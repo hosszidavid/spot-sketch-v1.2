@@ -1,35 +1,11 @@
 /*
 ==========================================================
-SPOT SKETCH
-
-File:
-style.css
+SPOT SKETCH v1.2 — DESKTOP & EXPORT BASELINE
 
 Purpose:
-Defines the full visual system, layout, controls, panels, pickers,
-markers, dialogs, and setup overlays.
-
-Table of Contents:
-1. Design Tokens
-2. Base
-3. Header
-4. Header Controls
-5. Mode Switch
-5. LAT Indicator
-6. Main Stage / Welcome / Image
-7. Measurement Bubbles
-9. Main Picker
-10. Header Menus
-11. Move Marker Cursor
-12. Project Info
-13. Dialog
-14. Project Library Autocomplete
-15. Exposure Setup Overlay
-
-Notes:
-- This file was cleaned for Spot Sketch 1.0.
-- Duplicate legacy blocks were merged.
-- Unused old Add Menu / Notes / Autocomplete styles were removed.
+Defines the consolidated visual system for the confirmed v1.2 baseline.
+Responsive/mobile rules added after this baseline must use the shared tokens
+and preserve the documented surface and layer contracts.
 ==========================================================
 */
 
@@ -40,16 +16,6 @@ Notes:
 */
 
 :root{
-  --bg:#f4f4f5;
-  --panel:rgba(255,255,255,.72);
-  --text:#1d1d1f;
-  --muted:#8a8a8f;
-  --accent:#0A84FF;
-  --orange:#ff9500;
-  --border:rgba(0,0,0,.08);
-  --green:#34c759;
-  --yellow:#ffcc00;
-  --red:#ff3b30;
 
   /*
     Shared application layer system.
@@ -57,15 +23,86 @@ Notes:
     Component-local layers (for example panels inside Project Manager)
     remain small relative values. Full-screen surfaces use these tokens.
   */
+
+  --bg:#f4f4f5;
+
+  --panel:rgba(255,255,255,.72);
+
+  --text:#1d1d1f;
+
+  --muted:#8a8a8f;
+
+  --accent:#0A84FF;
+
+  --orange:#ff9500;
+
+  --border:rgba(0,0,0,.08);
+
+  --green:#34c759;
+
+  --yellow:#ffcc00;
+
+  --red:#ff3b30;
+
   --layer-header:1200;
+
   --layer-workflow-overlay:4000;
+
   --layer-workspace:4800;
+
   --layer-project-manager:5000;
+
   --layer-image-replacement:5200;
+
   --layer-dialog:7000;
+
   --layer-notification:7200;
+
   --layer-autocomplete:7400;
+
   --layer-move-cursor:7600;
+
+  --layer-panel:40;
+
+  --layer-floating:80;
+
+  --layer-picker:2200;
+
+  --motion-fast:140ms;
+
+  --motion-standard:220ms;
+
+  --motion-panel:280ms;
+
+  --ease-enter:cubic-bezier(.2,.8,.2,1);
+
+  --ease-exit:cubic-bezier(.4,0,1,1);
+
+  --space-1:4px;
+
+  --space-2:8px;
+
+  --space-3:12px;
+
+  --space-4:16px;
+
+  --space-5:20px;
+
+  --space-6:24px;
+
+  --space-8:32px;
+
+  --radius-control:999px;
+
+  --radius-panel:20px;
+
+  --touch-target-min:44px;
+
+  --viewport-mobile-max:620px;
+
+  --viewport-tablet-max:900px;
+
+  --viewport-laptop-max:1280px;
 }
 
 body.dark{
@@ -89,7 +126,7 @@ body.dark{
 }
 
 body{
-  min-height:100vh;
+  min-height:var(--app-viewport-height, 100dvh);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   background:var(--bg);
   color:var(--text);
@@ -98,7 +135,7 @@ body{
 }
 
 #app{
-  height:100vh;
+  height:var(--app-viewport-height, 100dvh);
   display:flex;
   flex-direction:column;
 }
@@ -344,28 +381,6 @@ body.dark .export-button{
 .initial-metering-divider{
   color:var(--muted);
   opacity:.7;
-}
-
-.restart-metering-button{
-  min-width:92px;
-
-  color:rgba(255,59,48,.9);
-  background:rgba(255,59,48,.08);
-  border:1px solid rgba(255,59,48,.16);
-
-  font-size:11px;
-  font-weight:720;
-  letter-spacing:.035em;
-}
-
-.restart-metering-button:hover{
-  background:rgba(255,59,48,.13);
-}
-
-body.dark .restart-metering-button{
-  color:rgba(255,105,97,.95);
-  background:rgba(255,69,58,.12);
-  border-color:rgba(255,69,58,.2);
 }
 
 /*
@@ -688,17 +703,6 @@ body.dark .bubble{
   }
 }
 
-.leader-line{
-  stroke:rgba(255,255,255,.82);
-  stroke-width:1.4;
-  stroke-linecap:round;
-  filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));
-}
-
-body.dark .leader-line{
-  stroke:rgba(255,255,255,.76);
-}
-
 /*
 ────────────────────────────────────────────
 9. Main Picker
@@ -822,8 +826,7 @@ body.dark .picker-option.current{
   align-items:center;
 }
 
-.add-menu,
-.add-to-project-menu{
+.add-menu{
   position:absolute;
   top:42px;
   width:230px;
@@ -834,12 +837,9 @@ body.dark .picker-option.current{
   box-shadow:0 18px 45px rgba(0,0,0,.18);
   z-index:1200;
   animation:pickerDown .22s cubic-bezier(.2,.8,.2,1);
-}
-
-.add-menu{
   left:calc(50% - 50px);
   width:200px;
-  max-height:calc(100vh - 96px);
+  max-height:calc(var(--app-viewport-height, 100dvh) - 96px);
   overflow:auto;
   scrollbar-width:none;
 }
@@ -849,20 +849,10 @@ body.dark .picker-option.current{
   height:0;
 }
 
-.add-to-project-menu{
-  left:calc(100% - 133px);
-}
-
-.add-to-project-menu[hidden]{
-  display:none;
-}
-
-body.dark .add-menu,
-body.dark .add-to-project-menu{
+body.dark .add-menu{
   background:rgba(36,36,40,1);
 }
 
-.add-menu-section,
 .add-section{
   display:flex;
   flex-direction:column;
@@ -884,30 +874,23 @@ body.dark .add-to-project-menu{
   background:rgba(10,132,255,.12);
 }
 
-.add-menu-divider,
-.add-divider{
+.add-menu-divider{
   height:1px;
   margin:10px 6px;
   background:rgba(0,0,0,.14);
 }
 
-body.dark .add-menu-divider,
-body.dark .add-divider{
+body.dark .add-menu-divider{
   background:rgba(255,255,255,.14);
 }
 
-.add-section-label,
-.add-section-title,
-.add-subtitle{
+.add-section-title{
   width:100%;
   text-align:center;
   color:var(--muted);
   font-size:10px;
   font-weight:650;
   letter-spacing:.02em;
-}
-
-.add-section-title{
   position:relative;
   min-height:24px;
   display:flex;
@@ -915,39 +898,8 @@ body.dark .add-divider{
   justify-content:center;
 }
 
-.add-subtitle{
-  display:block;
-  padding:7px 8px 2px;
-}
-
 .image-identifier-wrap input{
   padding-right:42px;
-}
-
-.image-add-button{
-  position:absolute;
-  right:4px;
-  top:50%;
-  width:28px;
-  height:28px;
-  padding:0;
-  transform:translateY(-50%);
-  border-radius:50%;
-  background:var(--green);
-  border:none;
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.image-add-icon{
-  width:15px;
-  height:15px;
-  stroke:white;
-  stroke-width:2;
-  stroke-linecap:round;
-  fill:none;
 }
 
 /*
@@ -1015,7 +967,7 @@ body.move-marker *{
   top:42px;
  left:calc(50% - 125px);
   width:250px;
-  max-height:calc(100vh - 96px);
+  max-height:calc(var(--app-viewport-height, 100dvh) - 96px);
   overflow:auto;
   padding:8px;
   border-radius:18px;
@@ -1066,24 +1018,6 @@ body.dark .metadata-divider{
   text-align:center;
 }
 
-.metadata-title-check{
-  position:absolute;
-  left:4px;
-  top:50%;
-  transform:translateY(-50%);
-  width:22px;
-  height:22px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.metadata-title-check input{
-  width:13px;
-  height:13px;
-  accent-color:var(--accent);
-}
-
 .metadata-subtitle{
   width:100%;
   text-align:center;
@@ -1104,12 +1038,6 @@ body.dark .metadata-divider{
   color:var(--text);
   font:inherit;
   font-size:13px;
-}
-
-.metadata-two-col-row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:7px;
 }
 
 .metadata-notes-wrap{
@@ -1203,26 +1131,6 @@ body.dark .metadata-notes::placeholder{
 .range-separator{
   color:var(--muted);
   font-size:13px;
-}
-
-.filter-toggle-row,
-.metadata-check-row{
-  height:30px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  color:var(--muted);
-  font-size:12px;
-  font-weight:650;
-  user-select:none;
-}
-
-#filterEnabledInput,
-.metadata-check-row input{
-  width:14px;
-  height:14px;
-  accent-color:var(--accent);
 }
 
 body.project-info-open #appHeader{
@@ -1481,7 +1389,7 @@ Dialog Success Button
 
 .metering-setup-panel{
   width:min(760px, 100%);
-  max-height:min(720px, calc(100vh - 130px));
+  max-height:min(720px, calc(var(--app-viewport-height, 100dvh) - 130px));
 
   display:grid;
   grid-template-rows:auto minmax(0, 1fr) auto;
@@ -1778,7 +1686,7 @@ body.metering-setup-active #appHeader{
   }
 
   .metering-setup-panel{
-    max-height:calc(100vh - 90px);
+    max-height:calc(var(--app-viewport-height, 100dvh) - 90px);
     border-radius:22px;
   }
 
@@ -1846,7 +1754,7 @@ body.export-workspace-open{
   position:relative;
 
   width:min(1120px,100%);
-  height:min(760px,calc(100vh - 48px));
+  height:min(760px,calc(var(--app-viewport-height, 100dvh) - 48px));
   min-height:0;
 
   display:grid;
@@ -2084,88 +1992,6 @@ body.dark .export-settings-section{
   line-height:1.45;
 }
 
-.export-placeholder-block{
-  min-height:72px;
-  margin-top:13px;
-  padding:14px;
-
-  border:1px dashed rgba(10,132,255,.26);
-  border-radius:14px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  color:var(--muted);
-  background:rgba(10,132,255,.035);
-
-  font-size:11px;
-  line-height:1.4;
-  text-align:center;
-}
-
-.export-placeholder-options{
-  margin-top:13px;
-
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
-
-.export-placeholder-option{
-  min-height:34px;
-  padding:0 11px;
-
-  display:flex;
-  align-items:center;
-
-  border-radius:11px;
-  background:rgba(0,0,0,.035);
-
-  color:var(--muted);
-  font-size:11px;
-}
-
-body.dark .export-placeholder-option{
-  background:rgba(255,255,255,.05);
-}
-
-.export-format-summary{
-  margin-top:12px;
-
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-}
-
-.export-format-summary > div{
-  padding:11px;
-
-  border-radius:13px;
-  background:rgba(0,0,0,.035);
-
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-
-body.dark .export-format-summary > div{
-  background:rgba(255,255,255,.05);
-}
-
-.export-format-label{
-  color:var(--muted);
-  font-size:9px;
-  font-weight:650;
-  text-transform:uppercase;
-  letter-spacing:.05em;
-}
-
-.export-format-summary strong{
-  font-size:12px;
-  font-weight:700;
-}
-
 
 /*
   Preview area.
@@ -2230,66 +2056,6 @@ body.dark .export-preview-toolbar{
   display:flex;
   align-items:center;
   justify-content:center;
-}
-
-.export-preview-document{
-  width:min(680px,100%);
-  aspect-ratio:1.42 / 1;
-
-  padding:24px;
-
-  border-radius:5px;
-
-  background:#f2f2f3;
-  color:#1d1d1f;
-
-  box-shadow:0 18px 46px rgba(0,0,0,.19);
-}
-
-.export-preview-brand{
-  display:flex;
-  align-items:center;
-  gap:7px;
-
-  font-size:13px;
-  font-weight:750;
-}
-
-.export-preview-brand-dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:#0A84FF;
-}
-
-.export-preview-image-placeholder{
-  height:66%;
-  margin-top:17px;
-
-  border-radius:4px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  background:#252527;
-  color:rgba(255,255,255,.55);
-
-  font-size:11px;
-}
-
-.export-preview-data-placeholder{
-  margin-top:17px;
-
-  display:grid;
-  grid-template-columns:1.2fr 1fr 1fr;
-  gap:10px;
-}
-
-.export-preview-data-placeholder span{
-  height:42px;
-  border-radius:4px;
-  background:rgba(0,0,0,.075);
 }
 
 
@@ -2670,13 +2436,6 @@ body.dark .actual-exposure-summary{
   display:none !important;
 }
 
-.actual-exposure-comparison-label{
-  font-size:9px;
-  font-weight:800;
-  letter-spacing:.045em;
-  text-transform:uppercase;
-}
-
 .actual-exposure-comparison strong{
   color:var(--text);
   font-size:11px;
@@ -2921,14 +2680,6 @@ body.dark .actual-zone-table-row{
 ────────────────────────────────────────────
 */
 
-.export-content-options{
-  margin-top:13px;
-
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
-
 .export-content-option{
   min-height:58px;
   padding:10px 11px;
@@ -2954,91 +2705,6 @@ body.dark .export-content-option{
 .export-content-option:hover{
   border-color:rgba(10,132,255,.18);
   background:rgba(10,132,255,.035);
-}
-
-.export-content-option-copy{
-  min-width:0;
-
-  display:flex;
-  flex-direction:column;
-  gap:3px;
-}
-
-.export-content-option-copy strong{
-  color:var(--text);
-
-  font-size:11px;
-  font-weight:700;
-}
-
-.export-content-option-copy small{
-  color:var(--muted);
-
-  font-size:9px;
-  line-height:1.4;
-}
-
-.export-content-checkbox{
-  position:absolute;
-
-  width:1px;
-  height:1px;
-
-  opacity:0;
-  pointer-events:none;
-}
-
-.export-content-switch{
-  position:relative;
-
-  width:36px;
-  height:21px;
-  flex:0 0 36px;
-
-  border-radius:999px;
-
-  background:rgba(0,0,0,.13);
-
-  transition:
-    background .18s ease,
-    box-shadow .18s ease;
-}
-
-body.dark .export-content-switch{
-  background:rgba(255,255,255,.16);
-}
-
-.export-content-switch::after{
-  content:"";
-
-  position:absolute;
-  top:3px;
-  left:3px;
-
-  width:15px;
-  height:15px;
-
-  border-radius:50%;
-
-  background:white;
-  box-shadow:0 1px 4px rgba(0,0,0,.22);
-
-  transition:transform .18s ease;
-}
-
-.export-content-checkbox:checked +
-.export-content-switch{
-  background:var(--accent);
-}
-
-.export-content-checkbox:checked +
-.export-content-switch::after{
-  transform:translateX(15px);
-}
-
-.export-content-checkbox:focus-visible +
-.export-content-switch{
-  box-shadow:0 0 0 3px rgba(10,132,255,.16);
 }
 
 
@@ -3407,7 +3073,7 @@ body.dark .bubble-calculation-reference .num{
 
 
 /*
-  Compact active-state panel. Package 02 will expand this area with the
+  Compact active-state panel. The active Calculation controls use the
   full Calculated Exposure controls.
 */
 .calculation-status{
@@ -3556,7 +3222,7 @@ body.calculation-active #calculationBtn{
 
 /*
 ────────────────────────────────────────────
-Calculation Package 02 · Calculated Exposure
+Calculated Exposure Controls
 ────────────────────────────────────────────
 */
 
@@ -3766,7 +3432,7 @@ body.dark.calculation-active .bubble-calculation-reference .num{color:#8fe0dc}
 
 /*
 ────────────────────────────────────────────
-Calculation Package 03 · Bubble Readability
+Calculation Bubble Readability
 ────────────────────────────────────────────
 */
 
@@ -3904,7 +3570,7 @@ body.dark.calculation-active .bubble-calculation-reference .num{
 
 /*
 ────────────────────────────────────────────
-UI Refinement Package 01 · Readability
+Workflow Readability
 ────────────────────────────────────────────
 */
 
@@ -4174,17 +3840,9 @@ body.dark .calculation-exit-button:hover{
 
 /*
 ────────────────────────────────────────────
-UI Refinement Package 02 · Picker and Layer System
+Picker and Layer System
 ────────────────────────────────────────────
 */
-
-:root{
-  --layer-panel:40;
-  --layer-floating:80;
-  --layer-picker:2200;
-  --layer-dialog:2600;
-  --layer-notification:2800;
-}
 
 /* Shared floating picker must stay above Calculation panels. */
 #picker{
@@ -4220,14 +3878,6 @@ body.dark #picker{
   border-bottom:1px solid var(--border);
   user-select:none;
   touch-action:none;
-}
-
-
-.picker-drag-hint{
-  color:var(--muted);
-  font-size:8px;
-  font-weight:800;
-  letter-spacing:.08em;
 }
 
 /* Muted but explanatory controls consistently use the help cursor. */
@@ -4305,7 +3955,7 @@ body.dark .calculation-status{
 /* Compact Initial Setup using the same visual language as floating pickers. */
 .metering-setup-panel{
   width:min(690px,100%);
-  max-height:min(620px,calc(100vh - 122px));
+  max-height:min(620px,calc(var(--app-viewport-height, 100dvh) - 122px));
   border-radius:24px;
   background:rgba(241,242,244,.98);
 }
@@ -4363,7 +4013,7 @@ body.dark .metering-setup-control{
   padding:15px 18px 17px;
 }
 
-/* Deferred Package 01 corrections. */
+/* Workflow readability corrections. */
 .bubble-recording{
   width:auto;
   min-width:54px;
@@ -4406,7 +4056,7 @@ body.dark .metering-setup-control{
   }
 
   .metering-setup-panel{
-    max-height:calc(100vh - 88px);
+    max-height:calc(var(--app-viewport-height, 100dvh) - 88px);
   }
 
   .metering-setup-controls{
@@ -4429,7 +4079,7 @@ body.dark .metering-setup-control{
 
 /*
 ────────────────────────────────────────────
-UI Refinement Package 03 · Feedback Corrections
+Interaction Feedback
 ────────────────────────────────────────────
 */
 
@@ -4537,7 +4187,7 @@ body.calculation-active #photoCanvas{
 /* Flatter Initial Metering Setup, closer to the floating picker language. */
 .metering-setup-panel{
   width:min(620px,100%);
-  max-height:min(520px,calc(100vh - 112px));
+  max-height:min(520px,calc(var(--app-viewport-height, 100dvh) - 112px));
   border-radius:22px;
 }
 
@@ -4643,7 +4293,7 @@ body.dark #picker.picker-zone .picker-title{
 
 /* Spot Reading menus may use their complete content before internal scrolling. */
 #picker.picker-marker-menu{
-  max-height:min(410px,calc(100vh - 92px));
+  max-height:min(410px,calc(var(--app-viewport-height, 100dvh) - 92px));
 }
 
 /* Current Reference is ordinary menu typography, only gently muted. */
@@ -4888,7 +4538,7 @@ Calculation Final Polish 02
 /* Initial Metering Setup: equal-width, smaller picker columns. */
 .metering-setup-panel{
   width:min(560px,100%);
-  max-height:min(480px,calc(100vh - 112px));
+  max-height:min(480px,calc(var(--app-viewport-height, 100dvh) - 112px));
 }
 
 .metering-setup-controls{
@@ -5105,7 +4755,7 @@ left unchanged in this cautious cleanup.
 
 /*
 ────────────────────────────────────────────
-Project Package 01 - Gear and project save refinements
+Gear and Project Save
 ────────────────────────────────────────────
 */
 
@@ -5128,13 +4778,9 @@ Project Package 01 - Gear and project save refinements
 
 /*
 ────────────────────────────────────────────
-Project Package 03 — Project Manager
+Project Manager
 ────────────────────────────────────────────
 */
-
-.add-menu-item-danger{
-  color:var(--red);
-}
 
 body.project-manager-open{
   overflow:hidden;
@@ -5159,7 +4805,7 @@ body.project-manager-open{
 .project-manager{
   position:relative;
   width:min(920px,100%);
-  height:min(720px,calc(100vh - 48px));
+  height:min(720px,calc(var(--app-viewport-height, 100dvh) - 48px));
   min-height:0;
   display:grid;
   grid-template-rows:auto auto minmax(0,1fr) auto;
@@ -5610,7 +5256,7 @@ body.dark .spot-sketch-copy-create-button{
 
 /*
 ────────────────────────────────────────────
-Project Package 04 — Image Replacement
+Image Replacement
 ────────────────────────────────────────────
 */
 body.replace-image-open{
@@ -6000,7 +5646,6 @@ body.dark .location-panel{background:rgba(36,36,40,.98)}
 .location-panel-actions button{width:auto;min-width:76px;height:30px;font-size:12px}
 .location-clear-button{color:var(--red);background:transparent;border-color:transparent}
 .location-clear-button:hover{background:rgba(255,59,48,.09)}
-.location-done-button,.location-done-button:hover{background:var(--accent);border-color:var(--accent);color:white}
 
 /* Project Manager close icon */
 .project-manager-close-button svg{
@@ -6038,7 +5683,6 @@ body.dark .location-panel{background:rgba(36,36,40,.98)}
 }
 
 /* New Project is constructive/neutral, not destructive. */
-.add-menu-item-danger,
 .project-manager-new-project-button{
   color:inherit;
   background:transparent;
@@ -6143,7 +5787,7 @@ Spot Sketch Document Architecture — Package A
 
 .ssd-image-module{display:flex;flex-direction:column}.ssd-image-frame{position:relative;flex:1;min-height:410px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:10px;background:#e9e9e7}.ssd-image-frame img{display:block;width:100%;height:100%;object-fit:contain}.ssd-image-empty{color:#888;font-size:12px}.ssd-image-marker{position:absolute;width:21px;height:21px;transform:translate(-50%,-50%);display:grid;place-items:center;border:2px solid #0A84FF;border-radius:50%;background:rgba(247,247,245,.9);color:#0A84FF;font-size:9px;font-weight:850;box-shadow:0 1px 4px rgba(0,0,0,.2)}.ssd-image-marker.is-reference{background:#0A84FF;color:white;box-shadow:0 0 0 4px rgba(10,132,255,.18)}.ssd-image-caption{margin-top:9px;color:#777;font-size:8px;line-height:1.35}
 
-.ssd-workflow-module{display:flex;flex-direction:column}.ssd-workflow-grid{display:grid;flex:1;align-content:start}.ssd-workflow-unit{padding:10px;border:1px solid rgba(0,0,0,.075);border-radius:11px;background:#fbfbfa;min-width:0}.ssd-unit-kicker{color:#55555b;font-size:8px;font-weight:800;letter-spacing:.075em;text-transform:uppercase}.ssd-unit-explanation{margin-top:5px;color:#77777d;font-size:7.5px;line-height:1.35}.ssd-exposure-values{margin-top:8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.ssd-exposure-values strong{padding:7px 4px;border-radius:8px;background:rgba(10,132,255,.07);color:#1d1d1f;font-size:9px;text-align:center}.ssd-reference-values{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.ssd-reference-values strong{padding:6px 8px;border-radius:999px;background:rgba(10,132,255,.09);color:#0A84FF;font-size:8px}.ssd-calculated{border-color:rgba(10,132,255,.17)}.ssd-actual{background:#0A84FF;color:white;border-color:#0A84FF}.ssd-actual .ssd-unit-kicker,.ssd-actual .ssd-unit-explanation{color:white}.ssd-actual .ssd-exposure-values strong{background:rgba(255,255,255,.16);color:white}.ssd-unit-heading-row{display:flex;align-items:center;justify-content:space-between;gap:8px}.ssd-status{font-size:7px;padding:3px 6px;border-radius:999px;background:rgba(255,255,255,.18)}.ssd-actual-notes{margin-top:7px;font-size:7.5px;line-height:1.35;color:rgba(255,255,255,.88)}
+.ssd-workflow-module{display:flex;flex-direction:column}.ssd-workflow-grid{display:grid;flex:1;align-content:start}.ssd-workflow-unit{padding:10px;border:1px solid rgba(0,0,0,.075);border-radius:11px;background:#fbfbfa;min-width:0}.ssd-unit-kicker{color:#55555b;font-size:8px;font-weight:800;letter-spacing:.075em;text-transform:uppercase}.ssd-exposure-values{margin-top:8px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.ssd-exposure-values strong{padding:7px 4px;border-radius:8px;background:rgba(10,132,255,.07);color:#1d1d1f;font-size:9px;text-align:center}.ssd-reference-values{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.ssd-reference-values strong{padding:6px 8px;border-radius:999px;background:rgba(10,132,255,.09);color:#0A84FF;font-size:8px}.ssd-calculated{border-color:rgba(10,132,255,.17)}.ssd-actual{background:#0A84FF;color:white;border-color:#0A84FF}.ssd-actual .ssd-unit-kicker,.ssd-actual .ssd-unit-explanation{color:white}.ssd-actual .ssd-exposure-values strong{background:rgba(255,255,255,.16);color:white}.ssd-unit-heading-row{display:flex;align-items:center;justify-content:space-between;gap:8px}.ssd-status{font-size:7px;padding:3px 6px;border-radius:999px;background:rgba(255,255,255,.18)}.ssd-actual-notes{margin-top:7px;font-size:7.5px;line-height:1.35;color:rgba(255,255,255,.88)}
 
 .ssd-reading-table{margin-top:8px}.ssd-reading-head,.ssd-reading-row{display:grid;grid-template-columns:.55fr .9fr 1fr 1fr;align-items:center;gap:5px}.ssd-reading-head{padding:0 4px 5px;color:#888;font-size:6.5px;text-transform:uppercase;letter-spacing:.05em}.ssd-reading-row{min-height:24px;padding:4px;border-top:1px solid rgba(0,0,0,.06);font-size:7.5px}.ssd-reading-row.is-reference{background:rgba(10,132,255,.08);border-radius:7px;color:#0A84FF}.ssd-reading-number{display:flex;align-items:center;gap:3px;font-weight:800}.ssd-reading-number small{font-size:5.5px;padding:2px 3px;border-radius:999px;background:#0A84FF;color:white}.ssd-reading-empty{padding:10px;color:#888;font-size:8px;text-align:center}
 
@@ -6335,22 +5979,6 @@ body.dark .document-export-field select{
   .document-export-controls{
     grid-template-columns:1fr;
   }
-}
-
-.document-fixed-content-list{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  margin-top:12px;
-}
-
-.document-fixed-content-list span{
-  padding:6px 8px;
-  border-radius:999px;
-  background:rgba(10,132,255,.08);
-  color:var(--accent);
-  font-size:9px;
-  font-weight:680;
 }
 
 /* Export remains available while reviewing an active Calculation. */
@@ -7066,28 +6694,6 @@ One A4 page per Spot Sketch + compact modular Quick Export
   color:#777;
 }
 
-.ssq-image-marker{
-  position:absolute;
-  width:25px;
-  height:25px;
-  transform:translate(-50%,-50%);
-  display:grid;
-  place-items:center;
-  border:2px solid #0A84FF;
-  border-radius:50%;
-  background:rgba(255,255,255,.94);
-  color:#0A84FF;
-  font-size:10px;
-  font-weight:800;
-  box-shadow:0 1px 5px rgba(0,0,0,.24);
-}
-
-.ssq-image-marker.is-reference{
-  background:#0A84FF;
-  color:white;
-  box-shadow:0 0 0 4px rgba(255,255,255,.82);
-}
-
 .ssq-content{
   margin-top:16px;
   display:flex;
@@ -7502,7 +7108,7 @@ Final readability and annotation refinements.
 
 /*
 ────────────────────────────────────────────
-UI Refresh Packages 01–02
+Export and Header Workflow
 Export readability + floating Calculation foundation
 ────────────────────────────────────────────
 */
@@ -7629,16 +7235,6 @@ body.dark .export-workspace-close-button:hover{
   transform:translate(-50%,-2px) scale(1);
 }
 .floating-calculation-button[hidden]{display:none!important}
-.floating-calculation-icon{
-  width:28px;
-  height:28px;
-  display:grid;
-  place-items:center;
-  border-radius:50%;
-  background:rgba(255,255,255,.18);
-  font-size:12px;
-  font-weight:850;
-}
 body.dark .floating-calculation-button{background:#32b8b0;border-color:rgba(50,184,176,.48)}
 body.calculation-setup-active .floating-calculation-button,
 body.calculation-active .floating-calculation-button{display:none!important}
@@ -7671,7 +7267,7 @@ body.calculation-active .floating-calculation-button{display:none!important}
 
 /*
 ────────────────────────────────────────────
-UI Refresh Packages 03–04
+Calculation Persistence and Surface Guard
 ────────────────────────────────────────────
 */
 
@@ -7727,12 +7323,6 @@ UI Refresh Packages 03–04
 .floating-calculation-button.has-saved-calculation{
   background:rgba(42,167,161,.82);
 }
-.floating-calculation-icon{
-  width:24px;
-  height:24px;
-  font-size:10px;
-  background:rgba(255,255,255,.15);
-}
 
 /* Restart Metering is destructive: red hover, no movement. */
 .initial-metering-display:hover:not(:disabled){
@@ -7771,11 +7361,6 @@ body.dark .initial-metering-display:hover:not(:disabled){
 }
 
 /* Calculation decision shortcut. */
-.calculation-panel-actions{
-  display:flex;
-  justify-content:flex-end;
-  margin-top:10px;
-}
 .calculation-save-actual-button{
   width:auto;
   min-width:168px;
@@ -7799,7 +7384,7 @@ body.dark .calculation-save-actual-button{
 
 /*
 ────────────────────────────────────────────
-UI Refresh Package 05 — Calculation Panel Polish
+Calculation Panel
 ────────────────────────────────────────────
 */
 
@@ -7843,7 +7428,6 @@ UI Refresh Package 05 — Calculation Panel Polish
 .floating-calculation-button.has-saved-calculation{
   background:rgba(42,167,161,.13);
 }
-.floating-calculation-icon{display:none!important}
 body.dark .floating-calculation-button{
   background:rgba(50,184,176,.16);
   border-color:rgba(50,184,176,.24);
@@ -7888,12 +7472,6 @@ body.dark .calculated-exposure-row{
   margin:0;
   padding:0 4px;
 }
-.calculation-panel-actions{
-  order:4;
-  justify-content:center;
-  margin:0;
-  padding-top:2px;
-}
 .calculation-save-actual-button{
   min-width:210px;
   height:38px;
@@ -7919,17 +7497,9 @@ body.dark .calculated-exposure-row{
 
 /*
 ────────────────────────────────────────────
-UI Refresh Package 06 — Motion Foundation
+Motion Foundation
 ────────────────────────────────────────────
 */
-
-:root{
-  --motion-fast:140ms;
-  --motion-standard:220ms;
-  --motion-panel:280ms;
-  --ease-enter:cubic-bezier(.2,.8,.2,1);
-  --ease-exit:cubic-bezier(.4,0,1,1);
-}
 
 /* Native platform drag cursors replace the raster-looking custom cursor. */
 .picker-title,
@@ -7976,7 +7546,6 @@ UI Refresh Package 06 — Motion Foundation
 }
 
 /* Notes and small popovers feel connected without becoming theatrical. */
-.notes-popover:not([hidden]),
 .location-panel:not([hidden]),
 .project-library-autocomplete{
   animation:spotSketchSmallSurfaceEnter var(--motion-standard) var(--ease-enter) both;
@@ -8013,7 +7582,7 @@ UI Refresh Package 06 — Motion Foundation
   position:fixed;
   inset:50% auto auto 50%;
   width:min(940px,calc(100vw - 40px));
-  max-height:min(780px,calc(100vh - 40px));
+  max-height:min(780px,calc(var(--app-viewport-height, 100dvh) - 40px));
   padding:0;
   transform:translate(-50%,-50%);
   display:grid;
@@ -8032,62 +7601,6 @@ UI Refresh Package 06 — Motion Foundation
 body.dark .project-info-menu{
   background:rgba(31,31,35,.98);
   border-color:rgba(255,255,255,.11);
-}
-
-.project-info-workspace-header{
-  position:sticky;
-  top:0;
-  z-index:3;
-  grid-column:1 / -1;
-  min-height:92px;
-  padding:22px 24px 18px;
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:24px;
-  background:inherit;
-  border-bottom:1px solid var(--border);
-  backdrop-filter:blur(18px);
-}
-
-.project-info-workspace-kicker{
-  display:block;
-  margin-bottom:4px;
-  color:var(--accent);
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-}
-
-.project-info-workspace-header h2{
-  font-size:22px;
-  line-height:1.1;
-  letter-spacing:-.02em;
-}
-
-.project-info-workspace-header p{
-  margin-top:6px;
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.4;
-}
-
-.project-info-workspace-close{
-  width:36px;
-  height:36px;
-  min-width:36px;
-  padding:0;
-  display:grid;
-  place-items:center;
-  border-radius:50%;
-  font-size:22px;
-  line-height:1;
-  background:transparent;
-}
-.project-info-workspace-close:hover{
-  color:var(--red);
-  background:rgba(255,59,48,.10);
 }
 
 .project-info-menu > .metadata-section{
@@ -8221,7 +7734,6 @@ body.project-info-open .project-info-wrap{pointer-events:auto}
     transform:none;
     grid-template-columns:1fr;
   }
-  .project-info-workspace-header{padding-top:max(18px,env(safe-area-inset-top))}
   .project-info-menu > .metadata-section{margin:0 14px}
   .project-info-menu .metadata-footer{padding-bottom:max(18px,env(safe-area-inset-bottom))}
 }
@@ -8235,7 +7747,7 @@ body.project-info-open .project-info-wrap{pointer-events:auto}
 }
 
 
-/* Gear Workspace visibility and viewport positioning hotfix.
+/* Gear dropdown visibility and viewport positioning.
    Explicit hidden rules prevent component display declarations from
    overriding the HTML hidden state in any browser. */
 .project-info-overlay[hidden],
@@ -8245,7 +7757,7 @@ body.project-info-open .project-info-wrap{pointer-events:auto}
 
 
 /* ========================================================
-   UI REFRESH PACKAGES 09–10 — Corrected baseline hotfix
+   Calculation, Quick Export, Gear and Notifications
    ======================================================== */
 
 /* Floating Calculation: fully white surface, green text and border. */
@@ -8300,7 +7812,6 @@ body.dark .calculation-save-actual-button{
   background:rgba(50,184,176,.10) !important;
   border-color:rgba(50,184,176,.20) !important;
 }
-.calculation-panel-actions{display:none !important}
 
 /* Quiet emphasis for Actual Exposure in Quick Export. */
 .ssq-actual-section{
@@ -8338,7 +7849,6 @@ body.dark .calculation-save-actual-button{
   }
   body.dark .project-info-menu{background:rgba(36,36,40,.98) !important}
   .project-info-menu[hidden]{display:none !important}
-  .project-info-workspace-header{display:none !important}
   .project-info-menu > .metadata-section{
     display:flex !important;
     margin:0 !important;
@@ -8414,7 +7924,7 @@ body.dark .calculation-save-actual-button{
 #picker.picker-viewport-fixed{
   position:fixed !important;
   z-index:calc(var(--layer-autocomplete) + 20) !important;
-  max-height:min(420px,calc(100vh - 24px)) !important;
+  max-height:min(420px,calc(var(--app-viewport-height, 100dvh) - 24px)) !important;
 }
 
 /* Dark surfaces: only interactive fields receive a filled background. */
@@ -8422,8 +7932,6 @@ body.dark .project-info-menu .metadata-title-row,
 body.dark .project-info-menu .metadata-subtitle,
 body.dark .project-info-menu .metadata-divider,
 body.dark #picker .picker-title,
-body.dark .calculation-panel-heading,
-body.dark .calculation-panel-copy,
 body.dark .export-settings-section-heading,
 body.dark .export-settings-description{
   background:transparent !important;
@@ -8432,14 +7940,12 @@ body.dark .export-settings-description{
 body.dark .project-info-menu .metadata-input,
 body.dark .project-info-menu .metadata-notes,
 body.dark .project-info-menu .range-pill,
-body.dark #picker .picker-option,
-body.dark .calculation-value-button{
+body.dark #picker .picker-option{
   background:rgba(255,255,255,.065) !important;
 }
 
 body.dark #picker .picker-option:hover,
-body.dark .project-info-menu .range-pill:hover,
-body.dark .calculation-value-button:hover{
+body.dark .project-info-menu .range-pill:hover{
   background:rgba(255,255,255,.11) !important;
 }
 
@@ -8466,7 +7972,7 @@ body.dark .calculation-control-mode button.is-active{
 
 
 /* ==========================================================
-   UI REFRESH PACKAGES 13–14 — STABILIZATION BASELINE
+   Calculation and Surface Stabilization
    ========================================================== */
 
 /* Calculation warnings belong to the resulting exposure, never to source readings. */
@@ -8504,7 +8010,7 @@ body.dark .calculation-range-warning{color:rgba(255,150,145,.96);background:rgba
     transform:none!important;
     margin:0!important;
     width:min(680px,calc(100vw - 40px))!important;
-    max-height:min(720px,calc(100vh - 104px))!important;
+    max-height:min(720px,calc(var(--app-viewport-height, 100dvh) - 104px))!important;
     z-index:calc(var(--layer-header) + 30)!important;
     transform-origin:top right!important;
   }
@@ -8531,7 +8037,7 @@ body.dark .calculation-range-warning{color:rgba(255,150,145,.96);background:rgba
 
 
 /* ==========================================================
-   UI REFRESH BASELINE HOTFIX 01
+   v1.2 Final Interaction Corrections
    Image replacement, Quick Export, dark surfaces, range UX
    ========================================================== */
 

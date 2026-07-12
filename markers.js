@@ -177,12 +177,35 @@ function moveMarker(markerId, point) {
 /*
   Shows the custom move cursor while move mode is active.
 */
+function isTouchMarkerMovePresentation() {
+  return Boolean(
+    document.documentElement.dataset.touch === "true" &&
+    typeof isMobileApplicationShellActive === "function" &&
+    isMobileApplicationShellActive()
+  );
+}
+
+
 function showMoveCursor(event) {
   document.body.classList.add("move-marker");
 
-  if (event) {
-    moveCursor.style.left = `${event.clientX}px`;
-    moveCursor.style.top = `${event.clientY}px`;
+  if (isTouchMarkerMovePresentation()) {
+    document.body.classList.add("touch-marker-move-active");
+    moveCursor.style.removeProperty("left");
+    moveCursor.style.removeProperty("top");
+
+    const label = moveCursor.querySelector(".move-cursor-label");
+    if (label) label.textContent = "Tap the new position";
+  } else {
+    document.body.classList.remove("touch-marker-move-active");
+
+    if (event) {
+      moveCursor.style.left = `${event.clientX}px`;
+      moveCursor.style.top = `${event.clientY}px`;
+    }
+
+    const label = moveCursor.querySelector(".move-cursor-label");
+    if (label) label.textContent = "move here";
   }
 
   moveCursor.style.display = "flex";
@@ -194,8 +217,17 @@ function showMoveCursor(event) {
   Hides the custom move cursor and stops the countdown.
 */
 function hideMoveCursor() {
-  document.body.classList.remove("move-marker");
+  document.body.classList.remove(
+    "move-marker",
+    "touch-marker-move-active"
+  );
+
   moveCursor.style.display = "none";
+  moveCursor.style.removeProperty("left");
+  moveCursor.style.removeProperty("top");
+
+  const label = moveCursor.querySelector(".move-cursor-label");
+  if (label) label.textContent = "move here";
 
   stopMoveCountdown();
 }
@@ -305,27 +337,62 @@ function collapseAllMarkers() {
 */
 
 /*
-  Returns a collapsed marker near the given normalized image point.
-
-  The hit radius is measured in canvas pixels so collapsed markers remain
-  easy to tap/click at normal display sizes.
+  Returns the CSS-pixel radius used for invisible marker hit testing.
+  Source-canvas pixels are intentionally avoided because a 1500 px image can
+  be displayed only 300 px wide on a phone, making a source-pixel radius far
+  too small for touch.
 */
-function getCollapsedMarkerAtPoint(point) {
-  const hitRadius = 14;
+function getMarkerHitRadius(options = {}) {
+  const pointerMode = document.documentElement.dataset.pointer || "fine";
+  const touchInput = options.inputMode === "touch";
+  const coarsePointer = pointerMode === "coarse" || pointerMode === "hybrid";
+
+  if (touchInput || coarsePointer) return 30;
+  return 18;
+}
+
+
+/*
+  Returns the nearest marker inside an invisible CSS-pixel hit circle.
+  By default every marker is eligible, allowing the small pin itself to open
+  the existing marker menu even when the visible bubble is not tapped.
+*/
+function getMarkerAtPoint(point, options = {}) {
+  if (!point || !state.imageCanvas) return null;
+
+  const rect = imageWrap.getBoundingClientRect();
+  const width = rect.width || canvas.getBoundingClientRect().width;
+  const height = rect.height || canvas.getBoundingClientRect().height;
+  if (!width || !height) return null;
+
+  const hitRadius = Number(options.hitRadius || getMarkerHitRadius(options));
+  const collapsedOnly = options.collapsedOnly === true;
+
+  let nearest = null;
+  let nearestDistance = Infinity;
 
   for (const marker of state.markers) {
-    if (!marker.collapsed) continue;
+    if (collapsedOnly && !marker.collapsed) continue;
 
-    const dx = (point.x - marker.x) * canvas.width;
-    const dy = (point.y - marker.y) * canvas.height;
+    const dx = (point.x - marker.x) * width;
+    const dy = (point.y - marker.y) * height;
     const distance = Math.hypot(dx, dy);
 
-    if (distance <= hitRadius) {
-      return marker;
+    if (distance <= hitRadius && distance < nearestDistance) {
+      nearest = marker;
+      nearestDistance = distance;
     }
   }
 
-  return null;
+  return nearest;
+}
+
+
+function getCollapsedMarkerAtPoint(point, options = {}) {
+  return getMarkerAtPoint(point, {
+    ...options,
+    collapsedOnly: true
+  });
 }
 
 

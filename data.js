@@ -175,9 +175,8 @@ const state = {
   /*
     Confirmed Calculation Mode state.
 
-    Calculated Exposure is intentionally left null in Package 01. The next
-    package will create and edit that exposure without changing the original
-    Spot Reading measurements.
+    Calculated Exposure remains null until Reference + Zone are confirmed.
+    It is always stored separately from the original Spot Reading measurements.
   */
   calculation: {
     referenceSpotReadingId: null,
@@ -202,7 +201,16 @@ const state = {
   },
 
   preferences: {
-    interfaceMode: INTERFACE_MODES.FULL
+    interfaceMode: INTERFACE_MODES.FULL,
+
+    /*
+      Lightweight, device-local onboarding state. These flags are stored
+      only in local preferences and never become part of a .spotsketch file.
+    */
+    calculationGuidance: {
+      setupSeen: false,
+      modeSeen: false
+    }
   },
 
   initialMeteringSetup: {

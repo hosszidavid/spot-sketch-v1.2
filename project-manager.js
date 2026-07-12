@@ -10,7 +10,7 @@ Project Manager
 Purpose:
 Owns the multi-Spot-Sketch project lifecycle interface.
 
-Package 03 scope:
+v1.2 baseline scope:
 - Project Manager overlay
 - project naming
 - Spot Sketch list and switching
@@ -331,12 +331,29 @@ function createProjectManagerRow(sketch, index) {
   const identifier = String(sketch.imageIdentifier || "").trim();
   const meta = createSpotSketchMetadataItems(sketch, identifier, readingCount);
   const onlySketch = loadedProjectDocument.spotSketches.length <= 1;
+  const firstSketch = index === 0;
+  const lastSketch = index === loadedProjectDocument.project.spotSketchOrder.length - 1;
 
   return `
     <article class="project-manager-row ${active ? "is-active" : ""}" data-sketch-id="${escapeProjectHtml(sketch.id)}">
       <button class="project-manager-drag-handle" type="button" draggable="true" aria-label="Reorder Spot Sketch" title="Drag to reorder">
         <span></span><span></span><span></span>
       </button>
+
+      <div class="project-manager-mobile-order mobile-only" aria-label="Reorder Spot Sketch">
+        <button
+          class="project-manager-order-button ${firstSketch ? "is-unavailable" : ""}"
+          type="button"
+          data-project-action="move-up"
+          aria-label="Move Spot Sketch up"
+          aria-disabled="${firstSketch ? "true" : "false"}">↑</button>
+        <button
+          class="project-manager-order-button ${lastSketch ? "is-unavailable" : ""}"
+          type="button"
+          data-project-action="move-down"
+          aria-label="Move Spot Sketch down"
+          aria-disabled="${lastSketch ? "true" : "false"}">↓</button>
+      </div>
 
       <div class="project-manager-row-index">${index + 1}</div>
 
@@ -454,6 +471,44 @@ async function handleProjectManagerListClick(event) {
     }
     requestDeleteSpotSketch(sketchId);
   }
+
+  if (actionButton.dataset.projectAction === "move-up") {
+    moveProjectManagerSketch(sketchId, -1);
+  }
+
+  if (actionButton.dataset.projectAction === "move-down") {
+    moveProjectManagerSketch(sketchId, 1);
+  }
+}
+
+function moveProjectManagerSketch(sketchId, delta) {
+  const documentData = ensureInMemoryProjectDocument();
+  const order = normalizeSpotSketchOrder(
+    documentData.project.spotSketchOrder,
+    documentData.spotSketches
+  );
+
+  const currentIndex = order.indexOf(sketchId);
+  const targetIndex = currentIndex + delta;
+
+  if (currentIndex < 0 || targetIndex < 0 || targetIndex >= order.length) {
+    return false;
+  }
+
+  [order[currentIndex], order[targetIndex]] = [
+    order[targetIndex],
+    order[currentIndex]
+  ];
+
+  documentData.project.spotSketchOrder = order;
+  documentData.project.updatedAt = new Date().toISOString();
+  renderProjectManager();
+
+  const movedRow = document.querySelector(
+    `.project-manager-row[data-sketch-id="${CSS.escape(sketchId)}"]`
+  );
+  movedRow?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  return true;
 }
 
 async function switchActiveSpotSketch(sketchId) {

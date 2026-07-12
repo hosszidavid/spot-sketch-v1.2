@@ -176,13 +176,88 @@ function handleExportButtonClick(event) {
 */
 
 /*
-  Handles main canvas clicks during Spot Reading Recording:
-  - reopen collapsed Spot Readings
-  - place moved Spot Readings
-  - close an open picker
-  - start a new Spot Reading measurement
+  Closes a transient menu / picker before Recording can act on the image.
+  This function is also used by the touch workflow because pointerup occurs
+  before the synthetic click captured by the generic surface guard.
+*/
+function closeBlockingRecordingSurface(event) {
+  if (typeof getOpenTransientSurface !== "function") return false;
+
+  const surface = getOpenTransientSurface();
+  if (!surface || !surface.element) return false;
+
+  if (surface.element.contains(event.target)) {
+    return true;
+  }
+
+  surface.close();
+  return true;
+}
+
+
+/*
+  Applies one already validated image interaction. Mouse click and deliberate
+  touch tap both call this single workflow path, so marker creation and move
+  rules cannot drift apart between input types.
+*/
+function handleRecordingCanvasPoint(event, point, options = {}) {
+  if (!point || !isRecordingPhaseActive()) return false;
+
+  if (isProjectInfoOpen()) return false;
+
+  if (closeBlockingRecordingSurface(event)) {
+    return false;
+  }
+
+  if (state.moveMarkerId) {
+    moveMarker(state.moveMarkerId, point);
+    state.moveMarkerId = null;
+
+    hideMoveCursor();
+    hidePicker();
+    render();
+    return true;
+  }
+
+  const markerAtPoint = typeof getMarkerAtPoint === "function"
+    ? getMarkerAtPoint(point, {
+        inputMode: options.inputMode || "mouse"
+      })
+    : getCollapsedMarkerAtPoint(point);
+
+  if (markerAtPoint) {
+    state.selectedId = markerAtPoint.id;
+
+    if (markerAtPoint.collapsed) {
+      markerAtPoint.collapsed = false;
+      render();
+      return true;
+    }
+
+    showMarkerMenu(event, markerAtPoint.id);
+    render();
+    return true;
+  }
+
+  state.pendingPoint = point;
+  showValuePicker(event);
+  return true;
+}
+
+
+/*
+  Handles mouse / trackpad clicks during Spot Reading Recording. Touch taps
+  are classified in recording-touch.js and then routed into the shared
+  handleRecordingCanvasPoint() path above.
 */
 function handleCanvasClick(event) {
+  if (
+    typeof consumeRecordingTouchClickSuppression === "function" &&
+    consumeRecordingTouchClickSuppression(event)
+  ) {
+    return;
+  }
+
   if (isProjectInfoOpen()) {
     event.stopPropagation();
     return;
@@ -195,52 +270,12 @@ function handleCanvasClick(event) {
 
   event.stopPropagation();
 
-  const menuWasOpen =
-    isAddMenuOpen() ||
-    isAddToProjectMenuOpen();
-
-  closeHeaderMenus();
-
-  if (menuWasOpen) {
-    return;
-  }
-
   const point = getCanvasPoint(event);
   if (!point) return;
 
-  const collapsedMarker =
-    getCollapsedMarkerAtPoint(point);
-
-  if (collapsedMarker) {
-    collapsedMarker.collapsed = false;
-    state.selectedId = collapsedMarker.id;
-
-    render();
-    return;
-  }
-
-  if (state.moveMarkerId) {
-    moveMarker(
-      state.moveMarkerId,
-      point
-    );
-
-    state.moveMarkerId = null;
-
-    hideMoveCursor();
-    hidePicker();
-    render();
-
-    return;
-  }
-
-  if (isPickerOpen()) {
-    hidePicker();
-    return;
-  }
-
-  state.pendingPoint = point;
-  showValuePicker(event);
+  handleRecordingCanvasPoint(event, point, {
+    inputMode: "mouse"
+  });
 }
 
 

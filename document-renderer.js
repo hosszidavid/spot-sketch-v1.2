@@ -435,14 +435,6 @@ function renderSpotSketchDocument(
   }
 }
 
-function createSpotSketchDocumentElement(
-  model,
-  layout = SPOT_SKETCH_DOCUMENT_LAYOUT,
-  orientation = "auto"
-) {
-  return createSpotSketchDocumentElements(model, layout, orientation)[0] || null;
-}
-
 function createProjectCoverElement(model) {
   const host = document.createElement("div");
   host.innerHTML = `

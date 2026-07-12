@@ -85,7 +85,7 @@ let projectSavedState = null;
 let projectInfoDirty = false;
 
 /*
-  There are no boolean Gear fields in v1.1 Project Package 01. An empty
+  There are no boolean Gear fields in the v1.2 baseline. An empty
   Filter field now means that no filter was recorded.
 */
 const PROJECT_CHECK_FIELDS = [];
@@ -829,7 +829,20 @@ function ensureProjectInfoDropdownAnchor() {
   const wrap = button?.closest(".project-info-wrap");
   if (!menu || !wrap) return false;
 
-  if (menu.parentElement !== wrap) {
+  const mobileShellActive =
+    typeof isMobileApplicationShellActive === "function" &&
+    isMobileApplicationShellActive();
+
+  if (mobileShellActive) {
+    const portal =
+      typeof getMobileSurfacePortal === "function"
+        ? getMobileSurfacePortal()
+        : document.getElementById("mobileSurfacePortal");
+
+    if (portal && menu.parentElement !== portal) {
+      portal.appendChild(menu);
+    }
+  } else if (menu.parentElement !== wrap) {
     wrap.appendChild(menu);
   }
 
@@ -855,7 +868,11 @@ function openProjectInfoPanel() {
   const menu = document.getElementById("projectInfoMenu");
 
   if (overlay) {
-    overlay.hidden = !window.matchMedia("(max-width: 760px)").matches;
+    const mobileShellActive =
+      typeof isMobileApplicationShellActive === "function" &&
+      isMobileApplicationShellActive();
+
+    overlay.hidden = !mobileShellActive;
   }
   ensureProjectInfoDropdownAnchor();
   if (menu) menu.hidden = false;
@@ -865,9 +882,15 @@ function openProjectInfoPanel() {
   updateProjectFields();
   updateLimitButtons();
 
-  window.setTimeout(() => {
-    document.getElementById("cameraNameInput")?.focus({ preventScroll: true });
-  }, 0);
+  const mobileSurfaceActive =
+    typeof isMobileApplicationShellActive === "function" &&
+    isMobileApplicationShellActive();
+
+  if (!mobileSurfaceActive) {
+    window.setTimeout(() => {
+      document.getElementById("cameraNameInput")?.focus({ preventScroll: true });
+    }, 0);
+  }
 }
 
 

@@ -76,6 +76,11 @@ async function requestImageLoad(file) {
     return false;
   }
 
+  if (typeof openImageCropEditor === "function") {
+    decoded = await openImageCropEditor(decoded);
+    if (!decoded) return false;
+  }
+
   if (!state.imageCanvas) {
     applyFirstImage(decoded);
     return true;

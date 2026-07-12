@@ -49,8 +49,8 @@ const SPOT_SKETCH_STORAGE_KEY = "spotSketchData";
 /*
   Version of the small local-preferences storage schema.
 
-  A separate versioned project-document format will be designed later
-  for image, Spot Reading, Calculation and export interchange.
+  Project content is stored separately in the versioned .spotsketch document.
+  This schema is intentionally limited to lightweight local preferences.
 */
 const SPOT_SKETCH_STORAGE_SCHEMA_VERSION = 1;
 
@@ -65,8 +65,7 @@ const SPOT_SKETCH_STORAGE_SCHEMA_VERSION = 1;
   Saves persistent app data to localStorage.
 
   Spot Reading and image data are intentionally not included here. They
-  will belong to the future versioned Spot Sketch project format used by
-  desktop, mobile and export workflows.
+  belong to the versioned .spotsketch project document.
 */
 function saveLocalAppData() {
   const data = {
@@ -142,7 +141,11 @@ function loadLocalAppData() {
 function normalizeStoredPreferences() {
   if (!state.preferences) {
     state.preferences = {
-      interfaceMode: INTERFACE_MODES.FULL
+      interfaceMode: INTERFACE_MODES.FULL,
+      calculationGuidance: {
+        setupSeen: false,
+        modeSeen: false
+      }
     };
 
     return;
@@ -156,4 +159,11 @@ function normalizeStoredPreferences() {
     state.preferences.interfaceMode =
       INTERFACE_MODES.FULL;
   }
+
+  const guidance = state.preferences.calculationGuidance;
+
+  state.preferences.calculationGuidance = {
+    setupSeen: Boolean(guidance?.setupSeen),
+    modeSeen: Boolean(guidance?.modeSeen)
+  };
 }

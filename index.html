@@ -2,9 +2,10 @@
 <html lang="hu">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
   <title>Spot Sketch</title>
-  <link rel="stylesheet" href="style.css?v=uihotfix01">
+  <link rel="stylesheet" href="style.css?v=1.3-responsive-p07">
+  <link rel="stylesheet" href="responsive.css?v=1.3-responsive-p07">
 </head>
 
 
@@ -48,6 +49,46 @@
 
   </div>
 
+</div>
+
+<div id="imageCropOverlay" class="image-crop-overlay" hidden>
+  <section class="image-crop-dialog" role="dialog" aria-modal="true" aria-labelledby="imageCropTitle">
+    <header class="image-crop-header">
+      <div class="image-crop-heading">
+        <span class="image-crop-brand-dot"></span>
+        <div>
+          <h2 id="imageCropTitle">Crop Image</h2>
+          <p>Choose an aspect ratio, then drag and zoom the image inside the frame.</p>
+        </div>
+      </div>
+      <button id="imageCropCloseBtn" class="image-crop-close" type="button" aria-label="Cancel Crop">×</button>
+    </header>
+
+    <div class="image-crop-body">
+      <div class="image-crop-ratios" role="group" aria-label="Crop aspect ratio">
+        <button type="button" data-crop-ratio="original" class="is-active">Original</button>
+        <button type="button" data-crop-ratio="1">1:1</button>
+        <button type="button" data-crop-ratio="1.5">3:2</button>
+        <button type="button" data-crop-ratio="1.3333333333">9×12</button>
+        <button type="button" data-crop-ratio="1.25">5:4</button>
+        <button type="button" data-crop-ratio="1.7777777778">16:9</button>
+      </div>
+
+      <div id="imageCropStage" class="image-crop-stage">
+        <canvas id="imageCropCanvas"></canvas>
+      </div>
+
+      <label class="image-crop-zoom">
+        <span>Zoom</span>
+        <input id="imageCropZoom" type="range" min="1" max="3" step="0.01" value="1">
+      </label>
+    </div>
+
+    <footer class="image-crop-footer">
+      <button id="imageCropCancelBtn" type="button">Cancel</button>
+      <button id="imageCropConfirmBtn" class="image-crop-confirm" type="button">Use Image</button>
+    </footer>
+  </section>
 </div>
 
 
@@ -475,6 +516,7 @@
   <header id="appHeader">
     <div class="header-logo">
       <span class="logo-dot">S</span>
+      <span class="mobile-header-title">Spot Sketch</span>
     </div>
 
     <div class="header-controls">
@@ -484,6 +526,18 @@
     <button id="addBtn" class="add-button">+ ADD</button>
 
     <div id="addMenu" class="add-menu" hidden>
+
+      <div class="mobile-surface-heading mobile-only">
+        <div class="mobile-surface-title">
+          <span class="mobile-surface-brand-dot"></span>
+          <strong>Add</strong>
+        </div>
+        <button
+          id="mobileAddMenuCloseBtn"
+          class="mobile-surface-close"
+          type="button"
+          aria-label="Close Add menu">×</button>
+      </div>
 
       <div class="add-section">
         <button id="openImageBtn" class="add-menu-item">
@@ -539,6 +593,17 @@
 
     <div id="projectInfoMenu" class="project-info-menu" role="dialog" aria-modal="true" aria-labelledby="projectInfoTitle" hidden>
 
+      <header class="mobile-surface-heading mobile-gear-heading mobile-only">
+        <div class="mobile-surface-title">
+          <span class="mobile-surface-brand-dot"></span>
+          <strong id="projectInfoTitle">Gear Settings</strong>
+        </div>
+        <button
+          id="mobileGearCloseBtn"
+          class="mobile-surface-close"
+          type="button"
+          aria-label="Close Gear Settings">×</button>
+      </header>
 
             <!-- Camera -->
       <div class="metadata-section">
@@ -710,7 +775,10 @@
 
     <div id="locationPanel" class="location-panel" hidden>
       <div class="location-panel-heading">
-        <strong>Location</strong>
+        <div class="mobile-surface-title">
+          <span class="mobile-surface-brand-dot"></span>
+          <strong>Location</strong>
+        </div>
         <button id="locationPanelCloseBtn" class="location-panel-close" type="button" aria-label="Close Location">×</button>
       </div>
 
@@ -806,7 +874,47 @@
     <span>CALCULATION</span>
   </button>
 
-  
+  <nav
+    id="mobileActionBar"
+    class="mobile-action-bar"
+    aria-label="Primary application actions"
+    hidden>
+
+    <button id="mobileActionHandle" class="mobile-action-handle" type="button" aria-label="Show application menu" aria-expanded="false">
+      <span></span>
+    </button>
+
+    <div class="mobile-action-items">
+      <button id="mobileAddAction" class="mobile-action-button" type="button" aria-label="Add">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="mobile-action-label">Add</span>
+      </button>
+
+      <button id="mobileLocationAction" class="mobile-action-button" type="button" aria-label="Location">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6-5.2 6-11a6 6 0 1 0-12 0c0 5.8 6 11 6 11Z"/><circle cx="12" cy="10" r="2.2"/></svg>
+        <span class="mobile-action-label">Location</span>
+      </button>
+
+      <button id="mobileGearAction" class="mobile-action-button mobile-action-primary" type="button" aria-label="Gear Settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="10" cy="18" r="2"/></svg>
+        <span class="mobile-action-label">Gear</span>
+      </button>
+
+      <button id="mobileExportAction" class="mobile-action-button" type="button" aria-label="Export">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5M5 14v5h14v-5"/></svg>
+        <span class="mobile-action-label">Export</span>
+      </button>
+
+      <button id="mobileThemeAction" class="mobile-action-button" type="button" aria-label="Switch theme">
+        <svg class="mobile-theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.5A8 8 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/></svg>
+        <svg class="mobile-theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>
+        <span class="mobile-action-label">Dark</span>
+      </button>
+    </div>
+  </nav>
+
+  <div id="mobileSurfacePortal" class="mobile-surface-portal"></div>
+
 <div
   id="meteringSetupOverlay"
   class="metering-setup-overlay"
@@ -930,7 +1038,7 @@
         </h2>
 
         <p id="calculationSetupHint">
-          Select a Spot Reading on the image, then choose its reference Zone.
+          Select a Spot Reading on the image, then choose its reference Zone. In Calculation Mode, the Reference Spot Reading will always stay in the selected Zone!
         </p>
 
         <p class="calculation-setup-metering-note">
@@ -955,8 +1063,10 @@
       <button
         id="calculationSetupCancelBtn"
         class="calculation-setup-secondary-button"
-        type="button">
-        Cancel
+        type="button"
+        aria-label="Close Calculation Setup">
+        <span class="calculation-desktop-action-label">Cancel</span>
+        <span class="calculation-mobile-close-symbol" aria-hidden="true">×</span>
       </button>
 
       <button
@@ -997,8 +1107,10 @@
     <button
       id="calculationExitBtn"
       class="calculation-exit-button"
-      type="button">
-      Exit
+      type="button"
+      aria-label="Exit Calculation Mode">
+      <span class="calculation-desktop-action-label">Exit</span>
+      <span class="calculation-mobile-close-symbol" aria-hidden="true">×</span>
     </button>
   </div>
 
@@ -1056,7 +1168,8 @@
         type="button"
         title="Use the displayed Calculation values as Actual Exposure"
         aria-label="Use the displayed Calculation values as Actual Exposure">
-        CONFIRM
+        <span class="calculation-confirm-label">CONFIRM</span>
+        <span class="calculation-confirm-symbol" aria-hidden="true">✓</span>
       </button>
     </div>
 
@@ -1078,6 +1191,46 @@
 </section>
 
 <div
+  id="calculationGuideOverlay"
+  class="calculation-guide-overlay"
+  hidden>
+
+  <section
+    class="calculation-guide-dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="calculationGuideTitle"
+    aria-describedby="calculationGuideMessage">
+
+    <span class="calculation-guide-eyebrow">Spot Sketch</span>
+
+    <h2 id="calculationGuideTitle">Calculation</h2>
+
+    <div
+      id="calculationGuideMessage"
+      class="calculation-guide-message">
+    </div>
+
+    <div class="calculation-guide-progress" aria-hidden="true">
+      <span></span>
+    </div>
+
+    <div class="calculation-guide-actions">
+      <small id="calculationGuideCountdown">Continuing automatically in 10s</small>
+
+      <button
+        id="calculationGuideOkBtn"
+        class="calculation-guide-ok-button"
+        type="button">
+        OK · 10
+      </button>
+    </div>
+
+  </section>
+
+</div>
+
+<div
   id="appNotificationStack"
   class="app-notification-stack"
   role="region"
@@ -1094,7 +1247,7 @@
         <div class="welcome-brand">
           <span class="welcome-logo"></span>
           <span>
-  Spot Sketch<sup class="version">v1.1</sup>
+  Spot Sketch<sup class="version">v1.2</sup>
 </span>
         </div>
 
@@ -1134,43 +1287,49 @@
   <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
   <input id="projectFileInput" type="file" accept=".spotsketch,application/x-spotsketch+json,application/json" hidden>
 </div>
-<script src="dom.js?v=uihotfix01"></script>
-<script src="data.js?v=uihotfix01"></script>
-<script src="storage.js?v=uihotfix01"></script>
-<script src="exposure.js?v=uihotfix01"></script>
-<script src="picker-core.js?v=uihotfix01"></script>
-<script src="recording-pickers.js?v=uihotfix01"></script>
-<script src="calculation-pickers.js?v=uihotfix01"></script>
-<script src="notifications.js?v=uihotfix01"></script>
-<script src="calculation-ui.js?v=uihotfix01"></script>
-<script src="render.js?v=uihotfix01"></script>
-<script src="markers.js?v=uihotfix01"></script>
-<script src="image.js?v=uihotfix01"></script>
-<script src="welcome.js?v=uihotfix01"></script>
-<script src="export.js?v=uihotfix01"></script>
-<script src="dialog.js?v=uihotfix01"></script>
-<script src="project.js?v=uihotfix01"></script>
-<script src="project-library.js?v=uihotfix01"></script>
-<script src="project-document.js?v=uihotfix01"></script>
-<script src="project-manager.js?v=uihotfix01"></script>
-<script src="header.js?v=uihotfix01"></script>
-<script src="document-layout.js?v=uihotfix01"></script>
-<script src="document-model.js?v=uihotfix01"></script>
-<script src="document-renderer.js?v=uihotfix01"></script>
+<script src="responsive.js?v=1.3-responsive-p07"></script>
+<script src="dom.js?v=1.3-responsive-p07"></script>
+<script src="data.js?v=1.3-responsive-p07"></script>
+<script src="storage.js?v=1.3-responsive-p07"></script>
+<script src="exposure.js?v=1.3-responsive-p07"></script>
+<script src="picker-core.js?v=1.3-responsive-p07"></script>
+<script src="recording-pickers.js?v=1.3-responsive-p07"></script>
+<script src="calculation-pickers.js?v=1.3-responsive-p07"></script>
+<script src="notifications.js?v=1.3-responsive-p07"></script>
+<script src="calculation-ui.js?v=1.3-responsive-p07"></script>
+<script src="render.js?v=1.3-responsive-p07"></script>
+<script src="markers.js?v=1.3-responsive-p07"></script>
+<script src="image.js?v=1.3-responsive-p07"></script>
+<script src="image-crop.js?v=1.3-responsive-p07"></script>
+<script src="welcome.js?v=1.3-responsive-p07"></script>
+<script src="export.js?v=1.3-responsive-p07"></script>
+<script src="dialog.js?v=1.3-responsive-p07"></script>
+<script src="project.js?v=1.3-responsive-p07"></script>
+<script src="project-library.js?v=1.3-responsive-p07"></script>
+<script src="project-document.js?v=1.3-responsive-p07"></script>
+<script src="project-manager.js?v=1.3-responsive-p07"></script>
+<script src="header.js?v=1.3-responsive-p07"></script>
+<script src="document-layout.js?v=1.3-responsive-p07"></script>
+<script src="document-model.js?v=1.3-responsive-p07"></script>
+<script src="document-renderer.js?v=1.3-responsive-p07"></script>
 <script
-  src="html2canvas.js?v=uihotfix01"
+  src="html2canvas.js?v=1.3-responsive-p07"
   onload="globalThis.__spotSketchModuleStatus = globalThis.__spotSketchModuleStatus || {}; globalThis.__spotSketchModuleStatus.html2canvas = typeof globalThis.html2canvas === 'function' ? 'ready' : 'loaded without global';"
   onerror="globalThis.__spotSketchModuleStatus = globalThis.__spotSketchModuleStatus || {}; globalThis.__spotSketchModuleStatus.html2canvas = 'load failed';">
 </script>
 <script
-  src="document-export.js?v=uihotfix01"
+  src="document-export.js?v=1.3-responsive-p07"
   onerror="globalThis.__spotSketchModuleStatus = globalThis.__spotSketchModuleStatus || {}; globalThis.__spotSketchModuleStatus.documentExport = 'load failed';">
 </script>
-<script src="export-workspace.js?v=uihotfix01"></script>
-<script src="metering-setup.js?v=uihotfix01"></script>
-<script src="recording-workflow.js?v=uihotfix01"></script>
-<script src="calculation-workflow.js?v=uihotfix01"></script>
-<script src="app.js?v=uihotfix01"></script>
+<script src="export-workspace.js?v=1.3-responsive-p07"></script>
+<script src="metering-setup.js?v=1.3-responsive-p07"></script>
+<script src="recording-workflow.js?v=1.3-responsive-p07"></script>
+<script src="recording-touch.js?v=1.3-responsive-p07"></script>
+<script src="calculation-workflow.js?v=1.3-responsive-p07"></script>
+<script src="calculation-mobile.js?v=1.3-responsive-p07"></script>
+<script src="mobile-shell.js?v=1.3-responsive-p07"></script>
+<script src="mobile-project-surfaces.js?v=1.3-responsive-p07"></script>
+<script src="app.js?v=1.3-responsive-p07"></script>
 
 </body>
 </html>

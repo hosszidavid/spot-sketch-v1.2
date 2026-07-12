@@ -172,16 +172,69 @@ const matches = config
 
   const list = document.createElement("div");
   list.className = "project-library-autocomplete";
-
-  list.style.left = `${input.offsetLeft}px`;
-  list.style.top = `${input.offsetTop + input.offsetHeight + 4}px`;
-  list.style.width = `${input.offsetWidth}px`;
+  list.dataset.anchorInputId = input.id;
 
   for (const item of matches) {
     list.appendChild(createProjectLibraryAutocompleteRow(input, config, item));
   }
 
-  input.parentElement.appendChild(list);
+  const mobileSurface =
+    typeof isMobileApplicationShellActive === "function" &&
+    isMobileApplicationShellActive();
+
+  if (mobileSurface) {
+    list.classList.add("project-library-autocomplete-mobile");
+    document.body.appendChild(list);
+    positionProjectLibraryAutocomplete(list, input);
+  } else {
+    input.parentElement.appendChild(list);
+    positionProjectLibraryAutocomplete(list, input);
+  }
+}
+
+function positionProjectLibraryAutocomplete(list, input) {
+  if (!list || !input) return;
+
+  if (!list.classList.contains("project-library-autocomplete-mobile")) {
+    list.style.left = `${input.offsetLeft}px`;
+    list.style.top = `${input.offsetTop + input.offsetHeight + 4}px`;
+    list.style.width = `${input.offsetWidth}px`;
+    return;
+  }
+
+  const rect = input.getBoundingClientRect();
+  const viewportHeight = Number(
+    getComputedStyle(document.documentElement)
+      .getPropertyValue("--app-viewport-height")
+      .replace("px", "")
+  ) || window.innerHeight;
+  const safeTop = 8;
+  const margin = 8;
+  const desiredHeight = Math.min(300, Math.max(52, list.scrollHeight));
+  const roomBelow = viewportHeight - rect.bottom - margin;
+  const showAbove = roomBelow < Math.min(desiredHeight, 190) && rect.top > roomBelow;
+
+  list.style.position = "fixed";
+  list.style.left = `${Math.max(margin, rect.left)}px`;
+  list.style.width = `${Math.max(180, Math.min(rect.width, window.innerWidth - margin * 2))}px`;
+  list.style.maxHeight = `${Math.max(96, Math.min(300, showAbove ? rect.top - safeTop - margin : roomBelow))}px`;
+  list.style.top = showAbove ? "auto" : `${rect.bottom + 4}px`;
+  list.style.bottom = showAbove ? `${Math.max(margin, viewportHeight - rect.top + 4)}px` : "auto";
+}
+
+function repositionProjectLibraryAutocomplete() {
+  const list = document.querySelector(
+    ".project-library-autocomplete.project-library-autocomplete-mobile"
+  );
+  if (!list) return;
+
+  const input = document.getElementById(list.dataset.anchorInputId || "");
+  if (!input || !isProjectInfoOpen()) {
+    closeProjectLibraryAutocomplete();
+    return;
+  }
+
+  positionProjectLibraryAutocomplete(list, input);
 }
 
 

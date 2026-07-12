@@ -1,0 +1,3168 @@
+/*
+==========================================================
+SPOT SKETCH v1.3 RESPONSIVE DEVELOPMENT
+PACKAGE 01 — RESPONSIVE FOUNDATION
+
+Purpose:
+Defines shared responsive contracts without redesigning individual
+workflows. Later mobile packages should consume these tokens and HTML
+viewport attributes instead of introducing isolated breakpoint logic.
+==========================================================
+*/
+
+
+/*
+────────────────────────────────────────────
+1. Responsive Runtime Tokens
+────────────────────────────────────────────
+*/
+
+:root{
+  /* JavaScript replaces the viewport values with VisualViewport pixels. */
+  --app-viewport-width:100vw;
+  --app-viewport-height:100vh;
+  --app-layout-viewport-width:100vw;
+  --app-layout-viewport-height:100vh;
+  --app-viewport-offset-top:0px;
+  --app-viewport-offset-left:0px;
+  --app-keyboard-inset:0px;
+  --app-device-pixel-ratio:1;
+
+  /* Native safe-area contracts. */
+  --safe-area-top:env(safe-area-inset-top, 0px);
+  --safe-area-right:env(safe-area-inset-right, 0px);
+  --safe-area-bottom:env(safe-area-inset-bottom, 0px);
+  --safe-area-left:env(safe-area-inset-left, 0px);
+
+  /* Layout contracts consumed by the future application shell. */
+  --responsive-app-gutter:20px;
+  --responsive-surface-inset:24px;
+  --responsive-header-top:14px;
+  --responsive-header-bottom:12px;
+  --responsive-header-inline:20px;
+  --responsive-header-padding-inline:16px;
+  --responsive-header-padding-block:10px;
+  --responsive-header-gap:14px;
+  --responsive-control-gap:10px;
+  --responsive-panel-radius:24px;
+  --responsive-dialog-radius:18px;
+  --responsive-control-height:36px;
+  --responsive-touch-target:44px;
+  --responsive-mobile-action-offset:12px;
+  --responsive-notification-offset:20px;
+  --responsive-metering-top-inset:96px;
+  --responsive-calculation-top-inset:84px;
+  --responsive-type-scale:1;
+}
+
+@supports (height:100dvh){
+  :root{
+    --app-viewport-height:100dvh;
+    --app-layout-viewport-height:100dvh;
+  }
+}
+
+
+/*
+────────────────────────────────────────────
+2. Dynamic Viewport Contract
+────────────────────────────────────────────
+*/
+
+html{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  text-size-adjust:100%;
+  -webkit-text-size-adjust:100%;
+}
+
+body{
+  width:100%;
+  height:var(--app-viewport-height);
+  min-height:var(--app-viewport-height);
+  overflow:hidden;
+  overscroll-behavior:none;
+}
+
+#app{
+  width:100%;
+  height:var(--app-viewport-height);
+  min-height:0;
+}
+
+main,
+#stage{
+  min-width:0;
+  min-height:0;
+}
+
+/* Prevent browser text-size inflation from changing dense technical UI. */
+input,
+button,
+select,
+textarea{
+  max-width:100%;
+}
+
+
+/*
+────────────────────────────────────────────
+3. Safe-Area Foundation
+────────────────────────────────────────────
+*/
+
+#appHeader{
+  margin-top:calc(var(--safe-area-top) + var(--responsive-header-top));
+  margin-right:calc(var(--safe-area-right) + var(--responsive-header-inline));
+  margin-bottom:var(--responsive-header-bottom);
+  margin-left:calc(var(--safe-area-left) + var(--responsive-header-inline));
+  padding-block:var(--responsive-header-padding-block);
+  padding-inline:var(--responsive-header-padding-inline);
+  gap:var(--responsive-header-gap);
+}
+
+.header-controls{
+  gap:var(--responsive-control-gap);
+}
+
+.floating-calculation-button{
+  bottom:calc(var(--safe-area-bottom) + 24px) !important;
+}
+
+.app-notification-stack{
+  right:calc(var(--safe-area-right) + var(--responsive-notification-offset)) !important;
+  bottom:calc(var(--safe-area-bottom) + var(--responsive-notification-offset)) !important;
+}
+
+.dialog-overlay,
+.replace-image-overlay,
+.export-workspace-overlay,
+.project-manager-overlay{
+  box-sizing:border-box;
+  min-height:var(--app-viewport-height);
+  padding-top:max(var(--responsive-surface-inset), var(--safe-area-top));
+  padding-right:max(var(--responsive-surface-inset), var(--safe-area-right));
+  padding-bottom:max(var(--responsive-surface-inset), var(--safe-area-bottom));
+  padding-left:max(var(--responsive-surface-inset), var(--safe-area-left));
+}
+
+
+.metering-setup-overlay{
+  box-sizing:border-box;
+  min-height:var(--app-viewport-height);
+  padding-top:calc(var(--safe-area-top) + var(--responsive-metering-top-inset));
+  padding-right:max(24px, var(--safe-area-right));
+  padding-bottom:max(24px, var(--safe-area-bottom));
+  padding-left:max(24px, var(--safe-area-left));
+}
+
+.calculation-setup-overlay{
+  min-height:var(--app-viewport-height);
+  padding-top:calc(var(--safe-area-top) + var(--responsive-calculation-top-inset));
+  padding-right:max(22px, var(--safe-area-right));
+  padding-bottom:calc(var(--safe-area-bottom) + 24px);
+  padding-left:max(22px, var(--safe-area-left));
+}
+
+.export-workspace,
+.project-manager{
+  max-height:calc(
+    var(--app-viewport-height) -
+    max(var(--responsive-surface-inset), var(--safe-area-top)) -
+    max(var(--responsive-surface-inset), var(--safe-area-bottom))
+  );
+}
+
+.metering-setup-panel{
+  max-height:calc(
+    var(--app-viewport-height) -
+    var(--safe-area-top) -
+    var(--responsive-metering-top-inset) -
+    max(24px, var(--safe-area-bottom))
+  );
+}
+
+#picker.picker-viewport-fixed{
+  max-height:calc(
+    var(--app-viewport-height) -
+    var(--safe-area-top) -
+    var(--safe-area-bottom) -
+    24px
+  ) !important;
+}
+
+
+/*
+────────────────────────────────────────────
+4. Pointer and Touch Contracts
+────────────────────────────────────────────
+*/
+
+html[data-pointer="coarse"] button:not(.bubble),
+html[data-pointer="hybrid"] button:not(.bubble),
+html[data-pointer="coarse"] select,
+html[data-pointer="hybrid"] select,
+html[data-pointer="coarse"] input:not([type="checkbox"]):not([type="radio"]),
+html[data-pointer="hybrid"] input:not([type="checkbox"]):not([type="radio"]){
+  min-height:var(--responsive-touch-target);
+}
+
+html[data-pointer="coarse"] .picker-option,
+html[data-pointer="hybrid"] .picker-option,
+html[data-pointer="coarse"] .add-menu-item,
+html[data-pointer="hybrid"] .add-menu-item{
+  min-height:var(--responsive-touch-target);
+}
+
+html[data-pointer="coarse"] button,
+html[data-pointer="hybrid"] button{
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+
+/* Editing with a software keyboard should not leave the workflow action
+   floating above form fields. The action returns after the keyboard closes. */
+html[data-keyboard="visible"] .floating-calculation-button{
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
+
+/*
+────────────────────────────────────────────
+5. Breakpoint Contracts
+────────────────────────────────────────────
+*/
+
+/* Small laptop: preserve the desktop shell while reducing unused chrome. */
+@media (max-width:1280px){
+  :root{
+    --responsive-app-gutter:14px;
+    --responsive-surface-inset:18px;
+    --responsive-header-top:10px;
+    --responsive-header-bottom:9px;
+    --responsive-header-inline:14px;
+    --responsive-header-padding-inline:14px;
+    --responsive-header-gap:10px;
+    --responsive-control-gap:8px;
+  }
+
+  #appHeader{
+    grid-template-columns:auto minmax(0,1fr) auto;
+  }
+
+  .header-controls{
+    min-width:0;
+  }
+}
+
+/* Tablet contract: panels stay inset, controls become touch-sized and the
+   next package may replace the header without changing surface geometry. */
+@media (max-width:900px){
+  :root{
+    --responsive-app-gutter:12px;
+    --responsive-surface-inset:12px;
+    --responsive-header-top:8px;
+    --responsive-header-bottom:8px;
+    --responsive-header-inline:10px;
+    --responsive-header-padding-inline:12px;
+    --responsive-header-padding-block:8px;
+    --responsive-header-gap:8px;
+    --responsive-control-gap:7px;
+    --responsive-panel-radius:20px;
+    --responsive-dialog-radius:16px;
+    --responsive-metering-top-inset:76px;
+    --responsive-calculation-top-inset:72px;
+  }
+
+  .dialog,
+  .replace-image-dialog,
+  .export-workspace,
+  .project-manager,
+  .metering-setup-panel{
+    border-radius:var(--responsive-panel-radius);
+  }
+
+  .dialog{
+    border-radius:var(--responsive-dialog-radius);
+  }
+
+  .export-workspace-overlay,
+  .project-manager-overlay,
+  .replace-image-overlay,
+  .dialog-overlay{
+    padding-top:max(var(--responsive-surface-inset), var(--safe-area-top));
+    padding-right:max(var(--responsive-surface-inset), var(--safe-area-right));
+    padding-bottom:max(var(--responsive-surface-inset), var(--safe-area-bottom));
+    padding-left:max(var(--responsive-surface-inset), var(--safe-area-left));
+  }
+}
+
+/* Mobile contract: this is a foundation, not yet the final mobile shell.
+   It guarantees correct viewport, safe-area, scroll and touch geometry. */
+@media (max-width:620px){
+  :root{
+    --responsive-app-gutter:8px;
+    --responsive-surface-inset:8px;
+    --responsive-header-top:6px;
+    --responsive-header-bottom:6px;
+    --responsive-header-inline:8px;
+    --responsive-header-padding-inline:10px;
+    --responsive-header-padding-block:7px;
+    --responsive-header-gap:6px;
+    --responsive-control-gap:6px;
+    --responsive-panel-radius:18px;
+    --responsive-dialog-radius:16px;
+    --responsive-notification-offset:12px;
+    --responsive-metering-top-inset:64px;
+    --responsive-calculation-top-inset:60px;
+  }
+
+  .floating-calculation-button{
+    left:calc(var(--safe-area-left) + var(--responsive-mobile-action-offset));
+    right:calc(var(--safe-area-right) + var(--responsive-mobile-action-offset));
+    bottom:calc(var(--safe-area-bottom) + var(--responsive-mobile-action-offset)) !important;
+  }
+
+  .app-notification-stack{
+    left:calc(var(--safe-area-left) + var(--responsive-notification-offset)) !important;
+    right:calc(var(--safe-area-right) + var(--responsive-notification-offset)) !important;
+    bottom:calc(var(--safe-area-bottom) + var(--responsive-notification-offset)) !important;
+    width:auto !important;
+  }
+
+  .dialog-overlay,
+  .replace-image-overlay,
+  .export-workspace-overlay,
+  .project-manager-overlay{
+    padding-top:max(var(--responsive-surface-inset), var(--safe-area-top));
+    padding-right:max(var(--responsive-surface-inset), var(--safe-area-right));
+    padding-bottom:max(var(--responsive-surface-inset), var(--safe-area-bottom));
+    padding-left:max(var(--responsive-surface-inset), var(--safe-area-left));
+  }
+
+
+  .metering-setup-overlay{
+    padding-top:calc(var(--safe-area-top) + var(--responsive-metering-top-inset));
+    padding-right:max(var(--responsive-surface-inset), var(--safe-area-right));
+    padding-bottom:max(var(--responsive-surface-inset), var(--safe-area-bottom));
+    padding-left:max(var(--responsive-surface-inset), var(--safe-area-left));
+  }
+
+  .dialog,
+  .replace-image-dialog{
+    width:100%;
+    max-width:100%;
+  }
+}
+
+
+/*
+────────────────────────────────────────────
+6. Orientation and Accessibility Contracts
+────────────────────────────────────────────
+*/
+
+html[data-viewport-size="mobile"][data-orientation="landscape"]{
+  --responsive-header-top:4px;
+  --responsive-header-bottom:4px;
+  --responsive-surface-inset:6px;
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{
+    scroll-behavior:auto;
+  }
+}
+
+
+/*
+==========================================================
+PACKAGE 02 — MOBILE APPLICATION SHELL
+
+Purpose:
+Turns the responsive foundation into an application shell for tablet and
+mobile without changing the underlying desktop workflow or data model.
+==========================================================
+*/
+
+
+/*
+────────────────────────────────────────────
+7. Mobile Shell Tokens and Base Elements
+────────────────────────────────────────────
+*/
+
+:root{
+  --mobile-action-bar-height:72px;
+  --mobile-action-bar-gap:10px;
+  --mobile-shell-inline:10px;
+  --mobile-shell-header-radius:22px;
+  --mobile-shell-surface-radius:24px;
+  --mobile-shell-z:1380;
+  --mobile-sheet-z:1520;
+}
+
+.mobile-only,
+.mobile-header-title,
+.mobile-action-bar{
+  display:none;
+}
+
+.mobile-surface-portal{
+  display:contents;
+}
+
+.mobile-action-bar[hidden],
+.mobile-surface-heading[hidden]{
+  display:none !important;
+}
+
+
+/*
+────────────────────────────────────────────
+8. Tablet and Mobile Application Chrome
+────────────────────────────────────────────
+*/
+
+@media (max-width:900px){
+  body.mobile-shell-active{
+    --mobile-shell-inline:max(10px,var(--safe-area-left));
+  }
+
+  body.mobile-shell-active #appHeader{
+    position:relative;
+    z-index:var(--layer-header);
+    margin:
+      calc(var(--safe-area-top) + 8px)
+      calc(var(--safe-area-right) + 10px)
+      8px
+      calc(var(--safe-area-left) + 10px);
+    padding:10px 12px;
+    border-radius:var(--mobile-shell-header-radius);
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr) auto;
+    grid-template-areas:
+      "brand identifier identifier"
+      "metering metering lat";
+    align-items:center;
+    column-gap:10px;
+    row-gap:8px;
+    background:rgba(248,248,250,.88);
+    border:1px solid rgba(0,0,0,.08);
+    box-shadow:0 8px 30px rgba(0,0,0,.08);
+    backdrop-filter:blur(22px);
+    -webkit-backdrop-filter:blur(22px);
+  }
+
+  body.dark.mobile-shell-active #appHeader{
+    background:rgba(31,31,35,.90);
+    border-color:rgba(255,255,255,.09);
+    box-shadow:0 10px 30px rgba(0,0,0,.22);
+  }
+
+  body.mobile-shell-active .header-logo{
+    grid-area:brand;
+    min-width:0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  body.mobile-shell-active .mobile-header-title{
+    display:block;
+    color:var(--text);
+    font-size:13px;
+    font-weight:780;
+    letter-spacing:-.015em;
+    white-space:nowrap;
+  }
+
+  body.mobile-shell-active .header-controls{
+    display:contents;
+  }
+
+  body.mobile-shell-active .add-wrap,
+  body.mobile-shell-active .project-info-wrap{
+    display:contents;
+  }
+
+  body.mobile-shell-active #addBtn,
+  body.mobile-shell-active #projectInfoBtn,
+  body.mobile-shell-active #locationBtn,
+  body.mobile-shell-active #exportBtn,
+  body.mobile-shell-active #themeBtn{
+    display:none !important;
+  }
+
+  body.mobile-shell-active .image-identifier-wrap{
+    grid-area:identifier;
+    min-width:0;
+    width:100%;
+    display:block;
+  }
+
+  body.mobile-shell-active .image-identifier-wrap > #imageIdentifier{
+    width:100%;
+    height:38px;
+    padding:0 13px;
+    border-radius:13px;
+    background:rgba(120,120,128,.075);
+    border-color:rgba(0,0,0,.075);
+    font-size:13px;
+    font-weight:620;
+  }
+
+  body.dark.mobile-shell-active .image-identifier-wrap > #imageIdentifier{
+    background:rgba(255,255,255,.07);
+    border-color:rgba(255,255,255,.09);
+  }
+
+  body.mobile-shell-active #initialMeteringDisplay{
+    grid-area:metering;
+    justify-self:start;
+    min-width:0;
+    max-width:100%;
+    height:34px;
+    min-height:34px;
+    padding:0 11px;
+    overflow:hidden;
+    border-radius:12px;
+    font-size:11px;
+    transform:none !important;
+  }
+
+  body.mobile-shell-active #initialMeteringDisplay .initial-metering-value{
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  body.mobile-shell-active #drBtn{
+    grid-area:lat;
+    justify-self:end;
+    width:auto;
+    min-width:64px;
+    height:34px;
+    margin:0;
+    padding:0 10px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    background:rgba(120,120,128,.055);
+    font-size:11px;
+    font-weight:720;
+  }
+
+  html[data-metering-ready="false"] body.mobile-shell-active #drBtn{
+    display:none;
+  }
+
+  body.mobile-shell-active main{
+    padding-bottom:calc(
+      var(--mobile-action-bar-height) +
+      var(--safe-area-bottom) +
+      var(--mobile-action-bar-gap)
+    );
+  }
+
+  body.mobile-shell-active .mobile-action-bar{
+    position:fixed;
+    z-index:var(--mobile-shell-z);
+    left:50%;
+    right:auto;
+    bottom:calc(var(--safe-area-bottom) + 8px);
+    width:min(620px,calc(100% - var(--safe-area-left) - var(--safe-area-right) - 20px));
+    min-height:64px;
+    padding:6px;
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:3px;
+    border:1px solid rgba(0,0,0,.10);
+    border-radius:22px;
+    background:rgba(250,250,251,.92);
+    box-shadow:0 14px 42px rgba(0,0,0,.17);
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    transform:translateX(-50%);
+    opacity:1;
+    transition:
+      opacity var(--motion-standard,220ms) ease,
+      transform var(--motion-panel,280ms) cubic-bezier(.2,.8,.2,1);
+  }
+
+  body.dark.mobile-shell-active .mobile-action-bar{
+    background:rgba(31,31,35,.94);
+    border-color:rgba(255,255,255,.10);
+    box-shadow:0 16px 46px rgba(0,0,0,.34);
+  }
+
+  body.mobile-shell-active .mobile-action-bar.is-suppressed{
+    opacity:0;
+    pointer-events:none;
+    transform:translate(-50%,14px) scale(.985);
+  }
+
+  body.mobile-shell-active .mobile-action-button{
+    width:100%;
+    min-width:0;
+    height:52px;
+    min-height:52px;
+    padding:5px 3px 4px;
+    border:0;
+    border-radius:16px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    background:transparent;
+    color:var(--muted);
+    font-size:9px;
+    font-weight:690;
+    line-height:1;
+    letter-spacing:.01em;
+    transition:
+      background var(--motion-fast,140ms) ease,
+      color var(--motion-fast,140ms) ease,
+      opacity var(--motion-fast,140ms) ease;
+  }
+
+  body.mobile-shell-active .mobile-action-button svg{
+    width:20px;
+    height:20px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.9;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+
+  body.mobile-shell-active .mobile-action-button:hover,
+  body.mobile-shell-active .mobile-action-button:focus-visible,
+  body.mobile-shell-active .mobile-action-button.is-active{
+    background:rgba(10,132,255,.095);
+    color:var(--accent);
+  }
+
+  body.dark.mobile-shell-active .mobile-action-button:hover,
+  body.dark.mobile-shell-active .mobile-action-button:focus-visible,
+  body.dark.mobile-shell-active .mobile-action-button.is-active{
+    background:rgba(10,132,255,.18);
+    color:#77b8ff;
+  }
+
+  body.mobile-shell-active .mobile-action-button:disabled{
+    opacity:.34;
+    cursor:default;
+  }
+
+  body.mobile-shell-active .mobile-theme-sun{
+    display:none;
+  }
+
+  body.mobile-shell-active .mobile-action-button.is-dark-active .mobile-theme-moon{
+    display:none;
+  }
+
+  body.mobile-shell-active .mobile-action-button.is-dark-active .mobile-theme-sun{
+    display:block;
+  }
+
+  body.mobile-shell-active .floating-calculation-button{
+    z-index:calc(var(--mobile-shell-z) + 1);
+    bottom:calc(
+      var(--safe-area-bottom) +
+      var(--mobile-action-bar-height) +
+      17px
+    ) !important;
+  }
+
+  html[data-keyboard="visible"] body.mobile-shell-active main{
+    padding-bottom:0;
+  }
+}
+
+
+/*
+────────────────────────────────────────────
+9. Mobile Bottom Sheets and Fullscreen Surfaces
+────────────────────────────────────────────
+*/
+
+@media (max-width:900px){
+  body.mobile-shell-active .mobile-only{
+    display:flex;
+  }
+
+  body.mobile-shell-active .mobile-surface-heading{
+    min-height:56px;
+    padding:10px 12px 12px;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    border-bottom:1px solid var(--border);
+  }
+
+  body.mobile-shell-active .mobile-surface-heading > div{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+
+  body.mobile-shell-active .mobile-surface-heading strong{
+    color:var(--text);
+    font-size:17px;
+    font-weight:780;
+    line-height:1.2;
+  }
+
+  body.mobile-shell-active .mobile-surface-eyebrow{
+    color:var(--muted);
+    font-size:9px;
+    font-weight:760;
+    letter-spacing:.075em;
+    text-transform:uppercase;
+  }
+
+  body.mobile-shell-active .mobile-surface-close{
+    width:36px;
+    min-width:36px;
+    height:36px;
+    padding:0;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+    background:rgba(120,120,128,.08);
+    color:var(--muted);
+    font-size:22px;
+    font-weight:330;
+    line-height:1;
+  }
+
+  body.mobile-shell-active .mobile-surface-close:hover{
+    background:rgba(255,59,48,.10);
+    color:var(--red);
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .add-menu{
+    position:fixed !important;
+    z-index:var(--mobile-sheet-z) !important;
+    left:max(10px,var(--safe-area-left)) !important;
+    right:max(10px,var(--safe-area-right)) !important;
+    top:auto !important;
+    bottom:calc(
+      var(--safe-area-bottom) +
+      var(--mobile-action-bar-height) +
+      16px
+    ) !important;
+    width:auto !important;
+    max-height:min(62vh,520px) !important;
+    padding:8px 10px 12px !important;
+    border-radius:var(--mobile-shell-surface-radius) !important;
+    overflow:auto !important;
+    background:rgba(250,250,251,.98) !important;
+    border:1px solid rgba(0,0,0,.10) !important;
+    box-shadow:0 24px 70px rgba(0,0,0,.25) !important;
+    transform-origin:bottom center;
+  }
+
+  body.dark.mobile-shell-active #mobileSurfacePortal > .add-menu{
+    background:rgba(31,31,35,.985) !important;
+    border-color:rgba(255,255,255,.10) !important;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .add-menu .add-section{
+    padding:8px 0 0;
+    gap:4px;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .add-menu .add-menu-item{
+    min-height:46px;
+    height:auto;
+    padding:0 14px;
+    border-radius:14px;
+    font-size:14px;
+    font-weight:620;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel{
+    position:fixed !important;
+    z-index:var(--mobile-sheet-z) !important;
+    left:max(10px,var(--safe-area-left)) !important;
+    right:max(10px,var(--safe-area-right)) !important;
+    top:auto !important;
+    bottom:calc(
+      var(--safe-area-bottom) +
+      var(--mobile-action-bar-height) +
+      16px
+    ) !important;
+    width:auto !important;
+    max-height:min(72vh,620px) !important;
+    padding:16px !important;
+    border-radius:var(--mobile-shell-surface-radius) !important;
+    overflow:auto !important;
+    background:rgba(250,250,251,.985) !important;
+    border:1px solid rgba(0,0,0,.10) !important;
+    box-shadow:0 24px 70px rgba(0,0,0,.25) !important;
+  }
+
+  body.dark.mobile-shell-active #mobileSurfacePortal > .location-panel{
+    background:rgba(31,31,35,.985) !important;
+    border-color:rgba(255,255,255,.10) !important;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu{
+    position:fixed !important;
+    z-index:calc(var(--layer-workspace) + 1) !important;
+    inset:0 !important;
+    width:100% !important;
+    height:var(--app-viewport-height) !important;
+    max-width:none !important;
+    max-height:none !important;
+    margin:0 !important;
+    padding:
+      var(--safe-area-top)
+      max(0px,var(--safe-area-right))
+      var(--safe-area-bottom)
+      max(0px,var(--safe-area-left)) !important;
+    display:block !important;
+    overflow:auto !important;
+    border:0 !important;
+    border-radius:0 !important;
+    transform:none !important;
+    background:rgba(248,248,250,.99) !important;
+    box-shadow:none !important;
+  }
+
+  body.dark.mobile-shell-active #mobileSurfacePortal > .project-info-menu{
+    background:rgba(25,25,29,.995) !important;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu[hidden]{
+    display:none !important;
+  }
+
+  body.mobile-shell-active .mobile-gear-heading{
+    position:sticky;
+    top:0;
+    z-index:6;
+    padding-left:16px;
+    padding-right:16px;
+    background:inherit;
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu > .metadata-section{
+    margin:0 12px !important;
+    padding:16px 4px !important;
+    border:0 !important;
+    border-bottom:1px solid var(--border) !important;
+    border-radius:0 !important;
+    background:transparent !important;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu > .metadata-divider{
+    display:none !important;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu .metadata-footer{
+    position:sticky !important;
+    bottom:0 !important;
+    z-index:6 !important;
+    margin:0 !important;
+    padding:12px 14px calc(12px + var(--safe-area-bottom)) !important;
+    background:inherit !important;
+    border-top:1px solid var(--border) !important;
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+  }
+
+  body.mobile-shell-active .export-workspace-overlay,
+  body.mobile-shell-active .project-manager-overlay{
+    padding:0 !important;
+    align-items:stretch !important;
+  }
+
+  body.mobile-shell-active .export-workspace,
+  body.mobile-shell-active .project-manager{
+    width:100% !important;
+    height:var(--app-viewport-height) !important;
+    max-width:none !important;
+    max-height:none !important;
+    border:0 !important;
+    border-radius:0 !important;
+  }
+
+  body.mobile-shell-active .export-workspace-header,
+  body.mobile-shell-active .project-manager-header{
+    padding-top:calc(14px + var(--safe-area-top)) !important;
+    padding-right:max(16px,var(--safe-area-right)) !important;
+    padding-left:max(16px,var(--safe-area-left)) !important;
+  }
+
+  body.mobile-shell-active .export-workspace-footer,
+  body.mobile-shell-active .project-manager-footer{
+    padding-bottom:calc(13px + var(--safe-area-bottom)) !important;
+  }
+
+  body.mobile-shell-active .calculation-setup-overlay{
+    padding:
+      calc(var(--safe-area-top) + 64px)
+      max(10px,var(--safe-area-right))
+      calc(var(--safe-area-bottom) + 10px)
+      max(10px,var(--safe-area-left)) !important;
+    align-items:flex-end !important;
+  }
+
+  body.mobile-shell-active .calculation-setup-panel{
+    width:100% !important;
+    max-height:min(74vh,620px);
+    overflow:auto;
+    border-radius:24px !important;
+  }
+
+  body.mobile-shell-active .metering-setup-overlay{
+    padding:
+      calc(var(--safe-area-top) + 8px)
+      max(8px,var(--safe-area-right))
+      calc(var(--safe-area-bottom) + 8px)
+      max(8px,var(--safe-area-left)) !important;
+  }
+
+  body.mobile-shell-active .metering-setup-panel{
+    width:100%;
+    height:100%;
+    max-height:none;
+    border-radius:22px;
+  }
+}
+
+
+/*
+────────────────────────────────────────────
+10. Mobile Portrait and Landscape Variants
+────────────────────────────────────────────
+*/
+
+@media (max-width:620px){
+  :root{
+    --mobile-action-bar-height:68px;
+  }
+
+  body.mobile-shell-active #appHeader{
+    grid-template-columns:auto minmax(0,1fr);
+    grid-template-areas:
+      "brand identifier"
+      "metering lat";
+  }
+
+  body.mobile-shell-active .mobile-action-bar{
+    left:calc(var(--safe-area-left) + 8px);
+    right:calc(var(--safe-area-right) + 8px);
+    width:auto;
+    transform:none;
+  }
+
+  body.mobile-shell-active .mobile-action-bar.is-suppressed{
+    transform:translateY(14px) scale(.985);
+  }
+
+  body.mobile-shell-active #initialMeteringDisplay{
+    max-width:calc(100vw - 112px);
+  }
+
+  body.mobile-shell-active .floating-calculation-button{
+    left:calc(var(--safe-area-left) + 12px) !important;
+    right:calc(var(--safe-area-right) + 12px) !important;
+    width:auto !important;
+    bottom:calc(
+      var(--safe-area-bottom) +
+      var(--mobile-action-bar-height) +
+      15px
+    ) !important;
+  }
+}
+
+html[data-viewport-size="mobile"][data-orientation="landscape"] body.mobile-shell-active #appHeader{
+  margin-top:calc(var(--safe-area-top) + 4px);
+  margin-bottom:4px;
+  padding:6px 10px;
+  grid-template-columns:auto minmax(160px,1fr) auto auto;
+  grid-template-areas:"brand identifier metering lat";
+  row-gap:0;
+  border-radius:18px;
+}
+
+html[data-viewport-size="mobile"][data-orientation="landscape"] body.mobile-shell-active .mobile-header-title{
+  display:none;
+}
+
+html[data-viewport-size="mobile"][data-orientation="landscape"] body.mobile-shell-active #initialMeteringDisplay{
+  max-width:220px;
+}
+
+html[data-viewport-size="mobile"][data-orientation="landscape"] body.mobile-shell-active .mobile-action-bar{
+  min-height:52px;
+  padding:4px;
+  border-radius:18px;
+}
+
+html[data-viewport-size="mobile"][data-orientation="landscape"] body.mobile-shell-active .mobile-action-button{
+  height:44px;
+  min-height:44px;
+  padding:4px;
+}
+
+html[data-viewport-size="mobile"][data-orientation="landscape"] body.mobile-shell-active .mobile-action-label{
+  display:none;
+}
+
+html[data-viewport-size="mobile"][data-orientation="landscape"] body.mobile-shell-active .mobile-action-button svg{
+  width:19px;
+  height:19px;
+}
+
+html[data-viewport-size="mobile"][data-orientation="landscape"] body.mobile-shell-active main{
+  padding-bottom:calc(56px + var(--safe-area-bottom));
+}
+
+
+/*
+────────────────────────────────────────────
+11. Shell Motion and Reduced Motion
+────────────────────────────────────────────
+*/
+
+@keyframes mobileSheetEnter{
+  from{opacity:0;transform:translateY(16px) scale(.992)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+@media (max-width:900px){
+  body.mobile-shell-active #mobileSurfacePortal > .add-menu:not([hidden]),
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel:not([hidden]){
+    animation:mobileSheetEnter var(--motion-panel,280ms) cubic-bezier(.2,.8,.2,1) both !important;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .mobile-action-bar,
+  .mobile-action-button,
+  #mobileSurfacePortal > .add-menu,
+  #mobileSurfacePortal > .location-panel{
+    animation:none !important;
+    transition:none !important;
+  }
+}
+
+/* A rotated touch phone can enter the tablet width band. Compact landscape
+   chrome therefore also keys off touch capability and orientation. */
+@media (max-width:900px) and (max-height:520px){
+  html[data-orientation="landscape"][data-touch="true"] body.mobile-shell-active #appHeader{
+    margin-top:calc(var(--safe-area-top) + 4px);
+    margin-bottom:4px;
+    padding:6px 10px;
+    grid-template-columns:auto minmax(160px,1fr) auto auto;
+    grid-template-areas:"brand identifier metering lat";
+    row-gap:0;
+    border-radius:18px;
+  }
+
+  html[data-orientation="landscape"][data-touch="true"] body.mobile-shell-active .mobile-header-title,
+  html[data-orientation="landscape"][data-touch="true"] body.mobile-shell-active .mobile-action-label{
+    display:none;
+  }
+
+  html[data-orientation="landscape"][data-touch="true"] body.mobile-shell-active #initialMeteringDisplay{
+    max-width:220px;
+  }
+
+  html[data-orientation="landscape"][data-touch="true"] body.mobile-shell-active .mobile-action-bar{
+    min-height:52px;
+    padding:4px;
+    border-radius:18px;
+  }
+
+  html[data-orientation="landscape"][data-touch="true"] body.mobile-shell-active .mobile-action-button{
+    height:44px;
+    min-height:44px;
+    padding:4px;
+  }
+
+  html[data-orientation="landscape"][data-touch="true"] body.mobile-shell-active .mobile-action-button svg{
+    width:19px;
+    height:19px;
+  }
+
+  html[data-orientation="landscape"][data-touch="true"] body.mobile-shell-active main{
+    padding-bottom:calc(56px + var(--safe-area-bottom));
+  }
+}
+
+
+/*
+==========================================================
+PACKAGE 03 — RECORDING TOUCH WORKFLOW
+
+Purpose:
+Touch-safe marker hit areas, mobile Recording pickers, compact bubble
+presentation, and explicit touch move guidance.
+==========================================================
+*/
+
+:root{
+  --recording-touch-hit-size:60px;
+  --recording-mobile-picker-gap:12px;
+  --recording-mobile-picker-max-height:58vh;
+}
+
+html[data-touch="true"] #photoCanvas{
+  touch-action:manipulation;
+  -webkit-touch-callout:none;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+html[data-touch="true"] .bubble{
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* The visible bubble stays compact while its tappable area grows invisibly. */
+html[data-pointer="coarse"] .bubble::after,
+html[data-pointer="hybrid"] .bubble::after{
+  content:"";
+  position:absolute;
+  inset:-7px;
+  border-radius:16px;
+}
+
+@media (max-width:900px){
+  body.mobile-shell-active #picker.picker-mobile-sheet{
+    position:fixed !important;
+    z-index:calc(var(--layer-autocomplete) + 30) !important;
+    left:max(10px,var(--safe-area-left)) !important;
+    right:max(10px,var(--safe-area-right)) !important;
+    top:auto !important;
+    bottom:calc(
+      var(--safe-area-bottom) +
+      var(--mobile-action-bar-height) +
+      var(--recording-mobile-picker-gap)
+    ) !important;
+    width:auto !important;
+    max-width:none !important;
+    max-height:min(
+      var(--recording-mobile-picker-max-height),
+      calc(var(--app-viewport-height) - var(--mobile-action-bar-height) - var(--safe-area-top) - var(--safe-area-bottom) - 34px)
+    ) !important;
+    padding:8px !important;
+    border-radius:22px !important;
+    overflow:auto !important;
+    overscroll-behavior:contain;
+    box-shadow:0 24px 70px rgba(0,0,0,.26),0 4px 18px rgba(0,0,0,.12) !important;
+    animation:recordingPickerSheetEnter var(--motion-panel,280ms) cubic-bezier(.2,.8,.2,1) both !important;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-sheet.closing{
+    animation:recordingPickerSheetExit 160ms cubic-bezier(.4,0,.8,.2) forwards !important;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-sheet .picker-title{
+    position:sticky;
+    top:-8px;
+    z-index:3;
+    margin:-8px -8px 6px;
+    padding:13px 16px 11px;
+    background:inherit;
+    border-bottom:1px solid var(--border);
+    font-size:13px;
+    letter-spacing:.015em;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-sheet .picker-option{
+    min-height:48px;
+    height:auto;
+    margin:2px 0;
+    padding:8px 14px;
+    border-radius:15px;
+    font-size:15px;
+    line-height:1.2;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-aperture{
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    align-content:start;
+    gap:2px;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-aperture .picker-title{
+    grid-column:1 / -1;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-aperture .picker-option{
+    min-width:0;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-marker-menu .picker-option{
+    text-align:left;
+    justify-content:flex-start;
+  }
+
+  body.mobile-shell-active .bubble{
+    min-width:88px;
+    min-height:46px;
+    padding:4px 8px 6px;
+    border-radius:10px;
+  }
+
+  body.mobile-shell-active .bubble-recording .value{
+    font-size:14px;
+  }
+
+  body.mobile-shell-active .bubble .num{
+    font-size:9px;
+  }
+
+  body.touch-marker-move-active,
+  body.touch-marker-move-active *{
+    cursor:auto !important;
+  }
+
+  body.touch-marker-move-active #photoCanvas{
+    cursor:crosshair !important;
+  }
+
+  body.touch-marker-move-active #moveCursor{
+    left:50% !important;
+    right:auto !important;
+    top:auto !important;
+    bottom:calc(
+      var(--safe-area-bottom) +
+      var(--mobile-action-bar-height) +
+      15px
+    ) !important;
+    min-height:42px;
+    padding:7px 10px;
+    gap:8px;
+    border:1px solid rgba(10,132,255,.18);
+    border-radius:999px;
+    background:rgba(250,250,251,.94);
+    box-shadow:0 10px 30px rgba(0,0,0,.16);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    transform:translateX(-50%) !important;
+  }
+
+  body.dark.touch-marker-move-active #moveCursor{
+    background:rgba(31,31,35,.95);
+    border-color:rgba(92,190,255,.24);
+    box-shadow:0 12px 34px rgba(0,0,0,.34);
+  }
+
+  body.touch-marker-move-active .move-cursor-dot{
+    display:none;
+  }
+
+  body.touch-marker-move-active .move-cursor-label{
+    margin:0;
+    padding:0 5px;
+    background:transparent;
+    font-size:13px;
+  }
+}
+
+@media (max-width:900px) and (max-height:520px){
+  :root{
+    --recording-mobile-picker-max-height:64vh;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-sheet{
+    bottom:calc(var(--safe-area-bottom) + 58px) !important;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-aperture{
+    grid-template-columns:repeat(5,minmax(0,1fr));
+  }
+
+  body.touch-marker-move-active #moveCursor{
+    bottom:calc(var(--safe-area-bottom) + 58px) !important;
+  }
+}
+
+@keyframes recordingPickerSheetEnter{
+  from{opacity:0;transform:translateY(18px) scale(.992)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+@keyframes recordingPickerSheetExit{
+  from{opacity:1;transform:translateY(0) scale(1)}
+  to{opacity:0;transform:translateY(14px) scale(.992)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  #picker.picker-mobile-sheet{
+    animation:none !important;
+  }
+}
+
+
+/*
+==========================================================
+PACKAGE 04 — CALCULATION MOBILE LAYOUT
+==========================================================
+*/
+
+/* Calculation Setup candidates should look invitational rather than disabled. */
+body.calculation-setup-active .bubble-calculation-candidate:not(.bubble-calculation-reference){
+  opacity:.78;
+  transform:scale(.995);
+  animation:
+    calculationCandidateInvite 1.75s cubic-bezier(.4,0,.2,1)
+    var(--calculation-candidate-delay,0ms) infinite alternate;
+}
+
+body.calculation-setup-active .bubble-calculation-candidate:not(.bubble-calculation-reference):hover,
+body.calculation-setup-active .bubble-calculation-candidate:not(.bubble-calculation-reference):focus-visible{
+  opacity:1;
+  transform:scale(1.025);
+  animation-play-state:paused;
+}
+
+@keyframes calculationCandidateInvite{
+  from{
+    opacity:.70;
+    box-shadow:0 5px 13px rgba(0,0,0,.10);
+  }
+  to{
+    opacity:1;
+    box-shadow:
+      0 0 0 3px rgba(42,167,161,.12),
+      0 8px 20px rgba(0,0,0,.16);
+  }
+}
+
+.calculation-mobile-close-symbol{
+  display:none;
+}
+
+.calculation-guide-overlay[hidden]{
+  display:none !important;
+}
+
+.calculation-guide-overlay{
+  position:fixed;
+  inset:0;
+  z-index:calc(var(--layer-dialog) + 30);
+  display:grid;
+  place-items:center;
+  padding:
+    max(20px,var(--safe-area-top))
+    max(18px,var(--safe-area-right))
+    max(20px,var(--safe-area-bottom))
+    max(18px,var(--safe-area-left));
+  background:rgba(17,17,20,.28);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  animation:calculationGuideOverlayIn var(--motion-standard,220ms) ease both;
+}
+
+.calculation-guide-dialog{
+  width:min(420px,100%);
+  padding:20px;
+  border:1px solid rgba(42,167,161,.24);
+  border-radius:22px;
+  background:rgba(252,252,253,.985);
+  color:var(--text);
+  box-shadow:0 28px 80px rgba(0,0,0,.32);
+  animation:calculationGuideDialogIn var(--motion-panel,280ms) cubic-bezier(.2,.8,.2,1) both;
+}
+
+body.dark .calculation-guide-dialog{
+  background:rgba(38,38,43,.99);
+  border-color:rgba(50,184,176,.30);
+}
+
+.calculation-guide-eyebrow{
+  display:inline-block;
+  margin-bottom:8px;
+  color:#2aa7a1;
+  font-size:9px;
+  font-weight:820;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+
+body.dark .calculation-guide-eyebrow{
+  color:#8fe0dc;
+}
+
+.calculation-guide-dialog h2{
+  margin:0;
+  font-size:23px;
+  line-height:1.15;
+  letter-spacing:-.025em;
+}
+
+.calculation-guide-message{
+  margin-top:14px;
+  display:grid;
+  gap:9px;
+}
+
+.calculation-guide-message p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
+}
+
+.calculation-guide-message p:nth-child(2){
+  color:var(--text);
+  font-weight:680;
+}
+
+.calculation-guide-progress{
+  height:3px;
+  margin-top:18px;
+  overflow:hidden;
+  border-radius:999px;
+  background:rgba(120,120,128,.14);
+}
+
+.calculation-guide-progress span{
+  display:block;
+  width:100%;
+  height:100%;
+  border-radius:inherit;
+  background:#2aa7a1;
+  transform-origin:left center;
+  animation:calculationGuideCountdown 10s linear forwards;
+}
+
+.calculation-guide-actions{
+  margin-top:12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.calculation-guide-actions small{
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.3;
+}
+
+.calculation-guide-ok-button{
+  width:auto;
+  min-width:86px;
+  height:40px;
+  padding:0 16px;
+  border-color:#2aa7a1;
+  background:#2aa7a1;
+  color:white;
+  font-size:11px;
+  font-weight:790;
+  letter-spacing:.035em;
+}
+
+body.dark .calculation-guide-ok-button{
+  border-color:#32b8b0;
+  background:#32b8b0;
+  color:#101415;
+}
+
+@keyframes calculationGuideOverlayIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+@keyframes calculationGuideDialogIn{
+  from{opacity:0;transform:translateY(12px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+@keyframes calculationGuideCountdown{
+  from{transform:scaleX(1)}
+  to{transform:scaleX(0)}
+}
+
+@media (max-width:900px){
+  /* The normal mobile action bar yields the lower edge to Calculation. */
+  html[data-mobile-surface="calculation"] body.mobile-shell-active main,
+  html[data-mobile-surface="calculation-setup"] body.mobile-shell-active main{
+    padding-bottom:0;
+  }
+
+  body.mobile-shell-active .calculation-desktop-action-label{
+    display:none;
+  }
+
+  body.mobile-shell-active .calculation-mobile-close-symbol{
+    display:block;
+    font-size:21px;
+    font-weight:350;
+    line-height:1;
+  }
+
+  /* Compact Calculation Setup action strip. */
+  body.mobile-shell-active .calculation-setup-overlay{
+    padding:
+      calc(var(--safe-area-top) + 58px)
+      max(8px,var(--safe-area-right))
+      calc(var(--safe-area-bottom) + 8px)
+      max(8px,var(--safe-area-left)) !important;
+    align-items:flex-end !important;
+  }
+
+  body.mobile-shell-active .calculation-setup-panel{
+    width:100% !important;
+    min-height:0 !important;
+    max-height:none !important;
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-areas:
+      "setup-heading setup-actions"
+      "setup-selection setup-selection";
+    align-items:center;
+    gap:8px 10px !important;
+    padding:10px !important;
+    overflow:visible !important;
+    border-radius:19px !important;
+  }
+
+  body.mobile-shell-active .calculation-setup-heading{
+    grid-area:setup-heading;
+    min-width:0;
+    display:block !important;
+  }
+
+  body.mobile-shell-active .calculation-setup-heading > div{
+    display:none !important;
+  }
+
+  body.mobile-shell-active .calculation-setup-eyebrow{
+    margin:0 !important;
+    padding:0 !important;
+    background:transparent !important;
+    font-size:10px;
+    letter-spacing:.085em;
+  }
+
+  body.mobile-shell-active .calculation-setup-selection{
+    grid-area:setup-selection;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px;
+  }
+
+  body.mobile-shell-active .calculation-setup-selection > div{
+    min-height:38px;
+    padding:6px 9px;
+    border-radius:11px;
+  }
+
+  body.mobile-shell-active .calculation-setup-selection span{
+    margin-bottom:2px;
+    font-size:7px;
+  }
+
+  body.mobile-shell-active .calculation-setup-selection strong{
+    font-size:10px;
+  }
+
+  body.mobile-shell-active .calculation-setup-actions{
+    grid-area:setup-actions;
+    display:flex !important;
+    justify-content:flex-end;
+    gap:7px;
+  }
+
+  body.mobile-shell-active .calculation-setup-secondary-button{
+    width:36px !important;
+    min-width:36px !important;
+    height:36px !important;
+    padding:0 !important;
+    display:grid;
+    place-items:center;
+    border-radius:50% !important;
+  }
+
+  body.mobile-shell-active .calculation-setup-primary-button{
+    width:auto !important;
+    min-width:128px !important;
+    height:38px !important;
+    padding:0 13px !important;
+    font-size:10px;
+  }
+
+  /* Active Calculation is a compact control dock, not an information card. */
+  body.mobile-shell-active .calculation-status{
+    position:fixed !important;
+    z-index:calc(var(--mobile-sheet-z) - 5) !important;
+    left:max(8px,var(--safe-area-left)) !important;
+    right:max(8px,var(--safe-area-right)) !important;
+    bottom:calc(var(--safe-area-bottom) + 8px) !important;
+    width:auto !important;
+    max-width:none !important;
+    display:grid !important;
+    grid-template-rows:auto auto !important;
+    row-gap:7px !important;
+    padding:9px !important;
+    border-radius:19px !important;
+    transform:none !important;
+  }
+
+  body.mobile-shell-active .calculation-status-heading{
+    min-height:28px;
+    padding:0 1px 4px !important;
+    align-items:center !important;
+    border-bottom:0 !important;
+  }
+
+  body.mobile-shell-active .calculation-status-copy{
+    display:block;
+  }
+
+  body.mobile-shell-active .calculation-status-copy > span{
+    padding:0;
+    background:transparent;
+    font-size:9px;
+  }
+
+  body.mobile-shell-active .calculation-reference-summary,
+  body.mobile-shell-active .calculation-reference-help,
+  body.mobile-shell-active .calculation-guidance{
+    display:none !important;
+  }
+
+  body.mobile-shell-active .calculation-exit-button{
+    width:34px;
+    min-width:34px;
+    height:34px;
+    padding:0;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+  }
+
+  body.mobile-shell-active .calculated-exposure-row{
+    display:grid !important;
+    grid-template-columns:88px minmax(0,1fr) !important;
+    align-items:center !important;
+    gap:8px !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:transparent !important;
+  }
+
+  body.mobile-shell-active .calculation-control-mode{
+    width:88px;
+    height:38px;
+    padding:0 7px;
+    grid-template-columns:15px 1fr 15px;
+    gap:4px;
+    justify-self:stretch;
+  }
+
+  body.mobile-shell-active .calculated-exposure-fields{
+    grid-template-columns:repeat(3,minmax(0,1fr)) minmax(58px,.72fr) !important;
+    column-gap:5px !important;
+  }
+
+  body.mobile-shell-active .calculated-exposure-field,
+  body.mobile-shell-active .calculation-save-actual-button{
+    min-width:0;
+    height:38px;
+    padding:0 7px;
+    border-radius:11px;
+    font-size:10px;
+  }
+
+  body.mobile-shell-active .calculation-save-actual-button{
+    margin-left:5px !important;
+    letter-spacing:.025em;
+  }
+
+  /* Calculation pickers temporarily replace the compact dock. */
+  body.mobile-shell-active:has(#picker.picker-mobile-calculation:not([hidden])) .calculation-status,
+  body.mobile-shell-active:has(#picker.picker-mobile-calculation:not([hidden])) .calculation-setup-panel{
+    opacity:0;
+    pointer-events:none;
+    transform:translateY(8px) scale(.99) !important;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-calculation{
+    bottom:calc(var(--safe-area-bottom) + 8px) !important;
+    max-height:min(
+      70vh,
+      calc(var(--app-viewport-height) - var(--safe-area-top) - var(--safe-area-bottom) - 80px)
+    ) !important;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-calculation[data-picker-owner="calculated-iso"],
+  body.mobile-shell-active #picker.picker-mobile-calculation[data-picker-owner="calculated-shutter"],
+  body.mobile-shell-active #picker.picker-mobile-calculation[data-picker-owner="calculated-aperture"]{
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    align-content:start;
+    gap:2px;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-calculation .picker-title{
+    grid-column:1 / -1;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-zone,
+  body.mobile-shell-active #picker.picker-mobile-calculation[data-picker-owner="calculation-marker-menu"]{
+    display:block !important;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-zone .picker-option{
+    display:flex;
+    justify-content:space-between;
+    gap:14px;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-zone .picker-option small{
+    color:var(--muted);
+    font-size:10px;
+    text-align:right;
+  }
+}
+
+@media (max-width:420px){
+  body.mobile-shell-active .calculated-exposure-row{
+    grid-template-columns:78px minmax(0,1fr) !important;
+  }
+
+  body.mobile-shell-active .calculation-control-mode{
+    width:78px;
+  }
+
+  body.mobile-shell-active .calculated-exposure-field,
+  body.mobile-shell-active .calculation-save-actual-button{
+    padding-inline:5px;
+    font-size:9px;
+  }
+}
+
+@media (max-width:900px) and (max-height:520px){
+  body.mobile-shell-active .calculation-status{
+    left:max(6px,var(--safe-area-left)) !important;
+    right:max(6px,var(--safe-area-right)) !important;
+    bottom:calc(var(--safe-area-bottom) + 5px) !important;
+    grid-template-columns:auto minmax(0,1fr) !important;
+    grid-template-rows:auto !important;
+    align-items:center;
+    gap:8px !important;
+    padding:6px 8px !important;
+  }
+
+  body.mobile-shell-active .calculation-status-heading{
+    min-width:82px;
+    padding:0 !important;
+  }
+
+  body.mobile-shell-active .calculated-exposure-row{
+    grid-template-columns:78px minmax(0,1fr) !important;
+  }
+
+  body.mobile-shell-active .calculation-setup-panel{
+    grid-template-columns:auto minmax(0,1fr) auto !important;
+    grid-template-areas:"setup-heading setup-selection setup-actions" !important;
+    padding:7px 8px !important;
+  }
+
+  body.mobile-shell-active .calculation-setup-selection > div{
+    min-height:34px;
+    padding:4px 7px;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-calculation[data-picker-owner="calculated-iso"],
+  body.mobile-shell-active #picker.picker-mobile-calculation[data-picker-owner="calculated-shutter"],
+  body.mobile-shell-active #picker.picker-mobile-calculation[data-picker-owner="calculated-aperture"]{
+    grid-template-columns:repeat(5,minmax(0,1fr));
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  body.calculation-setup-active .bubble-calculation-candidate,
+  .calculation-guide-overlay,
+  .calculation-guide-dialog,
+  .calculation-guide-progress span{
+    animation:none !important;
+  }
+
+  body.calculation-setup-active .bubble-calculation-candidate:not(.bubble-calculation-reference){
+    opacity:.9;
+  }
+}
+
+/* Responsive display rules must never override the native hidden contract. */
+@media (max-width:900px){
+  body.mobile-shell-active .calculation-status[hidden]{
+    display:none !important;
+  }
+}
+
+/*
+==========================================================
+PACKAGE 05 — PROJECT AND METADATA SURFACES
+
+Purpose:
+Finishes the mobile Gear, Location, Project Manager and Add / Open / Save
+editing surfaces while keeping desktop presentation unchanged.
+==========================================================
+*/
+
+:root{
+  --mobile-form-footer-gap:10px;
+  --mobile-project-card-radius:18px;
+  --mobile-project-control-height:46px;
+}
+
+.mobile-add-project-context,
+.project-manager-mobile-order{
+  display:none;
+}
+
+@media (max-width:900px){
+  /* ----------------------------------------------------
+     Add / Open / Save bottom sheet
+     ---------------------------------------------------- */
+  body.mobile-shell-active .mobile-add-project-context{
+    display:grid;
+    gap:2px;
+    margin:4px 2px 8px;
+    padding:12px 14px;
+    border:1px solid rgba(10,132,255,.14);
+    border-radius:15px;
+    background:rgba(10,132,255,.055);
+  }
+
+  body.dark.mobile-shell-active .mobile-add-project-context{
+    border-color:rgba(95,190,255,.18);
+    background:rgba(10,132,255,.10);
+  }
+
+  body.mobile-shell-active .mobile-add-context-label{
+    color:var(--muted);
+    font-size:9px;
+    font-weight:760;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+  }
+
+  body.mobile-shell-active .mobile-add-context-name{
+    min-width:0;
+    overflow:hidden;
+    color:var(--text);
+    font-size:14px;
+    font-weight:760;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  body.mobile-shell-active .mobile-add-context-detail{
+    min-width:0;
+    overflow:hidden;
+    color:var(--muted);
+    font-size:11px;
+    line-height:1.35;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .add-menu .add-section-title{
+    padding:9px 12px 5px;
+    font-size:9px;
+    font-weight:780;
+    letter-spacing:.08em;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .add-menu .add-menu-divider{
+    margin:7px 10px;
+  }
+
+  /* ----------------------------------------------------
+     Gear Settings fullscreen editor
+     ---------------------------------------------------- */
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu{
+    display:block !important;
+    overflow-y:auto !important;
+    scroll-padding-bottom:calc(84px + var(--safe-area-bottom));
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu .metadata-title-row{
+    min-height:36px;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu .metadata-title-row > span{
+    font-size:13px;
+    font-weight:760;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu .metadata-input,
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu .metadata-notes,
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu .range-pill{
+    min-height:48px;
+    border-radius:14px;
+    font-size:16px;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu .metadata-notes{
+    min-height:112px;
+    padding:12px 13px;
+    line-height:1.45;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu .notes-button{
+    width:42px;
+    min-width:42px;
+    height:42px;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu .metadata-range-row{
+    gap:10px;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu .metadata-range-control{
+    min-width:0;
+    flex:1;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu .metadata-range-control > span{
+    font-size:10px;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu .metadata-footer{
+    display:grid !important;
+    grid-template-columns:auto minmax(0,1fr);
+    align-items:center;
+    gap:10px;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu .metadata-footer-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu .metadata-footer-button{
+    width:100%;
+    min-width:0;
+    min-height:46px;
+    border-radius:14px;
+  }
+
+  /* ----------------------------------------------------
+     Mobile Gear library autocomplete
+     ---------------------------------------------------- */
+  .project-library-autocomplete.project-library-autocomplete-mobile{
+    z-index:calc(var(--layer-autocomplete) + 40) !important;
+    padding:7px !important;
+    overflow:auto !important;
+    overscroll-behavior:contain;
+    border-radius:17px !important;
+    background:rgba(250,250,251,.99) !important;
+    box-shadow:0 18px 50px rgba(0,0,0,.24) !important;
+  }
+
+  body.dark .project-library-autocomplete.project-library-autocomplete-mobile{
+    background:rgba(35,35,39,.995) !important;
+    border-color:rgba(255,255,255,.12) !important;
+  }
+
+  .project-library-autocomplete.project-library-autocomplete-mobile .project-library-autocomplete-row{
+    min-height:46px;
+    height:auto;
+  }
+
+  .project-library-autocomplete.project-library-autocomplete-mobile .project-library-autocomplete-label{
+    min-height:44px;
+    height:auto;
+    padding:8px 12px;
+    border-radius:13px;
+    font-size:14px;
+  }
+
+  .project-library-autocomplete.project-library-autocomplete-mobile .project-library-autocomplete-delete{
+    width:40px;
+    min-width:40px;
+    height:40px;
+  }
+
+  /* ----------------------------------------------------
+     Location editor
+     ---------------------------------------------------- */
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel{
+    display:flex !important;
+    flex-direction:column;
+    overscroll-behavior:contain;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel[hidden]{
+    display:none !important;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel .location-panel-heading{
+    flex:0 0 auto;
+    margin:-4px -2px 8px;
+    padding:0 2px 10px;
+    border-bottom:1px solid var(--border);
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel .location-panel-heading strong{
+    font-size:18px;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel .location-field{
+    flex:0 0 auto;
+    gap:6px;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel .location-field > span{
+    font-size:10px;
+    font-weight:740;
+    letter-spacing:.045em;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel input,
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel textarea{
+    min-height:48px;
+    border-radius:14px;
+    font-size:16px;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel textarea{
+    min-height:118px;
+    padding:12px 13px;
+    resize:vertical;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel .location-panel-actions{
+    position:sticky;
+    bottom:-16px;
+    z-index:4;
+    margin:10px -16px -16px;
+    padding:12px 16px calc(12px + var(--safe-area-bottom));
+    background:inherit;
+    border-top:1px solid var(--border);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel .location-panel-actions button{
+    min-height:46px;
+    border-radius:14px;
+  }
+
+  /* ----------------------------------------------------
+     Project Manager fullscreen mobile workflow
+     ---------------------------------------------------- */
+  body.mobile-shell-active .project-manager{
+    grid-template-rows:auto auto minmax(0,1fr) auto !important;
+    background:rgba(248,248,250,.995) !important;
+  }
+
+  body.dark.mobile-shell-active .project-manager{
+    background:rgba(25,25,29,.998) !important;
+  }
+
+  body.mobile-shell-active .project-manager-header{
+    position:relative;
+    z-index:8;
+    min-height:66px;
+    padding-bottom:13px !important;
+    background:inherit !important;
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+  }
+
+  body.mobile-shell-active .project-manager-brand-dot{
+    width:12px;
+    height:12px;
+    flex-basis:12px;
+  }
+
+  body.mobile-shell-active .project-manager-heading h2{
+    font-size:18px;
+  }
+
+  body.mobile-shell-active .project-manager-heading p{
+    max-width:62vw;
+    font-size:11px;
+  }
+
+  body.mobile-shell-active .project-manager-toolbar{
+    align-items:stretch;
+    gap:10px;
+    padding:12px 14px;
+    background:inherit;
+  }
+
+  body.mobile-shell-active .project-manager-name-field{
+    max-width:none;
+  }
+
+  body.mobile-shell-active .project-manager-name-field input{
+    min-height:46px;
+    border-radius:14px;
+    font-size:16px;
+  }
+
+  body.mobile-shell-active .project-manager-count{
+    align-self:flex-end;
+    margin-bottom:5px;
+  }
+
+  body.mobile-shell-active .project-manager-list{
+    padding:12px 12px 18px;
+    gap:11px;
+    overscroll-behavior:contain;
+    scroll-padding-bottom:118px;
+  }
+
+  body.mobile-shell-active .project-manager-row{
+    grid-template-columns:auto 30px minmax(0,1fr);
+    align-items:start;
+    gap:10px;
+    padding:12px;
+    border-radius:var(--mobile-project-card-radius);
+  }
+
+  body.mobile-shell-active .project-manager-drag-handle{
+    display:none !important;
+  }
+
+  body.mobile-shell-active .project-manager-mobile-order{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    grid-column:1;
+    grid-row:1 / span 2;
+  }
+
+  body.mobile-shell-active .project-manager-order-button{
+    width:36px;
+    min-width:36px;
+    height:32px;
+    min-height:32px;
+    padding:0;
+    border-radius:10px;
+    background:rgba(120,120,128,.08);
+    color:var(--muted);
+    font-size:15px;
+    line-height:1;
+  }
+
+  body.mobile-shell-active .project-manager-order-button:hover:not(.is-unavailable),
+  body.mobile-shell-active .project-manager-order-button:focus-visible:not(.is-unavailable){
+    background:rgba(10,132,255,.11);
+    color:var(--accent);
+  }
+
+  body.mobile-shell-active .project-manager-order-button.is-unavailable{
+    opacity:.28;
+    pointer-events:none;
+  }
+
+  body.mobile-shell-active .project-manager-row-index{
+    grid-column:2;
+    grid-row:1;
+  }
+
+  body.mobile-shell-active .project-manager-row-main{
+    grid-column:3;
+    grid-row:1;
+  }
+
+  body.mobile-shell-active .project-manager-row-title-line{
+    align-items:flex-start;
+  }
+
+  body.mobile-shell-active .project-manager-sketch-title{
+    width:100%;
+    min-height:42px;
+    height:42px;
+    padding:0 10px;
+    font-size:15px;
+  }
+
+  body.mobile-shell-active .project-manager-active-badge{
+    margin-top:7px;
+  }
+
+  body.mobile-shell-active .project-manager-row-meta{
+    grid-template-columns:1fr 1fr;
+    gap:6px 10px;
+    margin-top:8px;
+  }
+
+  body.mobile-shell-active .project-manager-row-meta > div{
+    display:block;
+  }
+
+  body.mobile-shell-active .project-manager-row-meta dt{
+    margin-bottom:2px;
+  }
+
+  body.mobile-shell-active .project-manager-row-meta dd{
+    font-size:11px;
+  }
+
+  body.mobile-shell-active .project-manager-row-actions{
+    grid-column:3;
+    grid-row:2;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:9px;
+  }
+
+  body.mobile-shell-active .project-manager-row-button{
+    width:100%;
+    min-height:42px;
+    height:42px;
+    border-radius:13px;
+    font-size:12px;
+  }
+
+  body.mobile-shell-active .project-manager-footer{
+    position:relative;
+    z-index:8;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+    padding:10px 12px calc(10px + var(--safe-area-bottom)) !important;
+    background:inherit !important;
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+  }
+
+  body.mobile-shell-active .project-manager-footer-actions,
+  body.mobile-shell-active .project-manager-footer-left{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+
+  body.mobile-shell-active .project-manager-footer-actions{
+    order:1;
+  }
+
+  body.mobile-shell-active .project-manager-footer-left{
+    order:2;
+  }
+
+  body.mobile-shell-active .project-manager-footer-button{
+    width:100%;
+    min-width:0;
+    min-height:44px;
+    height:44px;
+    border-radius:14px;
+    font-size:12px;
+  }
+
+  body.mobile-shell-active .project-manager-new-project-button,
+  body.mobile-shell-active .project-manager-merge-button{
+    color:var(--muted);
+    background:transparent;
+  }
+
+  /* Nested New Spot Sketch and Merge flows fill the manager cleanly. */
+  body.mobile-shell-active .spot-sketch-copy-panel,
+  body.mobile-shell-active .project-merge-panel{
+    padding:
+      calc(10px + var(--safe-area-top))
+      max(10px,var(--safe-area-right))
+      calc(10px + var(--safe-area-bottom))
+      max(10px,var(--safe-area-left));
+    align-items:stretch;
+    background:rgba(0,0,0,.42);
+  }
+
+  body.mobile-shell-active .spot-sketch-copy-card,
+  body.mobile-shell-active .project-merge-card{
+    width:100%;
+    max-width:none;
+    max-height:100%;
+    margin:0;
+    padding:18px;
+    overflow:auto;
+    border-radius:22px;
+    overscroll-behavior:contain;
+  }
+
+  body.mobile-shell-active .spot-sketch-copy-source-field select,
+  body.mobile-shell-active .project-merge-name-field input{
+    min-height:48px;
+    border-radius:14px;
+    font-size:16px;
+  }
+
+  body.mobile-shell-active .spot-sketch-copy-option{
+    min-height:58px;
+    padding:10px 12px;
+    border-radius:14px;
+  }
+
+  body.mobile-shell-active .spot-sketch-copy-actions,
+  body.mobile-shell-active .project-merge-actions{
+    position:sticky;
+    bottom:-18px;
+    margin:14px -18px -18px;
+    padding:12px 18px calc(12px + var(--safe-area-bottom));
+    background:inherit;
+    border-top:1px solid var(--border);
+  }
+
+  body.mobile-shell-active .spot-sketch-copy-actions button,
+  body.mobile-shell-active .project-merge-actions button{
+    min-height:46px;
+    border-radius:14px;
+  }
+
+  /* ----------------------------------------------------
+     Dialogs shared by metadata and project workflows
+     ---------------------------------------------------- */
+  body.mobile-shell-active .dialog{
+    max-height:calc(var(--app-viewport-height) - var(--safe-area-top) - var(--safe-area-bottom) - 20px);
+    overflow:auto;
+    overscroll-behavior:contain;
+  }
+
+  body.mobile-shell-active .dialog-buttons{
+    gap:8px;
+  }
+
+  body.mobile-shell-active .dialog-button{
+    min-height:46px;
+    height:auto;
+    padding:8px 16px;
+    border-radius:14px;
+  }
+
+  /* Keyboard state: preserve content space and keep actions reachable. */
+  html[data-keyboard="visible"] body.mobile-shell-active .mobile-form-editing .mobile-surface-heading,
+  html[data-keyboard="visible"] body.mobile-shell-active .mobile-form-editing .project-manager-heading p{
+    display:none !important;
+  }
+
+  html[data-keyboard="visible"] body.mobile-shell-active #mobileSurfacePortal > .project-info-menu .metadata-footer,
+  html[data-keyboard="visible"] body.mobile-shell-active #mobileSurfacePortal > .location-panel .location-panel-actions,
+  html[data-keyboard="visible"] body.mobile-shell-active .project-manager-footer{
+    padding-bottom:10px !important;
+  }
+}
+
+@media (max-width:620px){
+  /* Location becomes a true fullscreen metadata editor on phones. */
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel{
+    inset:0 !important;
+    width:100% !important;
+    height:var(--app-viewport-height) !important;
+    max-height:none !important;
+    padding:
+      calc(12px + var(--safe-area-top))
+      max(16px,var(--safe-area-right))
+      var(--safe-area-bottom)
+      max(16px,var(--safe-area-left)) !important;
+    border:0 !important;
+    border-radius:0 !important;
+    background:rgba(248,248,250,.995) !important;
+    box-shadow:none !important;
+  }
+
+  body.dark.mobile-shell-active #mobileSurfacePortal > .location-panel{
+    background:rgba(25,25,29,.998) !important;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel .location-grid{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel .location-panel-actions{
+    bottom:calc(-1 * var(--safe-area-bottom));
+    margin-right:calc(-1 * max(16px,var(--safe-area-right)));
+    margin-left:calc(-1 * max(16px,var(--safe-area-left)));
+    padding-right:max(16px,var(--safe-area-right));
+    padding-left:max(16px,var(--safe-area-left));
+  }
+
+  body.mobile-shell-active .project-manager-toolbar{
+    flex-direction:column;
+  }
+
+  body.mobile-shell-active .project-manager-count{
+    align-self:flex-start;
+    margin:0;
+  }
+
+  body.mobile-shell-active .project-manager-row-meta{
+    grid-template-columns:1fr;
+  }
+
+  body.mobile-shell-active .project-manager-heading p{
+    display:none;
+  }
+
+  body.mobile-shell-active .dialog-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+
+  body.mobile-shell-active .dialog-button{
+    width:100%;
+    min-width:0;
+  }
+}
+
+@media (max-width:380px){
+  body.mobile-shell-active .dialog-buttons,
+  body.mobile-shell-active .location-panel-action-group{
+    grid-template-columns:1fr;
+  }
+
+  body.mobile-shell-active .location-panel-actions{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+
+  body.mobile-shell-active .location-panel-action-group{
+    display:grid;
+    gap:8px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .project-manager-order-button,
+  .project-library-autocomplete-mobile{
+    transition:none !important;
+    animation:none !important;
+  }
+}
+
+
+/*
+────────────────────────────────────────────
+11. Mobile Export Workflow
+────────────────────────────────────────────
+*/
+
+body.mobile-shell-active .export-workspace-body{
+  display:block !important;
+  min-height:0;
+}
+
+body.mobile-shell-active .export-workspace-settings{
+  width:100% !important;
+  max-width:none !important;
+  flex:1 1 auto !important;
+  padding:14px 14px 0 !important;
+  overflow:auto !important;
+}
+
+body.mobile-shell-active .export-workspace-preview,
+body.mobile-shell-active .export-preview-toolbar,
+body.mobile-shell-active .export-preview-stage{
+  display:none !important;
+}
+
+body.mobile-shell-active .export-format-section,
+body.mobile-shell-active .export-content-section{
+  display:none !important;
+}
+
+body.mobile-shell-active #actualExposureSection,
+body.mobile-shell-active #documentNotesSection{
+  margin-bottom:14px !important;
+}
+
+body.mobile-shell-active .export-workspace-heading p,
+body.mobile-shell-active #actualExposureSection .export-settings-description,
+body.mobile-shell-active #documentNotesSection > .export-settings-description,
+body.mobile-shell-active #documentNotesSection .export-notes-subsection > .export-settings-description,
+body.mobile-shell-active #actualExposureComparison,
+body.mobile-shell-active #actualZonePreview{
+  display:none !important;
+}
+
+body.mobile-shell-active #actualExposureFields{
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:10px !important;
+}
+
+body.mobile-shell-active .actual-exposure-choice{
+  grid-template-columns:1fr 1fr !important;
+}
+
+body.mobile-shell-active .actual-exposure-choice-button,
+body.mobile-shell-active .actual-exposure-select,
+body.mobile-shell-active .export-notes-input,
+body.mobile-shell-active .export-workspace-footer-button{
+  min-height:48px;
+}
+
+body.mobile-shell-active .export-workspace-footer{
+  padding-left:max(14px,var(--safe-area-left)) !important;
+  padding-right:max(14px,var(--safe-area-right)) !important;
+}
+
+
+/*
+==========================================================
+PACKAGE 07 — MOBILE POLISH & BASELINE CANDIDATE
+==========================================================
+*/
+
+:root{
+  --mobile-collapsed-bar-peek:13px;
+  --mobile-expanded-bar-height:52px;
+}
+
+/* Uniform mobile surface title language. */
+.mobile-surface-title{
+  min-width:0;
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:center;
+  gap:9px !important;
+}
+
+.mobile-surface-brand-dot,
+.image-crop-brand-dot{
+  width:13px;
+  height:13px;
+  flex:0 0 13px;
+  border-radius:50%;
+  background:var(--accent);
+}
+
+@media (max-width:900px){
+  /* One-row mobile header: identity, Image Identifier, Initial and LAT. */
+  body.mobile-shell-active #appHeader{
+    grid-template-columns:28px minmax(74px,1fr) auto auto !important;
+    grid-template-areas:"brand identifier metering lat" !important;
+    min-height:44px;
+    padding:6px 8px !important;
+    column-gap:6px !important;
+    row-gap:0 !important;
+  }
+
+  body.mobile-shell-active .header-logo{
+    grid-area:brand;
+    min-width:28px;
+  }
+
+  body.mobile-shell-active .header-logo .logo-dot{
+    width:25px;
+    height:25px;
+    font-size:10px;
+  }
+
+  body.mobile-shell-active .mobile-header-title{
+    display:none !important;
+  }
+
+  body.mobile-shell-active .image-identifier-wrap{
+    grid-area:identifier;
+    min-width:0;
+  }
+
+  body.mobile-shell-active #imageIdentifier{
+    width:100% !important;
+    min-width:0 !important;
+    height:30px !important;
+    padding:0 9px !important;
+    font-size:10px !important;
+  }
+
+  body.mobile-shell-active .image-location-button{
+    display:none !important;
+  }
+
+  body.mobile-shell-active #initialMeteringDisplay{
+    grid-area:metering;
+    width:auto !important;
+    min-width:0 !important;
+    max-width:128px !important;
+    min-height:30px !important;
+    height:30px !important;
+    padding:0 8px !important;
+    gap:4px !important;
+    border-radius:999px;
+  }
+
+  body.mobile-shell-active .initial-metering-label{
+    width:14px;
+    overflow:hidden;
+    font-size:0 !important;
+  }
+
+  body.mobile-shell-active .initial-metering-label::after{
+    content:"IN";
+    font-size:8px;
+    font-weight:780;
+  }
+
+  body.mobile-shell-active .initial-metering-value{
+    font-size:9px !important;
+  }
+
+  body.mobile-shell-active .initial-metering-divider{
+    font-size:8px;
+  }
+
+  body.mobile-shell-active #drBtn{
+    grid-area:lat;
+    width:auto !important;
+    min-width:38px;
+    padding:0 2px !important;
+    margin:0 !important;
+    font-size:10px !important;
+  }
+
+  /* Initial Metering Setup readability and scroll repair. */
+  body.mobile-shell-active .metering-setup-panel{
+    height:100% !important;
+    grid-template-rows:auto minmax(0,1fr) auto !important;
+  }
+
+  body.mobile-shell-active .metering-setup-header{
+    padding:12px 14px 9px !important;
+  }
+
+  body.mobile-shell-active .metering-setup-header h2{
+    font-size:18px !important;
+    white-space:nowrap;
+  }
+
+  body.mobile-shell-active .metering-setup-header p{
+    font-size:10px !important;
+  }
+
+  body.mobile-shell-active .metering-setup-controls{
+    min-height:0 !important;
+    height:auto !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px !important;
+    padding:8px !important;
+    overflow:hidden !important;
+  }
+
+  body.mobile-shell-active .metering-setup-control{
+    min-height:0 !important;
+    grid-template-rows:34px minmax(0,1fr) !important;
+  }
+
+  body.mobile-shell-active .metering-setup-control-heading{
+    min-height:34px !important;
+    padding:5px 8px !important;
+    gap:5px !important;
+    white-space:nowrap;
+  }
+
+  body.mobile-shell-active .metering-setup-control-heading span{
+    font-size:9px !important;
+  }
+
+  body.mobile-shell-active .metering-setup-control-heading strong{
+    min-width:0;
+    max-width:72%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:9px !important;
+    font-weight:650 !important;
+  }
+
+  body.mobile-shell-active .metering-setup-options{
+    min-height:0 !important;
+    max-height:none !important;
+    height:100% !important;
+    padding:6px 6px 42px !important;
+    overflow-y:auto !important;
+    -webkit-overflow-scrolling:touch;
+    color:var(--text) !important;
+    opacity:1 !important;
+  }
+
+  body.mobile-shell-active .metering-setup-option{
+    flex:0 0 auto;
+    min-height:38px !important;
+    color:var(--text) !important;
+    opacity:1 !important;
+  }
+
+  body.mobile-shell-active .metering-setup-footer{
+    padding:8px 10px calc(8px + var(--safe-area-bottom)) !important;
+  }
+
+  body.mobile-shell-active .metering-setup-summary{
+    display:none !important;
+  }
+
+  body.mobile-shell-active .metering-setup-start-button{
+    width:100% !important;
+    min-height:42px !important;
+  }
+
+  /* Collapsible full-width icon-only bottom navigation. */
+  body.mobile-shell-active .mobile-action-bar{
+    display:block !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+    width:100% !important;
+    height:calc(var(--mobile-expanded-bar-height) + var(--safe-area-bottom)) !important;
+    min-height:0 !important;
+    padding:5px max(8px,var(--safe-area-right)) calc(5px + var(--safe-area-bottom)) max(8px,var(--safe-area-left)) !important;
+    border:0 !important;
+    border-top:1px solid var(--border) !important;
+    border-radius:0 !important;
+    background:rgba(248,248,250,.97) !important;
+    box-shadow:0 -8px 28px rgba(0,0,0,.12) !important;
+    transform:translateY(calc(100% - var(--mobile-collapsed-bar-peek))) !important;
+    transition:transform 220ms cubic-bezier(.2,.8,.2,1),opacity 180ms ease !important;
+    overflow:visible !important;
+  }
+
+  body.dark.mobile-shell-active .mobile-action-bar{
+    background:rgba(28,28,32,.98) !important;
+  }
+
+  body.mobile-shell-active .mobile-action-bar.is-expanded{
+    transform:translateY(0) !important;
+  }
+
+  body.mobile-shell-active .mobile-action-bar.is-suppressed{
+    transform:translateY(110%) !important;
+    opacity:0 !important;
+    pointer-events:none !important;
+  }
+
+  body.mobile-shell-active .mobile-action-items{
+    width:100%;
+    height:100%;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    align-items:center;
+    gap:2px;
+  }
+
+  body.mobile-shell-active .mobile-action-handle{
+    position:absolute;
+    left:50%;
+    top:-13px;
+    width:54px;
+    min-width:54px;
+    height:18px;
+    min-height:18px !important;
+    padding:0;
+    border:1px solid var(--border);
+    border-bottom:0;
+    border-radius:13px 13px 0 0;
+    background:inherit;
+    transform:translateX(-50%);
+  }
+
+  body.mobile-shell-active .mobile-action-handle span{
+    display:block;
+    width:22px;
+    height:3px;
+    margin:auto;
+    border-radius:999px;
+    background:var(--muted);
+    opacity:.62;
+  }
+
+  body.mobile-shell-active .mobile-action-button{
+    width:100% !important;
+    min-width:0 !important;
+    min-height:40px !important;
+    height:40px !important;
+    padding:0 !important;
+    border:0 !important;
+    border-radius:12px !important;
+    background:transparent !important;
+  }
+
+  body.mobile-shell-active .mobile-action-button svg{
+    width:19px !important;
+    height:19px !important;
+  }
+
+  body.mobile-shell-active .mobile-action-label{
+    display:none !important;
+  }
+
+  body.mobile-shell-active .mobile-action-primary{
+    color:var(--accent) !important;
+    background:rgba(10,132,255,.08) !important;
+  }
+
+  body.mobile-shell-active main{
+    padding-bottom:calc(var(--mobile-collapsed-bar-peek) + var(--safe-area-bottom)) !important;
+  }
+
+  html.mobile-action-bar-open body.mobile-shell-active main{
+    padding-bottom:calc(var(--mobile-expanded-bar-height) + var(--safe-area-bottom)) !important;
+  }
+
+  /* Small inverse Calculation action, aligned to the lower left. */
+  body.mobile-shell-active .floating-calculation-button{
+    left:max(10px,var(--safe-area-left)) !important;
+    right:auto !important;
+    bottom:calc(var(--safe-area-bottom) + var(--mobile-collapsed-bar-peek) + 8px) !important;
+    width:auto !important;
+    min-width:0 !important;
+    height:30px !important;
+    min-height:30px !important;
+    padding:0 11px !important;
+    border:1px solid rgba(35,145,93,.86) !important;
+    border-radius:999px !important;
+    background:rgba(35,145,93,.96) !important;
+    color:#fff !important;
+    font-size:9px !important;
+    letter-spacing:.045em !important;
+    box-shadow:0 5px 16px rgba(21,110,68,.22) !important;
+  }
+
+  html.mobile-action-bar-open body.mobile-shell-active .floating-calculation-button{
+    bottom:calc(var(--safe-area-bottom) + var(--mobile-expanded-bar-height) + 8px) !important;
+  }
+
+  /* Fullscreen Add, Gear and Location share Export's title language. */
+  body.mobile-shell-active #mobileSurfacePortal > .add-menu,
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel,
+  body.mobile-shell-active #mobileSurfacePortal > .project-info-menu{
+    position:fixed !important;
+    inset:0 !important;
+    width:100% !important;
+    height:var(--app-viewport-height) !important;
+    max-width:none !important;
+    max-height:none !important;
+    margin:0 !important;
+    border:0 !important;
+    border-radius:0 !important;
+    box-shadow:none !important;
+    background:rgba(248,248,250,.995) !important;
+  }
+
+  body.dark.mobile-shell-active #mobileSurfacePortal > .add-menu,
+  body.dark.mobile-shell-active #mobileSurfacePortal > .location-panel,
+  body.dark.mobile-shell-active #mobileSurfacePortal > .project-info-menu{
+    background:rgba(25,25,29,.995) !important;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .add-menu{
+    padding:var(--safe-area-top) max(12px,var(--safe-area-right)) var(--safe-area-bottom) max(12px,var(--safe-area-left)) !important;
+    overflow:auto !important;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .add-menu .add-section{
+    padding:14px 2px !important;
+  }
+
+  body.mobile-shell-active #mobileSurfacePortal > .location-panel{
+    padding:var(--safe-area-top) max(14px,var(--safe-area-right)) calc(var(--safe-area-bottom) + 10px) max(14px,var(--safe-area-left)) !important;
+    overflow:auto !important;
+  }
+
+  body.mobile-shell-active .location-panel-heading,
+  body.mobile-shell-active .mobile-surface-heading{
+    min-height:54px !important;
+    padding:9px 2px 11px !important;
+    border-bottom:1px solid var(--border) !important;
+  }
+
+  /* Clean, geometrically centered close icons across mobile surfaces. */
+  body.mobile-shell-active :is(
+    .mobile-surface-close,
+    .location-panel-close,
+    .export-workspace-close-button,
+    .image-crop-close,
+    .calculation-exit-button,
+    .calculation-setup-secondary-button
+  ){
+    position:relative;
+    width:34px !important;
+    min-width:34px !important;
+    height:34px !important;
+    min-height:34px !important;
+    padding:0 !important;
+    font-size:0 !important;
+    line-height:0 !important;
+    border-radius:50% !important;
+  }
+
+  body.mobile-shell-active :is(
+    .mobile-surface-close,
+    .location-panel-close,
+    .export-workspace-close-button,
+    .image-crop-close,
+    .calculation-exit-button,
+    .calculation-setup-secondary-button
+  )::before,
+  body.mobile-shell-active :is(
+    .mobile-surface-close,
+    .location-panel-close,
+    .export-workspace-close-button,
+    .image-crop-close,
+    .calculation-exit-button,
+    .calculation-setup-secondary-button
+  )::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:14px;
+    height:1.6px;
+    border-radius:999px;
+    background:currentColor;
+    transform-origin:center;
+  }
+
+  body.mobile-shell-active :is(.mobile-surface-close,.location-panel-close,.export-workspace-close-button,.image-crop-close,.calculation-exit-button,.calculation-setup-secondary-button)::before{
+    transform:translate(-50%,-50%) rotate(45deg);
+  }
+
+  body.mobile-shell-active :is(.mobile-surface-close,.location-panel-close,.export-workspace-close-button,.image-crop-close,.calculation-exit-button,.calculation-setup-secondary-button)::after{
+    transform:translate(-50%,-50%) rotate(-45deg);
+  }
+
+  body.mobile-shell-active .calculation-mobile-close-symbol{
+    display:none !important;
+  }
+
+  /* Three-row horizontally scrolling value grids. */
+  body.mobile-shell-active #picker.picker-mobile-aperture,
+  body.mobile-shell-active #picker.picker-mobile-calculation[data-picker-owner="calculated-iso"],
+  body.mobile-shell-active #picker.picker-mobile-calculation[data-picker-owner="calculated-shutter"],
+  body.mobile-shell-active #picker.picker-mobile-calculation[data-picker-owner="calculated-aperture"]{
+    display:grid !important;
+    grid-auto-flow:column !important;
+    grid-template-rows:repeat(3,44px) !important;
+    grid-auto-columns:minmax(82px,1fr) !important;
+    grid-template-columns:none !important;
+    align-content:start !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    scroll-snap-type:x proximity;
+    max-height:none !important;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-aperture .picker-title,
+  body.mobile-shell-active #picker.picker-mobile-calculation .picker-title{
+    position:sticky !important;
+    left:0;
+    grid-row:1 / 4 !important;
+    align-self:stretch;
+    display:flex;
+    align-items:center;
+    min-width:92px;
+    margin:0 5px 0 0 !important;
+    border:0 !important;
+  }
+
+  body.mobile-shell-active #picker.picker-mobile-aperture .picker-option,
+  body.mobile-shell-active #picker.picker-mobile-calculation .picker-option{
+    min-height:40px !important;
+    height:40px !important;
+    margin:0 !important;
+    scroll-snap-align:start;
+  }
+
+  /* Larger visible Recording pins while bubbles remain compact. */
+  body.mobile-shell-active .bubble{
+    border-width:1.5px;
+  }
+
+  /* Calculation dock: one compact control row with icon-only confirm. */
+  body.mobile-shell-active .calculation-status{
+    left:max(6px,var(--safe-area-left)) !important;
+    right:max(6px,var(--safe-area-right)) !important;
+    bottom:calc(var(--safe-area-bottom) + 6px) !important;
+    padding:7px !important;
+    row-gap:4px !important;
+    border-radius:15px !important;
+  }
+
+  body.mobile-shell-active .calculation-status-heading{
+    min-height:24px !important;
+    padding:0 1px 2px !important;
+  }
+
+  body.mobile-shell-active .calculation-status-copy > span{
+    font-size:8px !important;
+  }
+
+  body.mobile-shell-active .calculated-exposure-row{
+    display:grid !important;
+    grid-template-columns:52px minmax(0,1fr) !important;
+    gap:4px !important;
+  }
+
+  body.mobile-shell-active .calculation-control-mode{
+    width:52px !important;
+    min-width:52px !important;
+    max-width:52px !important;
+    height:34px !important;
+    padding:0 4px !important;
+    grid-template-columns:10px 24px 10px !important;
+    gap:2px !important;
+  }
+
+  body.mobile-shell-active .calculated-exposure-fields{
+    display:grid !important;
+    grid-template-columns:repeat(3,minmax(0,1fr)) 34px !important;
+    column-gap:3px !important;
+    min-width:0;
+  }
+
+  body.mobile-shell-active .calculated-exposure-field,
+  body.mobile-shell-active .calculation-save-actual-button{
+    min-width:0 !important;
+    width:auto !important;
+    height:34px !important;
+    min-height:34px !important;
+    padding:0 4px !important;
+    border-radius:9px !important;
+    font-size:9px !important;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  body.mobile-shell-active .calculation-save-actual-button{
+    margin-left:3px !important;
+    padding:0 !important;
+  }
+
+  body.mobile-shell-active .calculation-confirm-label{
+    display:none !important;
+  }
+
+  body.mobile-shell-active .calculation-confirm-symbol{
+    display:inline !important;
+    font-size:14px;
+    line-height:1;
+  }
+}
+
+.calculation-confirm-symbol{
+  display:none;
+}
+
+/* Image Crop workflow. */
+.image-crop-overlay{
+  position:fixed;
+  inset:0;
+  z-index:calc(var(--layer-dialog) - 20);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:max(16px,var(--safe-area-top)) max(16px,var(--safe-area-right)) max(16px,var(--safe-area-bottom)) max(16px,var(--safe-area-left));
+  background:rgba(0,0,0,.62);
+  backdrop-filter:blur(9px);
+  -webkit-backdrop-filter:blur(9px);
+}
+
+.image-crop-overlay[hidden]{display:none !important}
+
+.image-crop-dialog{
+  width:min(920px,100%);
+  height:min(760px,calc(var(--app-viewport-height) - 32px));
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  overflow:hidden;
+  border:1px solid var(--border);
+  border-radius:24px;
+  background:rgba(248,248,250,.99);
+  box-shadow:0 30px 90px rgba(0,0,0,.38);
+}
+
+body.dark .image-crop-dialog{background:rgba(27,27,31,.995)}
+
+.image-crop-header,
+.image-crop-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
+}
+
+.image-crop-footer{
+  justify-content:flex-end;
+  border-top:1px solid var(--border);
+  border-bottom:0;
+}
+
+.image-crop-heading{display:flex;align-items:center;gap:10px;min-width:0}
+.image-crop-heading h2{margin:0;font-size:19px}
+.image-crop-heading p{margin:2px 0 0;color:var(--muted);font-size:11px}
+.image-crop-close{width:36px;height:36px;padding:0;border-radius:50%;font-size:21px}
+.image-crop-body{min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;padding:12px}
+.image-crop-ratios{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.image-crop-ratios button{width:auto;min-width:68px;height:34px;padding:0 11px}
+.image-crop-ratios button.is-active{color:#fff;background:var(--accent);border-color:var(--accent)}
+.image-crop-stage{min-height:0;position:relative;overflow:hidden;border-radius:16px;background:#111;touch-action:none}
+.image-crop-canvas{display:block}
+#imageCropCanvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
+#imageCropCanvas:active{cursor:grabbing}
+.image-crop-zoom{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:12px;font-size:11px;color:var(--muted)}
+.image-crop-zoom input{width:100%;height:auto;padding:0;background:transparent;border:0}
+.image-crop-footer button{width:auto;min-width:92px}
+.image-crop-confirm{color:#fff;background:var(--accent);border-color:var(--accent)}
+
+@media (max-width:900px){
+  .image-crop-overlay{padding:0}
+  .image-crop-dialog{
+    width:100%;
+    height:var(--app-viewport-height);
+    max-height:none;
+    border:0;
+    border-radius:0;
+  }
+  .image-crop-header{padding:calc(10px + var(--safe-area-top)) max(12px,var(--safe-area-right)) 10px max(12px,var(--safe-area-left))}
+  .image-crop-heading p{display:none}
+  .image-crop-body{padding:8px;gap:8px}
+  .image-crop-ratios button{min-width:60px;height:32px;font-size:10px}
+  .image-crop-footer{padding:8px max(12px,var(--safe-area-right)) calc(8px + var(--safe-area-bottom)) max(12px,var(--safe-area-left))}
+  .image-crop-footer button{min-height:42px}
+}
+
+@media (max-width:900px){
+  body.mobile-shell-active .calculation-control-track{
+    width:24px !important;
+    min-width:24px !important;
+    height:20px !important;
+  }
+  body.mobile-shell-active .calculation-control-thumb{
+    width:14px !important;
+    height:14px !important;
+    top:3px !important;
+    left:3px !important;
+  }
+  body.mobile-shell-active .calculation-control-mode.is-aperture .calculation-control-thumb{
+    left:7px !important;
+  }
+  body.mobile-shell-active .calculation-control-label{
+    width:10px !important;
+    min-width:10px !important;
+    font-size:9px !important;
+  }
+}

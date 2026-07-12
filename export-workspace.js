@@ -198,6 +198,20 @@ const exportPreviewCaption =
 /*
   Returns whether the Export Workspace is currently open.
 */
+
+function isMobileExportWorkflowActive() {
+  return document.body.classList.contains("mobile-shell-active");
+}
+
+function applyMobileExportWorkflowDefaults() {
+  if (!isMobileExportWorkflowActive()) return;
+
+  ensureExportDocumentStructure();
+  state.exportOptions.exportType = "quick";
+  state.exportOptions.documentScope = "current";
+  state.exportOptions.documentFormat = "png";
+}
+
 function isExportWorkspaceOpen() {
   return Boolean(
     exportWorkspaceOverlay &&
@@ -863,6 +877,7 @@ function openExportWorkspace() {
 
   ensureActualExposureStructure();
   ensureExportDocumentStructure();
+  applyMobileExportWorkflowDefaults();
 
   populateActualExposureSelectors();
 
@@ -990,12 +1005,21 @@ if (exportWorkspaceExportBtn) {
     exportWorkspaceExportBtn.textContent = "Preparing…";
 
     try {
-      const result = await exportDocument({
-        type: state.exportOptions.exportType,
-        scope: state.exportOptions.documentScope,
-        format: state.exportOptions.documentFormat,
-        orientation: state.exportOptions.documentOrientation
-      });
+      const exportRequest = isMobileExportWorkflowActive()
+        ? {
+            type: "quick",
+            scope: "current",
+            format: "png",
+            orientation: state.exportOptions.documentOrientation
+          }
+        : {
+            type: state.exportOptions.exportType,
+            scope: state.exportOptions.documentScope,
+            format: state.exportOptions.documentFormat,
+            orientation: state.exportOptions.documentOrientation
+          };
+
+      const result = await exportDocument(exportRequest);
 
       const pageCount = result?.pageCount || 1;
       const message = result?.type === "quick"

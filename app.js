@@ -39,6 +39,8 @@ Does NOT own:
 - rendering internals
 
 Dependencies:
+- responsive.js
+- mobile-shell.js
 - dom.js
 - data.js
 - picker-core.js
@@ -53,8 +55,11 @@ Dependencies:
 - export-workspace.js
 - metering-setup.js
 - recording-workflow.js
+- recording-touch.js
+- image-crop.js
 - calculation-workflow.js
 - calculation-ui.js
+- calculation-mobile.js
 - notifications.js
 ==========================================================
 */
@@ -175,11 +180,24 @@ document.addEventListener("keydown", event => {
 */
 
 /*
-  Keeps the image and Spot Reading bubbles aligned after browser resize.
+  Keeps the image, Spot Reading bubbles and an open picker aligned after
+  the Responsive Foundation commits a new visual viewport state.
+
+  The responsive module also observes VisualViewport changes caused by
+  mobile browser chrome and the software keyboard, so application modules
+  no longer need separate resize and orientation listeners.
 */
-window.addEventListener("resize", () => {
+window.addEventListener("spot-sketch:viewport-change", () => {
   fitImage();
   drawBubbles();
+
+  if (typeof isPickerOpen === "function" && isPickerOpen()) {
+    if (picker.classList.contains("picker-centered")) {
+      centerPickerInStage();
+    } else if (!picker.classList.contains("picker-viewport-fixed")) {
+      keepPickerInside();
+    }
+  }
 });
 
 
@@ -191,22 +209,29 @@ window.addEventListener("resize", () => {
 
 /*
   Startup order matters:
-  1. load saved local data
-  2. initialize Project Info and Metering Setup
-  3. initialize Recording Workflow and Header menus
-  4. refresh project and workflow UI
-  5. start welcome animation
+  1. initialize responsive viewport contracts
+  2. load saved local data
+  3. initialize Project Info and Metering Setup
+  4. initialize Recording Workflow and Header menus
+  5. refresh project and workflow UI
+  6. start welcome animation
 */
+initializeResponsiveFoundation();
 loadLocalAppData();
 
 initializeUnavailableInteractions();
 initializeProjectPanel();
 initializeMeteringSetup();
 initializeRecordingWorkflow();
+initializeRecordingTouchWorkflow();
+initializeImageCropWorkflow();
 initializeImageReplacement();
 initializeCalculationWorkflow();
+initializeCalculationMobileLayout();
 initializeHeaderMenus();
 initializeProjectManager();
+initializeMobileApplicationShell();
+initializeMobileProjectSurfaces();
 
 updateLimitButtons();
 updateMeteringSetupUi();

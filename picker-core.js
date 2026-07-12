@@ -88,10 +88,92 @@ function preparePickerForOpen(html) {
     "picker-centered",
     "picker-zone",
     "picker-marker-menu",
-    "picker-viewport-fixed"
+    "picker-viewport-fixed",
+    "picker-mobile-sheet",
+    "picker-mobile-aperture",
+    "picker-mobile-marker-menu",
+    "picker-mobile-calculation",
+    "picker-mobile-zone"
   );
+
+  picker.style.removeProperty("right");
+  picker.style.removeProperty("bottom");
   picker.removeAttribute("data-picker-owner");
   picker.innerHTML = html;
+}
+
+
+function shouldUseMobileRecordingPicker() {
+  return Boolean(
+    document.documentElement.dataset.touch === "true" &&
+    typeof isMobileApplicationShellActive === "function" &&
+    isMobileApplicationShellActive()
+  );
+}
+
+
+function openMobileRecordingPicker(
+  html,
+  owner,
+  scrollOptions = null
+) {
+  preparePickerForOpen(html);
+
+  picker.classList.add(
+    "picker-viewport-fixed",
+    "picker-mobile-sheet"
+  );
+
+  if (owner === "recording-aperture") {
+    picker.classList.add("picker-mobile-aperture");
+  }
+
+  if (owner === "recording-marker-menu") {
+    picker.classList.add(
+      "picker-marker-menu",
+      "picker-mobile-marker-menu"
+    );
+  }
+
+  picker.dataset.pickerOwner = owner;
+  picker.style.removeProperty("left");
+  picker.style.removeProperty("top");
+  picker.scrollTop = 0;
+
+  scrollPickerAfterOpen(scrollOptions);
+}
+
+
+function shouldUseMobileCalculationPicker() {
+  return Boolean(
+    typeof isMobileApplicationShellActive === "function" &&
+    isMobileApplicationShellActive()
+  );
+}
+
+function openMobileCalculationPicker(
+  html,
+  owner,
+  scrollOptions = null
+) {
+  preparePickerForOpen(html);
+
+  picker.classList.add(
+    "picker-viewport-fixed",
+    "picker-mobile-sheet",
+    "picker-mobile-calculation"
+  );
+
+  if (owner === "calculation-zone") {
+    picker.classList.add("picker-zone", "picker-mobile-zone");
+  }
+
+  picker.dataset.pickerOwner = owner || "calculation";
+  picker.style.removeProperty("left");
+  picker.style.removeProperty("top");
+  picker.scrollTop = 0;
+
+  scrollPickerAfterOpen(scrollOptions);
 }
 
 
@@ -103,6 +185,15 @@ function openPickerFromPoint(
   html,
   scrollOptions = null
 ) {
+  if (shouldUseMobileRecordingPicker()) {
+    openMobileRecordingPicker(
+      html,
+      "recording-aperture",
+      scrollOptions
+    );
+    return;
+  }
+
   const stageRect =
     stage.getBoundingClientRect();
 
@@ -134,6 +225,15 @@ function openPickerFromButton(
   scrollOptions = null
 ) {
   if (!button) return;
+
+  if (
+    shouldUseMobileCalculationPicker() &&
+    typeof owner === "string" &&
+    owner.startsWith("calculated-")
+  ) {
+    openMobileCalculationPicker(html, owner, scrollOptions);
+    return;
+  }
 
   const stageRect =
     stage.getBoundingClientRect();
@@ -198,6 +298,14 @@ function openCenteredPicker(
   owner = null,
   scrollOptions = null
 ) {
+  if (
+    shouldUseMobileCalculationPicker() &&
+    owner === "calculation-zone"
+  ) {
+    openMobileCalculationPicker(html, owner, scrollOptions);
+    return;
+  }
+
   preparePickerForOpen(html);
   picker.scrollTop = 0;
 
@@ -238,6 +346,28 @@ function centerPickerInStage() {
   Opens a picker around a Spot Reading position.
 */
 function openPickerFromMarker(marker, html) {
+  if (shouldUseMobileRecordingPicker()) {
+    const calculationActive = Boolean(
+      typeof isWorkflowPhase === "function" &&
+      isWorkflowPhase(WORKFLOW_PHASES.CALCULATION)
+    );
+
+    if (calculationActive) {
+      openMobileCalculationPicker(
+        html,
+        "calculation-marker-menu"
+      );
+      picker.classList.add("picker-marker-menu");
+    } else {
+      openMobileRecordingPicker(
+        html,
+        "recording-marker-menu"
+      );
+    }
+
+    return;
+  }
+
   const stageRect =
     stage.getBoundingClientRect();
 
@@ -302,7 +432,14 @@ function hidePicker() {
   pickerCloseTimeout = window.setTimeout(() => {
     picker.hidden = true;
     picker.classList.remove("closing");
-    picker.classList.remove("is-dragging");
+    picker.classList.remove(
+      "is-dragging",
+      "picker-mobile-sheet",
+      "picker-mobile-aperture",
+      "picker-mobile-marker-menu",
+      "picker-mobile-calculation",
+      "picker-mobile-zone"
+    );
     picker.removeAttribute("data-picker-owner");
     picker.innerHTML = "";
     pickerDragState = null;

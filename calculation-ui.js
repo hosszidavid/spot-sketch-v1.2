@@ -29,6 +29,17 @@ Dependencies:
 ==========================================================
 */
 
+
+const CALCULATION_REFERENCE_ZONE_NOTE =
+  "In Calculation Mode, the Reference Spot Reading will always stay in the selected Zone.";
+
+function getCalculationSetupBaseInstruction() {
+  return (
+    "Select a Spot Reading on the image, then choose its reference Zone. " +
+    CALCULATION_REFERENCE_ZONE_NOTE
+  );
+}
+
 function getCalculationDraftReference() {
   return state.markers.find(
     marker =>
@@ -85,7 +96,7 @@ function updateCalculationUi() {
       ? zone
         ? "Review the Reference Spot Reading and Zone, then start Calculation Mode."
         : "Choose the Zone for the selected Reference Spot Reading."
-      : "Select a Spot Reading on the image, then choose its reference Zone.";
+      : getCalculationSetupBaseInstruction();
 
     calculationSetupStartBtn.disabled =
       !isCalculationDraftComplete();
@@ -214,6 +225,6 @@ window.addEventListener("spot-sketch:picker-closed", () => {
     !state.calculationDraft.referenceZone
   ) {
     calculationSetupHint.textContent =
-      "Select a Spot Reading on the image, then choose its reference Zone.";
+      getCalculationSetupBaseInstruction();
   }
 });

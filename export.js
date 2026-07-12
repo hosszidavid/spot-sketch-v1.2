@@ -282,20 +282,3 @@ function renderQuickExport(target, model) {
 }
 
 /* Compatibility entry point for any legacy caller. */
-function exportPng() {
-  if (typeof globalThis.exportSpotSketchDocument !== "function") return;
-
-  return globalThis.exportSpotSketchDocument({
-    type: "quick",
-    scope: "current",
-    format: "png"
-  });
-}
-
-function safeFileName(name) {
-  return String(name || "spot-sketch")
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9áéíóöőúüű]+/gi, "-")
-    .replace(/^-|-$/g, "") || "spot-sketch";
-}

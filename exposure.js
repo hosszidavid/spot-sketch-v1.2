@@ -585,7 +585,7 @@ function calculateShutterForReference(
 
 /*
   Builds the first Calculated Exposure from the confirmed Reference and
-  Zone. Package 02 starts in S control mode and preserves the Initial ISO
+  Zone. Calculation starts in S control mode and preserves the Initial ISO
   and shutter, calculating the required aperture.
 */
 function createInitialCalculatedExposure() {

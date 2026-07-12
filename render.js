@@ -99,16 +99,22 @@ function drawMarkers() {
 
     ctx.save();
 
+    const touchMarker = Boolean(
+      document.documentElement.dataset.touch === "true" &&
+      typeof isMobileApplicationShellActive === "function" &&
+      isMobileApplicationShellActive()
+    );
+
     ctx.beginPath();
     ctx.arc(
       x,
       y,
-      8,
+      touchMarker ? 10.5 : 8,
       0,
       Math.PI * 2
     );
 
-    ctx.lineWidth = 2.4;
+    ctx.lineWidth = touchMarker ? 3.4 : 2.4;
     ctx.strokeStyle = isLimit
       ? "#ff3b30"
       : markerColor;
@@ -227,6 +233,10 @@ function drawBubbles() {
 
     bubble.dataset.id = marker.id;
     bubble.dataset.placementKey = marker.id;
+    bubble.style.setProperty(
+      "--calculation-candidate-delay",
+      `${((Math.max(1, marker.number) - 1) % 7) * 90}ms`
+    );
 
     bubble.innerHTML = `
       <div class="bubble-identity">
@@ -388,16 +398,37 @@ function placeBubbleSafely(bubble, x, y, rect, placedBubbles) {
     bubblePlacementCache.set(placementKey, best.name);
   }
 
-  bubble.style.left = `${best.left}px`;
-  bubble.style.top = `${best.top}px`;
+  /*
+    Small screens can run out of collision-free candidates. Clamp the chosen
+    position to the visible image instead of allowing the fallback bubble to
+    leave the canvas. The extra top inset keeps the reading number visible.
+  */
+  const compactViewport = ["mobile", "tablet"].includes(
+    document.documentElement.dataset.viewportSize
+  );
+  const edgeInset = compactViewport ? 6 : 2;
+  const numberInset = compactViewport ? 17 : 16;
+
+  const safeLeft = Math.min(
+    Math.max(edgeInset, rect.width - bubbleWidth - edgeInset),
+    Math.max(edgeInset, best.left)
+  );
+
+  const safeTop = Math.min(
+    Math.max(numberInset, rect.height - bubbleHeight - edgeInset),
+    Math.max(numberInset, best.top)
+  );
+
+  bubble.style.left = `${safeLeft}px`;
+  bubble.style.top = `${safeTop}px`;
   bubble.style.transform = "none";
   bubble.style.marginTop = "0";
 
   placedBubbles.push({
-    left: best.left,
-    top: best.top - 16,
-    right: best.left + bubbleWidth,
-    bottom: best.top + bubbleHeight
+    left: safeLeft,
+    top: safeTop - numberInset,
+    right: safeLeft + bubbleWidth,
+    bottom: safeTop + bubbleHeight
   });
 }
 
@@ -527,6 +558,10 @@ function updateHeader() {
           </g>
         </svg>
       `;
+
+  if (typeof scheduleMobileApplicationShellSync === "function") {
+    scheduleMobileApplicationShellSync();
+  }
 }
 
 
@@ -539,13 +574,6 @@ function updateHeader() {
 /*
   Returns the visual class used for zone labels in marker bubbles.
 */
-function getZoneClass(ev) {
-  if (ev < 0) return "zone-low";
-  if (ev > 0) return "zone-high";
-
-  return "zone-mid";
-}
-
 
 /*
   Checks whether a box is fully inside the visible image rectangle.

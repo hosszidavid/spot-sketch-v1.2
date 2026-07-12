@@ -322,7 +322,7 @@ function getOpenTransientSurface() {
     return {
       element: document.getElementById("projectInfoMenu"),
       trigger: document.getElementById("projectInfoBtn"),
-      close: requestCloseProjectInfoPanel
+      close: requestCancelProjectInfoPanel
     };
   }
 

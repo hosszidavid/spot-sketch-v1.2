@@ -11,7 +11,7 @@ Purpose:
 Builds, validates, downloads, opens, and restores the versioned
 .spotsketch project document.
 
-Package 02 scope:
+v1.2 baseline scope:
 - schema v1 validation
 - embedded image decoding
 - active Spot Sketch restore
@@ -36,7 +36,7 @@ Dependencies:
 
 const SPOT_SKETCH_PROJECT_FORMAT = "spot-sketch-project";
 const SPOT_SKETCH_PROJECT_SCHEMA_VERSION = 1;
-const SPOT_SKETCH_APP_VERSION = "1.1";
+const SPOT_SKETCH_APP_VERSION = "1.2";
 const SPOT_SKETCH_MIME_TYPE = "application/x-spotsketch+json";
 
 /*
