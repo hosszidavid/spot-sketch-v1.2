@@ -1,0 +1,1176 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spot Sketch</title>
+  <link rel="stylesheet" href="style.css?v=uihotfix01">
+</head>
+
+
+<body>
+
+<!-- Spot Sketch Dialog -->
+
+<div id="dialogOverlay" class="dialog-overlay" hidden>
+
+  <div
+    id="dialog"
+    class="dialog"
+    role="dialog"
+    aria-modal="true">
+
+    <div
+      id="dialogTitle"
+      class="dialog-title">
+    </div>
+
+    <div
+      id="dialogMessage"
+      class="dialog-message">
+    </div>
+
+    <div class="dialog-buttons">
+
+      <button
+        id="dialogCancelBtn"
+        class="dialog-button">
+        Cancel
+      </button>
+
+      <button
+        id="dialogOkBtn"
+        class="dialog-button dialog-button-primary">
+        OK
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div
+  id="exportWorkspaceOverlay"
+  class="export-workspace-overlay"
+  hidden>
+
+  <section
+    id="exportWorkspace"
+    class="export-workspace"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="exportWorkspaceTitle">
+
+    <header class="export-workspace-header">
+      <div class="export-workspace-heading">
+        <span class="export-workspace-brand-dot"></span>
+        <div>
+          <h2 id="exportWorkspaceTitle">Spot Sketch Export</h2>
+          <p>Prepare a printable A4 document or an image-led Quick Export.</p>
+        </div>
+      </div>
+
+      <button
+        id="exportWorkspaceCloseBtn"
+        class="export-workspace-close-button"
+        type="button"
+        aria-label="Close Export">×</button>
+    </header>
+
+    <div class="export-workspace-body">
+      <aside class="export-workspace-settings">
+
+        <section id="actualExposureSection" class="export-settings-section export-important-section">
+                  <div class="export-settings-section-heading">
+                    <h3>Actual Exposure</h3>
+                    <span id="actualExposureStatusBadge" class="export-settings-status">Not recorded</span>
+                  </div>
+
+                  <p class="export-settings-description">
+                    Record the ISO, shutter speed and aperture that were actually used for the photograph.
+                  </p>
+
+                  <div class="actual-exposure-choice" role="group" aria-label="Actual Exposure status">
+                    <button id="actualExposureNotRecordedBtn" class="actual-exposure-choice-button is-active" type="button" data-actual-exposure-status="not-recorded">Not recorded</button>
+                    <button id="actualExposureExposedBtn" class="actual-exposure-choice-button" type="button" data-actual-exposure-status="exposed">Exposed</button>
+                  </div>
+
+                  <div id="actualExposureFields" class="actual-exposure-fields" hidden>
+                    <label class="actual-exposure-field"><span class="actual-exposure-field-label">ISO</span><select id="actualExposureIsoSelect" class="actual-exposure-select"><option value="">Select ISO</option></select></label>
+                    <label class="actual-exposure-field"><span class="actual-exposure-field-label">Shutter</span><select id="actualExposureShutterSelect" class="actual-exposure-select"><option value="">Select shutter</option></select></label>
+                    <label class="actual-exposure-field"><span class="actual-exposure-field-label">Aperture</span><select id="actualExposureApertureSelect" class="actual-exposure-select"><option value="">Select aperture</option></select></label>
+                  </div>
+
+                  <div id="actualExposureSummary" class="actual-exposure-summary">No Actual Exposure has been recorded.</div>
+                  <div id="actualExposureComparison" class="actual-exposure-comparison" hidden></div>
+
+                  <label id="actualExposureNotesField" class="export-notes-field" hidden>
+                    <span class="export-notes-label">Exposure Notes</span>
+                    <span class="export-notes-description">Record why the actual exposure was chosen or why it differed from the recommendation.</span>
+                    <textarea id="actualExposureNotesInput" class="export-notes-input" rows="4" maxlength="1200" placeholder="For example: Opened the aperture to use a faster shutter speed."></textarea>
+                    <span id="actualExposureNotesCount" class="export-notes-count">0 / 1200</span>
+                  </label>
+
+                  <div id="actualZonePreview" class="actual-zone-preview" hidden>
+                    <div class="actual-zone-preview-heading">
+                      <div><span class="actual-zone-preview-title">Actual Zones</span><span class="actual-zone-preview-description">Calculated from the original Spot Readings and Actual Exposure.</span></div>
+                      <span id="actualZonePreviewCount" class="actual-zone-preview-count">0 markers</span>
+                    </div>
+                    <div class="actual-zone-table">
+                      <div class="actual-zone-table-header"><span>Reading</span><span>Metered</span><span>Difference</span><span>Actual Zone</span></div>
+                      <div id="actualZoneTableBody" class="actual-zone-table-body"></div>
+                    </div>
+                  </div>
+                </section>
+
+        <section id="documentNotesSection" class="export-settings-section">
+                  <div class="export-settings-section-heading">
+                    <h3>Document Notes</h3>
+                    <span id="documentNotesStatusBadge" class="export-settings-status export-settings-status-neutral">Empty</span>
+                  </div>
+                  <p class="export-settings-description">Add general notes about the photograph, scene, workflow or printing intention.</p>
+                  <label class="export-notes-field export-document-notes-field">
+                    <textarea id="documentNotesInput" class="export-notes-input" rows="5" maxlength="2000" placeholder="Add notes about this Spot Sketch Document."></textarea>
+                    <span id="documentNotesCount" class="export-notes-count">0 / 2000</span>
+                  </label>
+
+                  <div class="export-notes-subsection">
+                    <div class="export-notes-subsection-heading">
+                      <strong>Development Notes</strong>
+                      <span id="developmentNotesStatusBadge" class="export-settings-status export-settings-status-neutral">Empty</span>
+                    </div>
+                    <p class="export-settings-description">Record processing, chemistry, time, temperature, agitation, printing or later darkroom decisions.</p>
+                    <label class="export-notes-field">
+                      <textarea id="developmentNotesInput" class="export-notes-input" rows="5" maxlength="2400" placeholder="Development and darkroom notes..."></textarea>
+                      <span id="developmentNotesCount" class="export-notes-count">0 / 2400</span>
+                    </label>
+                  </div>
+                </section>
+
+        <section class="export-settings-section export-format-section">
+                  <div class="export-settings-section-heading">
+                    <h3>Export</h3>
+                    <span class="export-settings-status is-complete">Ready</span>
+                  </div>
+
+                  <p class="export-settings-description">
+                    Document creates fixed A4 pages. Quick Export keeps the image dominant and follows its natural aspect ratio.
+                  </p>
+
+                  <div class="document-export-controls document-export-controls-four">
+                    <label class="document-export-field">
+                      <span>Type</span>
+                      <select id="documentExportType">
+                        <option value="document">A4 Document</option>
+                        <option value="quick">Quick Export</option>
+                      </select>
+                    </label>
+
+                    <label class="document-export-field">
+                      <span>Scope</span>
+                      <select id="documentExportScope">
+                        <option value="current">Current Spot Sketch</option>
+                        <option value="project">Full Project</option>
+                      </select>
+                    </label>
+
+                    <label class="document-export-field">
+                      <span>Format</span>
+                      <select id="documentExportFormat">
+                        <option value="pdf">PDF</option>
+                        <option value="png">PNG</option>
+                      </select>
+                    </label>
+
+                    <label class="document-export-field">
+                      <span>Orientation</span>
+                      <select id="documentExportOrientation">
+                        <option value="auto">Auto from image</option>
+                        <option value="portrait">Portrait A4</option>
+                        <option value="landscape">Landscape A4</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <p id="documentExportHint" class="document-export-hint"></p>
+                </section>
+
+        <section class="export-settings-section export-content-section">
+                  <div class="export-settings-section-heading">
+                    <h3>Content</h3>
+                    <span class="export-settings-status export-settings-status-neutral">Per Spot Sketch</span>
+                  </div>
+
+                  <p class="export-settings-description">
+                    Choose the information groups that appear in both Document and Quick Export.
+                  </p>
+
+                  <div class="export-content-grid">
+                    <label class="export-content-option"><input id="exportIncludeImageInput" type="checkbox"><span><strong>Image + Spot Readings</strong><small>Reference image and numbered marker positions.</small></span></label>
+                    <label class="export-content-option"><input id="exportIncludeMeteringInput" type="checkbox"><span><strong>Metering Workflow</strong><small>Initial setup, measurements, reference and calculation.</small></span></label>
+                    <label class="export-content-option"><input id="exportIncludeActualInput" type="checkbox"><span><strong>Actual Exposure</strong><small>Final ISO, shutter, aperture and exposure notes.</small></span></label>
+                    <label class="export-content-option"><input id="exportIncludeGearInput" type="checkbox"><span><strong>Gear Settings</strong><small>Camera, lens, film, meter and supporting notes.</small></span></label>
+                    <label class="export-content-option"><input id="exportIncludeDocumentNotesInput" type="checkbox"><span><strong>Document Notes</strong><small>General notes module.</small></span></label>
+                    <label class="export-content-option"><input id="exportIncludeDevelopmentNotesInput" type="checkbox"><span><strong>Development Notes</strong><small>Processing and darkroom module.</small></span></label>
+                  </div>
+                </section>
+      </aside>
+
+      <section class="export-workspace-preview">
+        <div class="export-preview-toolbar">
+          <div>
+            <span id="exportPreviewLabel" class="export-preview-label">A4 Document Preview</span>
+            <span id="exportPreviewCaption" class="export-preview-caption">One A4 page per Spot Sketch</span>
+          </div>
+        </div>
+
+        <div class="export-preview-stage">
+          <div id="documentPreviewRoot" class="document-preview-root" aria-live="polite"></div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="export-workspace-footer">
+      <button id="exportWorkspaceCancelBtn" class="export-workspace-footer-button" type="button">Cancel</button>
+      <button id="exportWorkspaceExportBtn" class="export-workspace-footer-button export-workspace-export-button" type="button" title="Export Spot Sketch">Export Document</button>
+    </footer>
+  </section>
+</div>
+
+
+<div
+  id="projectManagerOverlay"
+  class="project-manager-overlay"
+  hidden>
+
+  <section
+    class="project-manager"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="projectManagerTitle">
+
+    <header class="project-manager-header">
+      <div class="project-manager-heading">
+        <span class="project-manager-brand-dot"></span>
+        <div>
+          <h2 id="projectManagerTitle">Project Manager</h2>
+          <p id="projectManagerStatus">
+            Manage the Spot Sketches stored in this project.
+          </p>
+        </div>
+      </div>
+
+      <button
+        id="projectManagerCloseBtn"
+        class="project-manager-close-button"
+        type="button"
+        aria-label="Close Project Manager">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </header>
+
+    <div class="project-manager-toolbar">
+      <label class="project-manager-name-field">
+        <span>Project name</span>
+        <input
+          id="projectManagerNameInput"
+          type="text"
+          maxlength="120"
+          placeholder="Untitled Project">
+      </label>
+
+      <span id="projectManagerCount" class="project-manager-count">
+        1 Spot Sketch
+      </span>
+    </div>
+
+    <div id="projectManagerList" class="project-manager-list"></div>
+
+    <footer class="project-manager-footer">
+      <div class="project-manager-footer-left">
+        <button
+          id="projectManagerMergeBtn"
+          class="project-manager-footer-button project-manager-merge-button"
+          type="button">
+          Merge Projects
+        </button>
+
+        <button
+          id="projectManagerNewProjectBtn"
+          class="project-manager-footer-button project-manager-new-project-button"
+          type="button">
+          New Project
+        </button>
+      </div>
+
+      <div class="project-manager-footer-actions">
+        <button
+          id="projectManagerNewSketchBtn"
+          class="project-manager-footer-button"
+          type="button">
+          New Spot Sketch
+        </button>
+
+        <button
+          id="projectManagerDoneBtn"
+          class="project-manager-footer-button project-manager-done-button"
+          type="button">
+          Done
+        </button>
+      </div>
+    </footer>
+
+    <div id="spotSketchCopyPanel" class="spot-sketch-copy-panel" hidden>
+      <div class="spot-sketch-copy-card">
+        <div class="spot-sketch-copy-heading">
+          <div>
+            <span class="spot-sketch-copy-eyebrow">New Spot Sketch</span>
+            <h3>Choose what to carry forward</h3>
+            <p>
+              Image Identifier is always left empty and must remain unique inside the project.
+            </p>
+          </div>
+        </div>
+
+        <label class="spot-sketch-copy-source-field">
+          <span>Copy from</span>
+          <select id="spotSketchCopySource">
+            <option value="">Start empty</option>
+          </select>
+        </label>
+
+        <div class="spot-sketch-copy-options">
+          <label class="spot-sketch-copy-option">
+            <input type="checkbox" data-copy-group="gear">
+            <span><strong>Gear Settings</strong><small>Camera, lens, filter, film, meter, lighting and gear notes.</small></span>
+          </label>
+
+          <label class="spot-sketch-copy-option">
+            <input type="checkbox" data-copy-group="image">
+            <span><strong>Image</strong><small>Copy the embedded working image.</small></span>
+          </label>
+
+          <label class="spot-sketch-copy-option">
+            <input type="checkbox" data-copy-group="setup">
+            <span><strong>Initial Metering Setup</strong><small>Copy the confirmed metering ISO and shutter.</small></span>
+          </label>
+
+          <label class="spot-sketch-copy-option">
+            <input type="checkbox" data-copy-group="readings">
+            <span><strong>Spot Readings</strong><small>Also requires the source image and Initial Metering Setup.</small></span>
+          </label>
+
+          <label class="spot-sketch-copy-option">
+            <input type="checkbox" data-copy-group="calculation">
+            <span><strong>Calculation</strong><small>Also carries the image, setup and Spot Readings.</small></span>
+          </label>
+
+          <label class="spot-sketch-copy-option">
+            <input type="checkbox" data-copy-group="actualExposure">
+            <span><strong>Actual Exposure</strong><small>Copy the recorded exposure and its notes.</small></span>
+          </label>
+
+          <label class="spot-sketch-copy-option">
+            <input type="checkbox" data-copy-group="imageNotes">
+            <span><strong>Image Notes</strong><small>Copy the Spot Sketch document notes.</small></span>
+          </label>
+
+          <label class="spot-sketch-copy-option">
+            <input type="checkbox" data-copy-group="exportSettings">
+            <span><strong>Export Settings</strong><small>Copy the document-content selections.</small></span>
+          </label>
+        </div>
+
+        <div class="spot-sketch-copy-actions">
+          <button id="spotSketchCopyCancelBtn" type="button">Cancel</button>
+          <button id="spotSketchCopyCreateBtn" class="spot-sketch-copy-create-button" type="button">Create Spot Sketch</button>
+        </div>
+      </div>
+    </div>
+
+    <input
+      id="projectMergeFileInput"
+      type="file"
+      accept=".spotsketch,application/json"
+      hidden>
+
+    <div id="projectMergePanel" class="project-merge-panel" hidden>
+      <div class="project-merge-card">
+        <div class="project-merge-heading">
+          <span class="project-merge-eyebrow">Merge Projects</span>
+          <h3>Create a new combined project</h3>
+          <p id="projectMergeSummary">
+            Select another .spotsketch project to combine with the active project.
+          </p>
+        </div>
+
+        <label class="project-merge-name-field">
+          <span>New project name</span>
+          <input
+            id="projectMergeNameInput"
+            type="text"
+            maxlength="120"
+            placeholder="Merged Project">
+        </label>
+
+        <div id="projectMergeConflicts" class="project-merge-conflicts" hidden></div>
+
+        <div class="project-merge-actions">
+          <button id="projectMergeCancelBtn" type="button">Cancel</button>
+          <button id="projectMergeConfirmBtn" class="project-merge-confirm-button" type="button" disabled>
+            Merge Projects
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+<div id="replaceImageOverlay" class="replace-image-overlay" hidden>
+  <section class="replace-image-dialog" role="dialog" aria-modal="true" aria-labelledby="replaceImageTitle">
+    <span class="replace-image-eyebrow">Image Replacement</span>
+    <h2 id="replaceImageTitle">Replace this Spot Sketch image?</h2>
+    <p id="replaceImageMessage" class="replace-image-message">
+      Spot Reading measurements, Calculation and exposure data will remain.
+    </p>
+
+    <div class="replace-image-options" role="radiogroup" aria-label="Spot Reading position handling">
+      <label class="replace-image-option">
+        <input type="radio" name="replaceImagePositionMode" value="preserve" checked>
+        <span>
+          <strong>Preserve relative positions</strong>
+          <small>Keep every Spot Reading at the same normalized image coordinates.</small>
+        </span>
+      </label>
+
+      <label class="replace-image-option replace-image-option-muted">
+        <input type="radio" name="replaceImagePositionMode" value="arrange">
+        <span>
+          <strong>Arrange along the top</strong>
+          <small>An unusual fallback for complete manual repositioning.</small>
+        </span>
+      </label>
+
+      <label class="replace-image-option replace-image-option-danger">
+        <input type="radio" name="replaceImagePositionMode" value="delete">
+        <span>
+          <strong>Delete Spot Readings</strong>
+          <small>Replace the image and permanently remove every Spot Reading and Calculation.</small>
+        </span>
+      </label>
+    </div>
+
+    <div class="replace-image-actions">
+      <button id="replaceImageCancelBtn" type="button">Cancel</button>
+      <button id="replaceImageConfirmBtn" class="replace-image-confirm-button" type="button">Replace Image</button>
+    </div>
+  </section>
+</div>
+
+<div id="app">
+<div id="projectInfoOverlay" class="project-info-overlay" hidden></div>
+  <header id="appHeader">
+    <div class="header-logo">
+      <span class="logo-dot">S</span>
+    </div>
+
+    <div class="header-controls">
+
+  <!-- Add -->
+  <div class="add-wrap">
+    <button id="addBtn" class="add-button">+ ADD</button>
+
+    <div id="addMenu" class="add-menu" hidden>
+
+      <div class="add-section">
+        <button id="openImageBtn" class="add-menu-item">
+          Open Image
+        </button>
+
+        <div class="add-menu-divider"></div>
+
+        <div class="add-section-title">Project</div>
+
+        <button id="projectManagerBtn" class="add-menu-item">
+          Project Manager
+        </button>
+
+        <button id="openProjectBtn" class="add-menu-item">
+          Open Project
+        </button>
+
+        <button id="saveProjectBtn" class="add-menu-item">
+          Save Project
+        </button>
+
+        <button id="newProjectBtn" class="add-menu-item">
+          New Project
+        </button>
+      </div>
+
+
+    </div>
+  </div>
+
+
+  <!-- Project metadata -->
+  <div class="project-info-wrap">
+
+   <button id="projectInfoBtn" class="project-info-button" aria-label="Project Info">
+  <svg
+  class="project-info-icon"
+  viewBox="0 0 24 24"
+  aria-hidden="true">
+
+  <line x1="2.5" y1="5"  x2="21.5" y2="5"/>
+  <circle cx="8.5" cy="5" r="2.3"/>
+
+  <line x1="2.5" y1="12" x2="21.5" y2="12"/>
+  <circle cx="16" cy="12" r="2.3"/>
+
+  <line x1="2.5" y1="19" x2="21.5" y2="19"/>
+  <circle cx="10.5" cy="19" r="2.3"/>
+
+</svg>
+</button>
+
+    <div id="projectInfoMenu" class="project-info-menu" role="dialog" aria-modal="true" aria-labelledby="projectInfoTitle" hidden>
+
+
+            <!-- Camera -->
+      <div class="metadata-section">
+        <div class="metadata-title-row">
+          <span>Camera</span>
+          <button id="cameraNotesBtn" class="notes-button" aria-label="Camera notes">✎</button>
+        </div>
+        <input id="cameraNameInput" class="metadata-input" placeholder="Camera name">
+        <div id="cameraNotesPopover" class="metadata-notes-wrap" hidden>
+          <textarea id="cameraNotesInput" class="metadata-notes" placeholder="Camera notes"></textarea>
+        </div>
+      </div>
+
+      <div class="metadata-divider"></div>
+
+      <!-- Lens -->
+      <div class="metadata-section">
+        <div class="metadata-title-row">
+          <span>Lens</span>
+          <button id="lensNotesBtn" class="notes-button" aria-label="Lens notes">✎</button>
+        </div>
+        <input id="lensNameInput" class="metadata-input" placeholder="Lens name">
+        <div id="lensNotesPopover" class="metadata-notes-wrap" hidden>
+          <textarea id="lensNotesInput" class="metadata-notes" placeholder="Lens notes"></textarea>
+        </div>
+        <div class="metadata-subtitle">Aperture Range</div>
+        <div class="metadata-range-row metadata-range-row-labelled">
+          <div class="metadata-range-control">
+            <span>Maximum</span>
+            <button id="apertureMinBtn" class="range-pill range-pill-aperture" type="button">0</button>
+          </div>
+          <span class="range-separator">—</span>
+          <div class="metadata-range-control">
+            <span>Minimum</span>
+            <button id="apertureMaxBtn" class="range-pill range-pill-aperture" type="button">F</button>
+          </div>
+        </div>
+        <div class="metadata-subtitle">Shutter Range</div>
+        <div class="metadata-range-row metadata-range-row-labelled">
+          <div class="metadata-range-control">
+            <span>Shortest</span>
+            <button id="shutterMaxBtn" class="range-pill" type="button">0</button>
+          </div>
+          <span class="range-separator">—</span>
+          <div class="metadata-range-control">
+            <span>Longest</span>
+            <button id="shutterMinBtn" class="range-pill" type="button">B</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="metadata-divider"></div>
+
+      <!-- Filter -->
+      <div class="metadata-section">
+        <div class="metadata-title-row">
+          <span>Filter</span>
+          <button id="filterNotesBtn" class="notes-button" aria-label="Filter notes">✎</button>
+        </div>
+        <input id="filterNameInput" class="metadata-input" placeholder="Filter name (optional)">
+        <input id="filterEvInput" class="metadata-input" placeholder="Filter compensation / factor (optional)">
+        <div id="filterNotesPopover" class="metadata-notes-wrap" hidden>
+          <textarea id="filterNotesInput" class="metadata-notes" placeholder="Filter notes"></textarea>
+        </div>
+      </div>
+
+      <div class="metadata-divider"></div>
+
+      <!-- Film -->
+      <div class="metadata-section">
+        <div class="metadata-title-row">
+          <span>Film</span>
+          <button id="filmNotesBtn" class="notes-button" aria-label="Film notes">✎</button>
+        </div>
+        <input id="filmNameInput" class="metadata-input" placeholder="Film name">
+        <input id="filmBoxIsoInput" class="metadata-input" inputmode="numeric" placeholder="Box ISO">
+        <div id="filmNotesPopover" class="metadata-notes-wrap" hidden>
+          <textarea id="filmNotesInput" class="metadata-notes" placeholder="Film notes"></textarea>
+        </div>
+      </div>
+
+      <div class="metadata-divider"></div>
+
+      <!-- Film Holder -->
+      <div class="metadata-section">
+        <div class="metadata-title-row">
+          <span>Film Holder</span>
+          <button id="filmHolderNotesBtn" class="notes-button" aria-label="Film holder notes">✎</button>
+        </div>
+        <input id="filmHolderNameInput" class="metadata-input" placeholder="Film holder name">
+        <div id="filmHolderNotesPopover" class="metadata-notes-wrap" hidden>
+          <textarea id="filmHolderNotesInput" class="metadata-notes" placeholder="Film holder notes"></textarea>
+        </div>
+      </div>
+
+      <div class="metadata-divider"></div>
+
+      <!-- Light Meter -->
+      <div class="metadata-section">
+        <div class="metadata-title-row">
+          <span>Light Meter</span>
+          <button id="lightMeterNotesBtn" class="notes-button" aria-label="Light meter notes">✎</button>
+        </div>
+        <input id="lightMeterNameInput" class="metadata-input" placeholder="Light meter name">
+        <div id="lightMeterNotesPopover" class="metadata-notes-wrap" hidden>
+          <textarea id="lightMeterNotesInput" class="metadata-notes" placeholder="Light meter notes"></textarea>
+        </div>
+      </div>
+
+      <div class="metadata-divider"></div>
+
+      <!-- Additional Gear -->
+      <div class="metadata-section">
+        <div class="metadata-title-row">
+          <span>Lighting</span>
+        </div>
+        <input id="lightingInput" class="metadata-input" placeholder="Lighting / flash notes">
+      </div>
+
+      <div class="metadata-divider"></div>
+
+      <div class="metadata-section">
+        <div class="metadata-title-row">
+          <span>Gear Notes</span>
+          <button id="gearNotesBtn" class="notes-button" aria-label="Gear notes">✎</button>
+        </div>
+        <div id="gearNotesPopover" class="metadata-notes-wrap" hidden>
+          <textarea id="gearNotesInput" class="metadata-notes" placeholder="Tripod, release, support and other gear notes"></textarea>
+        </div>
+      </div>
+
+    <div class="metadata-footer">
+  <button id="projectInfoClearBtn" class="metadata-footer-button metadata-clear-button">
+    Clear
+  </button>
+
+  <div class="metadata-footer-actions">
+    <button id="projectInfoCancelBtn" class="metadata-footer-button">
+      Cancel
+    </button>
+
+    <button id="projectInfoSaveBtn" class="metadata-footer-button metadata-save-button">
+      Save
+    </button>
+  </div>
+</div>
+</div>
+  </div>
+
+
+  <!-- Current image identifier and location -->
+
+  <div class="image-identifier-wrap">
+    <input
+      id="imageIdentifier"
+      placeholder="Image Identifier">
+
+    <button
+      id="locationBtn"
+      class="image-location-button"
+      type="button"
+      aria-label="Location"
+      title="Location">
+      <svg class="image-location-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 21s6-5.2 6-11a6 6 0 1 0-12 0c0 5.8 6 11 6 11Z"/>
+        <circle cx="12" cy="10" r="2.2"/>
+      </svg>
+    </button>
+
+    <div id="locationPanel" class="location-panel" hidden>
+      <div class="location-panel-heading">
+        <strong>Location</strong>
+        <button id="locationPanelCloseBtn" class="location-panel-close" type="button" aria-label="Close Location">×</button>
+      </div>
+
+      <label class="location-field">
+        <span>Location name</span>
+        <input id="locationNameInput" type="text" maxlength="180" placeholder="Place or site name">
+      </label>
+
+      <div class="location-grid">
+        <label class="location-field"><span>Latitude</span><input id="locationLatitudeInput" type="text" inputmode="decimal" autocomplete="off" placeholder="—"></label>
+        <label class="location-field"><span>Longitude</span><input id="locationLongitudeInput" type="text" inputmode="decimal" autocomplete="off" placeholder="—"></label>
+        <label class="location-field"><span>Altitude</span><input id="locationAltitudeInput" type="text" inputmode="decimal" autocomplete="off" placeholder="m"></label>
+        <label class="location-field"><span>Accuracy</span><input id="locationAccuracyInput" type="text" inputmode="decimal" autocomplete="off" placeholder="m"></label>
+      </div>
+
+      <label class="location-field">
+        <span>Location Notes</span>
+        <textarea id="locationNotesInput" rows="4" maxlength="1200" placeholder="Optional location details"></textarea>
+      </label>
+
+      <div class="location-panel-actions">
+        <button id="locationClearBtn" class="location-clear-button" type="button">Clear</button>
+        <div class="location-panel-action-group">
+          <button id="locationCancelBtn" class="location-cancel-button" type="button">Cancel</button>
+          <button id="locationSaveBtn" class="location-save-button" type="button">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recording workflow information -->
+
+  <button
+    id="initialMeteringDisplay"
+    class="initial-metering-display"
+    type="button"
+    aria-label="Restart Initial Metering Setup"
+    title="Restart Metering"
+    hidden>
+
+    <span class="initial-metering-label">
+      Initial
+    </span>
+
+    <span
+      id="initialIsoDisplay"
+      class="initial-metering-value">
+      ISO —
+    </span>
+
+    <span
+      class="initial-metering-divider"
+      aria-hidden="true">
+      ·
+    </span>
+
+    <span
+      id="initialShutterDisplay"
+      class="initial-metering-value">
+      Shutter —
+    </span>
+
+  </button>
+
+  <span id="drBtn" class="lat lat-blue">
+    LAT --
+  </span>
+
+  <button id="exportBtn" class="export-button">
+    EXPORT
+  </button>
+
+  <button id="themeBtn" class="theme-button">
+   <svg
+  class="hold-icon"
+  viewBox="0 0 24 24"
+  aria-hidden="true">
+
+  <path
+    d="M 10.76 0.3364 a 0.9317 0.9317 90 0 1 0.0968 1.0382 a 8.712 8.712 90 0 0 -1.0624 4.1866 c 0 4.8654 3.9664 8.8052 8.8548 8.8052 q 0.9583 -0.0012 1.8549 -0.1936 a 0.9559 0.9559 90 0 1 0.9801 0.3824 a 0.8833 0.8833 90 0 1 -0.0375 1.0805 A 10.1035 10.1035 90 0 1 13.5962 19.36 C 8.0181 19.36 3.5 14.8661 3.5 9.3291 C 3.5 5.1619 6.0579 1.5875 9.7 0.0726 A 0.9075 0.9075 90 0 1 10.76 0.3364"/>
+</svg>
+  </button>
+
+</div>
+  </header>
+
+  <button
+    id="calculationBtn"
+    class="floating-calculation-button"
+    type="button"
+    aria-label="Open Calculation Setup"
+    hidden>
+    <span>CALCULATION</span>
+  </button>
+
+  
+<div
+  id="meteringSetupOverlay"
+  class="metering-setup-overlay"
+  hidden>
+
+  <section
+    id="meteringSetupPanel"
+    class="metering-setup-panel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="meteringSetupTitle">
+
+    <header class="metering-setup-header">
+
+      <span class="metering-setup-eyebrow">
+        Spot Metering
+      </span>
+
+      <h2 id="meteringSetupTitle">
+        Initial Metering Setup
+      </h2>
+
+      <p>
+        Choose the ISO and shutter speed used for recording Spot Readings.
+      </p>
+
+    </header>
+
+    <div class="metering-setup-controls">
+
+      <section class="metering-setup-control">
+
+        <div class="metering-setup-control-heading">
+          <span>ISO</span>
+
+          <strong id="meteringSetupIsoValue">
+            Not selected
+          </strong>
+        </div>
+
+        <div
+          id="meteringSetupIsoOptions"
+          class="metering-setup-options"
+          role="listbox"
+          aria-label="Initial ISO">
+        </div>
+
+      </section>
+
+      <section class="metering-setup-control">
+
+        <div class="metering-setup-control-heading">
+          <span>Shutter</span>
+
+          <strong id="meteringSetupShutterValue">
+            Not selected
+          </strong>
+        </div>
+
+        <div
+          id="meteringSetupShutterOptions"
+          class="metering-setup-options"
+          role="listbox"
+          aria-label="Initial shutter speed">
+        </div>
+
+      </section>
+
+    </div>
+
+    <footer class="metering-setup-footer">
+
+      <div
+        id="meteringSetupSummary"
+        class="metering-setup-summary">
+
+        <span>
+          Start recording Spot Readings with these Initial Metering Settings:
+        </span>
+
+        <strong>
+          Select ISO and shutter speed
+        </strong>
+
+      </div>
+
+      <button
+        id="meteringSetupStartBtn"
+        class="metering-setup-start-button"
+        type="button"
+        disabled>
+        Start Metering
+      </button>
+
+    </footer>
+
+  </section>
+
+</div>
+
+
+<div
+  id="calculationSetupOverlay"
+  class="calculation-setup-overlay"
+  hidden>
+
+  <section
+    class="calculation-setup-panel"
+    role="dialog"
+    aria-modal="false"
+    aria-labelledby="calculationSetupTitle">
+
+    <div class="calculation-setup-heading">
+      <span class="calculation-setup-eyebrow">
+        Calculation Setup
+      </span>
+
+      <div>
+        <h2 id="calculationSetupTitle">
+          Place one Spot Reading on a Zone
+        </h2>
+
+        <p id="calculationSetupHint">
+          Select a Spot Reading on the image, then choose its reference Zone.
+        </p>
+
+        <p class="calculation-setup-metering-note">
+          Spot meter readings are recorded as Zone V values before placement.
+        </p>
+      </div>
+    </div>
+
+    <div class="calculation-setup-selection">
+      <div>
+        <span>Reference</span>
+        <strong id="calculationSetupReference">Not selected</strong>
+      </div>
+
+      <div>
+        <span>Zone</span>
+        <strong id="calculationSetupZone">Not selected</strong>
+      </div>
+    </div>
+
+    <div class="calculation-setup-actions">
+      <button
+        id="calculationSetupCancelBtn"
+        class="calculation-setup-secondary-button"
+        type="button">
+        Cancel
+      </button>
+
+      <button
+        id="calculationSetupStartBtn"
+        class="calculation-setup-primary-button"
+        type="button"
+        disabled>
+        Start Calculation
+      </button>
+    </div>
+
+  </section>
+
+</div>
+
+<section
+  id="calculationStatus"
+  class="calculation-status"
+  aria-label="Calculated Exposure"
+  hidden>
+
+  <div class="calculation-status-heading">
+    <div class="calculation-status-copy">
+      <span>Calculation Mode</span>
+      <strong
+        id="calculationStatusReference"
+        class="calculation-reference-summary">
+      </strong>
+
+
+      <p class="calculation-reference-help">
+        Click a Spot Reading to change the reference or its Zone placement.
+      </p>
+
+      
+    </div>
+
+    <button
+      id="calculationExitBtn"
+      class="calculation-exit-button"
+      type="button">
+      Exit
+    </button>
+  </div>
+
+  <div class="calculated-exposure-row">
+
+    <button
+      id="calculationControlModeBtn"
+      class="calculation-control-mode is-shutter"
+      type="button"
+      aria-label="Switch to Aperture control">
+
+      <span
+        id="calculationModeShutterLabel"
+        class="calculation-control-label active">
+        S
+      </span>
+
+      <span class="calculation-control-track">
+        <span class="calculation-control-thumb"></span>
+      </span>
+
+      <span
+        id="calculationModeApertureLabel"
+        class="calculation-control-label">
+        A
+      </span>
+
+    </button>
+
+    <div class="calculated-exposure-fields">
+      <button
+        id="calculatedIsoBtn"
+        class="calculated-exposure-field calculated-exposure-iso is-editable"
+        type="button">
+        ISO —
+      </button>
+
+      <button
+        id="calculatedShutterBtn"
+        class="calculated-exposure-field calculated-exposure-shutter is-editable"
+        type="button">
+        Shutter —
+      </button>
+
+      <button
+        id="calculatedApertureBtn"
+        class="calculated-exposure-field calculated-exposure-aperture is-calculated"
+        type="button">
+        Aperture —
+      </button>
+
+      <button
+        id="calculationSaveActualBtn"
+        class="calculation-save-actual-button"
+        type="button"
+        title="Use the displayed Calculation values as Actual Exposure"
+        aria-label="Use the displayed Calculation values as Actual Exposure">
+        CONFIRM
+      </button>
+    </div>
+
+  </div>
+
+  <div class="calculation-guidance">
+    <p
+      id="calculatedExposureMessage"
+      class="calculated-exposure-message">
+    </p>
+
+    <div id="calculationRangeWarning" class="calculation-range-warning" hidden role="status"></div>
+
+    <p class="calculation-limit-note">
+      Reciprocity, bellows compensation and filter factor are not calculated.
+    </p>
+  </div>
+
+</section>
+
+<div
+  id="appNotificationStack"
+  class="app-notification-stack"
+  role="region"
+  aria-label="Notifications"
+  aria-live="polite"
+  aria-relevant="additions">
+</div>
+
+
+  <main>
+ <section id="stage">
+
+  <div id="welcome">
+        <div class="welcome-brand">
+          <span class="welcome-logo"></span>
+          <span>
+  Spot Sketch<sup class="version">v1.1</sup>
+</span>
+        </div>
+
+        <h1>Documenting photographic decisions.</h1>
+        <p>Load an image to begin documenting spot meter measurements.</p>
+        <div class="welcome-actions">
+  <button class="welcome-button primary" id="welcomeLoad">
+    Load Image
+  </button>
+
+  <div class="welcome-divider"></div>
+
+  <button class="welcome-button" id="welcomeOpenProject">
+    Open Project
+  </button>
+</div>
+        
+      </div>
+
+      <div id="imageWrap">
+        <canvas id="photoCanvas"></canvas>
+        <svg id="lineLayer"></svg>
+        <div id="bubbleLayer"></div>
+      </div>
+
+      <div id="picker" hidden></div>
+
+      <div id="moveCursor">
+        <span class="move-cursor-dot"></span>
+        <span class="move-cursor-label">move here</span>
+        <span id="moveCountdown">5</span>
+      </div>
+
+    </section>
+  </main>
+
+  <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+  <input id="projectFileInput" type="file" accept=".spotsketch,application/x-spotsketch+json,application/json" hidden>
+</div>
+<script src="dom.js?v=uihotfix01"></script>
+<script src="data.js?v=uihotfix01"></script>
+<script src="storage.js?v=uihotfix01"></script>
+<script src="exposure.js?v=uihotfix01"></script>
+<script src="picker-core.js?v=uihotfix01"></script>
+<script src="recording-pickers.js?v=uihotfix01"></script>
+<script src="calculation-pickers.js?v=uihotfix01"></script>
+<script src="notifications.js?v=uihotfix01"></script>
+<script src="calculation-ui.js?v=uihotfix01"></script>
+<script src="render.js?v=uihotfix01"></script>
+<script src="markers.js?v=uihotfix01"></script>
+<script src="image.js?v=uihotfix01"></script>
+<script src="welcome.js?v=uihotfix01"></script>
+<script src="export.js?v=uihotfix01"></script>
+<script src="dialog.js?v=uihotfix01"></script>
+<script src="project.js?v=uihotfix01"></script>
+<script src="project-library.js?v=uihotfix01"></script>
+<script src="project-document.js?v=uihotfix01"></script>
+<script src="project-manager.js?v=uihotfix01"></script>
+<script src="header.js?v=uihotfix01"></script>
+<script src="document-layout.js?v=uihotfix01"></script>
+<script src="document-model.js?v=uihotfix01"></script>
+<script src="document-renderer.js?v=uihotfix01"></script>
+<script
+  src="html2canvas.js?v=uihotfix01"
+  onload="globalThis.__spotSketchModuleStatus = globalThis.__spotSketchModuleStatus || {}; globalThis.__spotSketchModuleStatus.html2canvas = typeof globalThis.html2canvas === 'function' ? 'ready' : 'loaded without global';"
+  onerror="globalThis.__spotSketchModuleStatus = globalThis.__spotSketchModuleStatus || {}; globalThis.__spotSketchModuleStatus.html2canvas = 'load failed';">
+</script>
+<script
+  src="document-export.js?v=uihotfix01"
+  onerror="globalThis.__spotSketchModuleStatus = globalThis.__spotSketchModuleStatus || {}; globalThis.__spotSketchModuleStatus.documentExport = 'load failed';">
+</script>
+<script src="export-workspace.js?v=uihotfix01"></script>
+<script src="metering-setup.js?v=uihotfix01"></script>
+<script src="recording-workflow.js?v=uihotfix01"></script>
+<script src="calculation-workflow.js?v=uihotfix01"></script>
+<script src="app.js?v=uihotfix01"></script>
+
+</body>
+</html>
