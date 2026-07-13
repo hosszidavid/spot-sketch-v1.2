@@ -401,6 +401,12 @@ function handleCalculationPickerClick(event) {
 }
 
 
+/*
+  Deferred fine-adjustment: mobile auto-start after both Reference and Zone
+  are selected remains intentionally disabled. The explicit Start action is
+  the current confirmation boundary shared with desktop and avoids accidental
+  workflow transitions while users are still testing Zone placement.
+*/
 function startCalculation() {
   if (!isCalculationSetupActive()) return;
 

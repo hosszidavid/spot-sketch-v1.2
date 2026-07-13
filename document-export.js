@@ -310,6 +310,11 @@ async function exportQuickSpotSketch(options = {}) {
   const fileData = await createQuickSpotSketchFile(options.format);
   let delivery = "download";
 
+  /*
+    Platform limitation: a browser cannot force an image directly into the
+    iOS Photos library. Web Share is the supported route; iOS decides whether
+    the share sheet offers Save Image, Files or another destination.
+  */
   if (options.delivery === "share" && typeof navigator.share === "function") {
     const file = new File(
       [fileData.blob],

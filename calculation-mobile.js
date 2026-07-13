@@ -30,8 +30,11 @@ Does NOT own:
 const CALCULATION_GUIDE_AUTO_DISMISS_MS = 10000;
 
 let calculationMobileLayoutInitialized = false;
-let calculationGuideTimeout = null;
 let calculationGuideCountdownTimer = null;
+let calculationGuideRemainingMs = CALCULATION_GUIDE_AUTO_DISMISS_MS;
+let calculationGuideLastTick = 0;
+let calculationGuideHeld = false;
+let calculationGuideCycle = { setupSeen: false, modeSeen: false };
 let calculationGuideMutationObserver = null;
 let calculationPickerMutationObserver = null;
 let calculationShellResizeObserver = null;
@@ -250,41 +253,27 @@ function syncCalculationShellForPicker() {
     return;
   }
 
-  if (pickerOpen && !calculationPickerWasOpen && phase === "mode") {
-    calculationShellExpandedBeforePicker = calculationShellExpanded;
-    setMobileCalculationShellExpanded(false);
-  }
-
-  if (!pickerOpen && calculationPickerWasOpen && phase === "mode") {
-    setMobileCalculationShellExpanded(calculationShellExpandedBeforePicker);
-  }
-
+  /* Fine-adjustment baseline: pickers no longer collapse the Calculation
+     panel. The workflow trigger remains the sole collapse control in active
+     Calculation Mode. */
   calculationPickerWasOpen = pickerOpen;
+  scheduleMobileCalculationShellMeasure();
 }
 
-function ensureCalculationGuidancePreferences() {
-  if (!state.preferences || typeof state.preferences !== "object") {
-    state.preferences = { interfaceMode: INTERFACE_MODES.FULL };
-  }
-
-  const stored = state.preferences.calculationGuidance;
-  state.preferences.calculationGuidance = {
-    setupSeen: Boolean(stored?.setupSeen),
-    modeSeen: Boolean(stored?.modeSeen)
-  };
-  return state.preferences.calculationGuidance;
+function resetMobileCalculationGuidance() {
+  calculationGuideCycle = { setupSeen: false, modeSeen: false };
+  if (isMobileCalculationGuideOpen()) closeMobileCalculationGuide();
 }
 
 function hasSeenMobileCalculationGuide(type) {
-  const preferences = ensureCalculationGuidancePreferences();
-  return type === "setup" ? preferences.setupSeen : preferences.modeSeen;
+  return type === "setup"
+    ? calculationGuideCycle.setupSeen
+    : calculationGuideCycle.modeSeen;
 }
 
 function markMobileCalculationGuideSeen(type) {
-  const preferences = ensureCalculationGuidancePreferences();
-  if (type === "setup") preferences.setupSeen = true;
-  else preferences.modeSeen = true;
-  if (typeof saveLocalAppData === "function") saveLocalAppData();
+  if (type === "setup") calculationGuideCycle.setupSeen = true;
+  else calculationGuideCycle.modeSeen = true;
 }
 
 function isMobileCalculationGuideOpen() {
@@ -293,10 +282,10 @@ function isMobileCalculationGuideOpen() {
 }
 
 function clearMobileCalculationGuideTimers() {
-  window.clearTimeout(calculationGuideTimeout);
   window.clearInterval(calculationGuideCountdownTimer);
-  calculationGuideTimeout = null;
   calculationGuideCountdownTimer = null;
+  calculationGuideHeld = false;
+  calculationGuideLastTick = 0;
 }
 
 function closeMobileCalculationGuide() {
@@ -304,15 +293,40 @@ function closeMobileCalculationGuide() {
   if (!overlay) return;
   clearMobileCalculationGuideTimers();
   overlay.hidden = true;
+  overlay.classList.remove("is-held");
   overlay.removeAttribute("data-guide-type");
+  document.getElementById("calculationGuideHoldBtn")?.setAttribute("aria-pressed", "false");
   scheduleMobileApplicationShellSync?.();
 }
 
-function updateMobileCalculationGuideCountdown(seconds) {
+function updateMobileCalculationGuideCountdown() {
   const countdown = document.getElementById("calculationGuideCountdown");
   const button = document.getElementById("calculationGuideOkBtn");
-  if (countdown) countdown.textContent = `Continuing automatically in ${seconds}s`;
+  const progress = document.querySelector(".calculation-guide-progress span");
+  const seconds = Math.max(0, Math.ceil(calculationGuideRemainingMs / 1000));
+  if (countdown) {
+    countdown.textContent = calculationGuideHeld
+      ? `Paused · ${seconds}s remaining`
+      : `Continuing automatically in ${seconds}s`;
+  }
   if (button) button.textContent = seconds > 0 ? `OK · ${seconds}` : "OK";
+  if (progress) {
+    const ratio = Math.max(0, Math.min(1,
+      calculationGuideRemainingMs / CALCULATION_GUIDE_AUTO_DISMISS_MS
+    ));
+    progress.style.transform = `scaleX(${ratio})`;
+  }
+}
+
+function setMobileCalculationGuideHeld(held) {
+  if (!isMobileCalculationGuideOpen()) return;
+  calculationGuideHeld = Boolean(held);
+  const overlay = document.getElementById("calculationGuideOverlay");
+  const holdButton = document.getElementById("calculationGuideHoldBtn");
+  overlay?.classList.toggle("is-held", calculationGuideHeld);
+  holdButton?.setAttribute("aria-pressed", calculationGuideHeld ? "true" : "false");
+  calculationGuideLastTick = performance.now();
+  updateMobileCalculationGuideCountdown();
 }
 
 function showMobileCalculationGuide(type) {
@@ -333,20 +347,20 @@ function showMobileCalculationGuide(type) {
   overlay.hidden = false;
   markMobileCalculationGuideSeen(type);
 
-  const startedAt = Date.now();
-  updateMobileCalculationGuideCountdown(10);
+  calculationGuideRemainingMs = CALCULATION_GUIDE_AUTO_DISMISS_MS;
+  calculationGuideHeld = false;
+  calculationGuideLastTick = performance.now();
+  updateMobileCalculationGuideCountdown();
   calculationGuideCountdownTimer = window.setInterval(() => {
-    const remaining = Math.max(
-      0,
-      Math.ceil((CALCULATION_GUIDE_AUTO_DISMISS_MS - (Date.now() - startedAt)) / 1000)
-    );
-    updateMobileCalculationGuideCountdown(remaining);
-  }, 250);
-
-  calculationGuideTimeout = window.setTimeout(
-    closeMobileCalculationGuide,
-    CALCULATION_GUIDE_AUTO_DISMISS_MS
-  );
+    const now = performance.now();
+    const elapsed = now - calculationGuideLastTick;
+    calculationGuideLastTick = now;
+    if (!calculationGuideHeld) {
+      calculationGuideRemainingMs = Math.max(0, calculationGuideRemainingMs - elapsed);
+    }
+    updateMobileCalculationGuideCountdown();
+    if (calculationGuideRemainingMs <= 0) closeMobileCalculationGuide();
+  }, 100);
 
   window.requestAnimationFrame(() => button.focus({ preventScroll: true }));
   scheduleMobileApplicationShellSync?.();
@@ -398,7 +412,6 @@ function initializeCalculationMobileLayout() {
   if (calculationMobileLayoutInitialized) return;
   calculationMobileLayoutInitialized = true;
 
-  ensureCalculationGuidancePreferences();
   ensureCalculationMobileCloseHost();
 
   document.getElementById("calculationGuideOkBtn")?.addEventListener("click", event => {
@@ -406,6 +419,35 @@ function initializeCalculationMobileLayout() {
     event.stopPropagation();
     closeMobileCalculationGuide();
   });
+
+  const guideHoldButton = document.getElementById("calculationGuideHoldBtn");
+  guideHoldButton?.addEventListener("pointerdown", event => {
+    event.preventDefault();
+    event.stopPropagation();
+    guideHoldButton.setPointerCapture?.(event.pointerId);
+    setMobileCalculationGuideHeld(true);
+  });
+  for (const eventName of ["pointerup", "pointercancel", "lostpointercapture"]) {
+    guideHoldButton?.addEventListener(eventName, event => {
+      event.preventDefault();
+      event.stopPropagation();
+      setMobileCalculationGuideHeld(false);
+    });
+  }
+  guideHoldButton?.addEventListener("keydown", event => {
+    if (event.code === "Space" || event.code === "Enter") {
+      event.preventDefault();
+      setMobileCalculationGuideHeld(true);
+    }
+  });
+  guideHoldButton?.addEventListener("keyup", event => {
+    if (event.code === "Space" || event.code === "Enter") {
+      event.preventDefault();
+      setMobileCalculationGuideHeld(false);
+    }
+  });
+
+  window.addEventListener("spot-sketch:calculation-guidance-reset", resetMobileCalculationGuidance);
 
   document.getElementById("calculationGuideOverlay")?.addEventListener("click", event => {
     event.preventDefault();
@@ -440,3 +482,6 @@ function initializeCalculationMobileLayout() {
 
   syncMobileCalculationShell();
 }
+
+
+globalThis.resetMobileCalculationGuidance = resetMobileCalculationGuidance;

@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=overlays-content">
   <title>Spot Sketch</title>
-  <link rel="stylesheet" href="tokens.css?v=1.3-baseline-p14">
-  <link rel="stylesheet" href="style.css?v=1.3-baseline-p14">
-  <link rel="stylesheet" href="responsive.css?v=1.3-baseline-p14">
+  <link rel="stylesheet" href="tokens.css?v=1.3-baseline-p15">
+  <link rel="stylesheet" href="style.css?v=1.3-baseline-p15">
+  <link rel="stylesheet" href="responsive.css?v=1.3-baseline-p15">
 </head>
 
 
@@ -160,11 +160,11 @@
 
                   <div id="actualZonePreview" class="actual-zone-preview" hidden>
                     <div class="actual-zone-preview-heading">
-                      <div><span class="actual-zone-preview-title">Actual Zones</span><span class="actual-zone-preview-description">Calculated from the original Spot Readings and Actual Exposure.</span></div>
+                      <div><span class="actual-zone-preview-title">Actual Zones</span><span class="actual-zone-preview-description">Calculated and Actual Zones compared from the same original Spot Readings.</span></div>
                       <span id="actualZonePreviewCount" class="actual-zone-preview-count">0 markers</span>
                     </div>
                     <div class="actual-zone-table">
-                      <div class="actual-zone-table-header"><span>Reading</span><span>Metered</span><span>Difference</span><span>Actual Zone</span></div>
+                      <div class="actual-zone-table-header"><span>Reading</span><span>Metered</span><span>Calculated Zone</span><span>Actual Zone</span></div>
                       <div id="actualZoneTableBody" class="actual-zone-table-body"></div>
                     </div>
                   </div>
@@ -1073,6 +1073,8 @@
       </div>
     </div>
 
+    <p class="calculation-mobile-inline-hint calculation-mobile-setup-hint">Pick a Spot Reading and choose a Zone.</p>
+
     <div class="calculation-setup-actions">
       <button
         id="calculationSetupCancelBtn"
@@ -1187,6 +1189,8 @@
       </button>
     </div>
 
+    <p class="calculation-mobile-inline-hint calculation-mobile-mode-hint">You can change the Reference Spot Reading and its Zone.</p>
+
     <div id="calculationRangeWarning" class="calculation-range-warning" hidden role="status"></div>
 
   </div>
@@ -1232,12 +1236,22 @@
     <div class="calculation-guide-actions">
       <small id="calculationGuideCountdown">Continuing automatically in 10s</small>
 
-      <button
-        id="calculationGuideOkBtn"
-        class="calculation-guide-ok-button"
-        type="button">
-        OK · 10
-      </button>
+      <div class="calculation-guide-button-group">
+        <button
+          id="calculationGuideHoldBtn"
+          class="calculation-guide-hold-button"
+          type="button"
+          aria-pressed="false">
+          Hold
+        </button>
+
+        <button
+          id="calculationGuideOkBtn"
+          class="calculation-guide-ok-button"
+          type="button">
+          OK · 10
+        </button>
+      </div>
     </div>
 
   </section>
@@ -1312,51 +1326,51 @@
   <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
   <input id="projectFileInput" type="file" accept=".spotsketch,application/x-spotsketch+json,application/json" hidden>
 </div>
-<script src="ui-runtime.js?v=1.3-baseline-p14"></script>
-<script src="responsive.js?v=1.3-baseline-p14"></script>
-<script src="dom.js?v=1.3-baseline-p14"></script>
-<script src="data.js?v=1.3-baseline-p14"></script>
-<script src="storage.js?v=1.3-baseline-p14"></script>
-<script src="exposure.js?v=1.3-baseline-p14"></script>
-<script src="picker-core.js?v=1.3-baseline-p14"></script>
-<script src="recording-pickers.js?v=1.3-baseline-p14"></script>
-<script src="calculation-pickers.js?v=1.3-baseline-p14"></script>
-<script src="notifications.js?v=1.3-baseline-p14"></script>
-<script src="calculation-ui.js?v=1.3-baseline-p14"></script>
-<script src="render.js?v=1.3-baseline-p14"></script>
-<script src="markers.js?v=1.3-baseline-p14"></script>
-<script src="image.js?v=1.3-baseline-p14"></script>
-<script src="mobile-image-navigation.js?v=1.3-baseline-p14"></script>
-<script src="image-crop.js?v=1.3-baseline-p14"></script>
-<script src="welcome.js?v=1.3-baseline-p14"></script>
-<script src="export.js?v=1.3-baseline-p14"></script>
-<script src="dialog.js?v=1.3-baseline-p14"></script>
-<script src="project.js?v=1.3-baseline-p14"></script>
-<script src="project-library.js?v=1.3-baseline-p14"></script>
-<script src="project-document.js?v=1.3-baseline-p14"></script>
-<script src="project-manager.js?v=1.3-baseline-p14"></script>
-<script src="header.js?v=1.3-baseline-p14"></script>
-<script src="document-layout.js?v=1.3-baseline-p14"></script>
-<script src="document-model.js?v=1.3-baseline-p14"></script>
-<script src="document-renderer.js?v=1.3-baseline-p14"></script>
+<script src="ui-runtime.js?v=1.3-baseline-p15"></script>
+<script src="responsive.js?v=1.3-baseline-p15"></script>
+<script src="dom.js?v=1.3-baseline-p15"></script>
+<script src="data.js?v=1.3-baseline-p15"></script>
+<script src="storage.js?v=1.3-baseline-p15"></script>
+<script src="exposure.js?v=1.3-baseline-p15"></script>
+<script src="picker-core.js?v=1.3-baseline-p15"></script>
+<script src="recording-pickers.js?v=1.3-baseline-p15"></script>
+<script src="calculation-pickers.js?v=1.3-baseline-p15"></script>
+<script src="notifications.js?v=1.3-baseline-p15"></script>
+<script src="calculation-ui.js?v=1.3-baseline-p15"></script>
+<script src="render.js?v=1.3-baseline-p15"></script>
+<script src="markers.js?v=1.3-baseline-p15"></script>
+<script src="image.js?v=1.3-baseline-p15"></script>
+<script src="mobile-image-navigation.js?v=1.3-baseline-p15"></script>
+<script src="image-crop.js?v=1.3-baseline-p15"></script>
+<script src="welcome.js?v=1.3-baseline-p15"></script>
+<script src="export.js?v=1.3-baseline-p15"></script>
+<script src="dialog.js?v=1.3-baseline-p15"></script>
+<script src="project.js?v=1.3-baseline-p15"></script>
+<script src="project-library.js?v=1.3-baseline-p15"></script>
+<script src="project-document.js?v=1.3-baseline-p15"></script>
+<script src="project-manager.js?v=1.3-baseline-p15"></script>
+<script src="header.js?v=1.3-baseline-p15"></script>
+<script src="document-layout.js?v=1.3-baseline-p15"></script>
+<script src="document-model.js?v=1.3-baseline-p15"></script>
+<script src="document-renderer.js?v=1.3-baseline-p15"></script>
 <script
-  src="html2canvas.js?v=1.3-baseline-p14"
+  src="html2canvas.js?v=1.3-baseline-p15"
   onload="globalThis.__spotSketchModuleStatus = globalThis.__spotSketchModuleStatus || {}; globalThis.__spotSketchModuleStatus.html2canvas = typeof globalThis.html2canvas === 'function' ? 'ready' : 'loaded without global';"
   onerror="globalThis.__spotSketchModuleStatus = globalThis.__spotSketchModuleStatus || {}; globalThis.__spotSketchModuleStatus.html2canvas = 'load failed';">
 </script>
 <script
-  src="document-export.js?v=1.3-baseline-p14"
+  src="document-export.js?v=1.3-baseline-p15"
   onerror="globalThis.__spotSketchModuleStatus = globalThis.__spotSketchModuleStatus || {}; globalThis.__spotSketchModuleStatus.documentExport = 'load failed';">
 </script>
-<script src="export-workspace.js?v=1.3-baseline-p14"></script>
-<script src="metering-setup.js?v=1.3-baseline-p14"></script>
-<script src="recording-workflow.js?v=1.3-baseline-p14"></script>
-<script src="recording-touch.js?v=1.3-baseline-p14"></script>
-<script src="calculation-workflow.js?v=1.3-baseline-p14"></script>
-<script src="calculation-mobile.js?v=1.3-baseline-p14"></script>
-<script src="mobile-shell.js?v=1.3-baseline-p14"></script>
-<script src="mobile-project-surfaces.js?v=1.3-baseline-p14"></script>
-<script src="app.js?v=1.3-baseline-p14"></script>
+<script src="export-workspace.js?v=1.3-baseline-p15"></script>
+<script src="metering-setup.js?v=1.3-baseline-p15"></script>
+<script src="recording-workflow.js?v=1.3-baseline-p15"></script>
+<script src="recording-touch.js?v=1.3-baseline-p15"></script>
+<script src="calculation-workflow.js?v=1.3-baseline-p15"></script>
+<script src="calculation-mobile.js?v=1.3-baseline-p15"></script>
+<script src="mobile-shell.js?v=1.3-baseline-p15"></script>
+<script src="mobile-project-surfaces.js?v=1.3-baseline-p15"></script>
+<script src="app.js?v=1.3-baseline-p15"></script>
 
 </body>
 </html>

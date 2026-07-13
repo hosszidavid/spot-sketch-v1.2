@@ -388,6 +388,24 @@ function handleRecordingDocumentClick(event) {
   Centralized initialization prevents accidental duplicate canvas and
   document listeners during later architectural work.
 */
+function updateRecordingCanvasHoverCursor(event) {
+  if (!canvas) return;
+  if (!isWorkflowPhase(WORKFLOW_PHASES.RECORDING)) {
+    canvas.classList.remove("is-over-collapsed-marker");
+    return;
+  }
+
+  const point = getCanvasPoint(event);
+  const overCollapsedMarker = Boolean(
+    point && getCollapsedMarkerAtPoint(point)
+  );
+  canvas.classList.toggle("is-over-collapsed-marker", overCollapsedMarker);
+}
+
+function clearRecordingCanvasHoverCursor() {
+  canvas?.classList.remove("is-over-collapsed-marker");
+}
+
 function initializeRecordingWorkflow() {
   if (recordingWorkflowInitialized) {
     return;
@@ -420,6 +438,16 @@ function initializeRecordingWorkflow() {
   canvas.addEventListener(
     "click",
     handleCanvasClick
+  );
+
+  canvas.addEventListener(
+    "mousemove",
+    updateRecordingCanvasHoverCursor
+  );
+
+  canvas.addEventListener(
+    "mouseleave",
+    clearRecordingCanvasHoverCursor
   );
 
   picker.addEventListener(

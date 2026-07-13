@@ -367,6 +367,7 @@ function handleStartMeteringClick() {
     return;
   }
 
+  window.dispatchEvent(new CustomEvent("spot-sketch:calculation-guidance-reset"));
   updateMeteringSetupUi();
   render();
 }
@@ -477,7 +478,17 @@ function initializeMeteringSetup() {
   if (initialMeteringDisplay) {
     initialMeteringDisplay.addEventListener("click", event => {
       event.stopPropagation();
-      if (initialMeteringDisplay.disabled) return;
+      if (!hasInitialMeteringSetup()) return;
+
+      if (!isWorkflowPhase(WORKFLOW_PHASES.RECORDING)) {
+        showAppNotification({
+          type: "info",
+          title: "Initial Metering is locked",
+          message: "Exit Calculation before restarting Initial Metering Setup."
+        });
+        return;
+      }
+
       requestRestartMetering();
     });
   }

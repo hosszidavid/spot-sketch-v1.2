@@ -133,6 +133,7 @@ function decodeImageFile(file) {
 function applyFirstImage(decoded) {
   state.imageSource = decoded.source;
   state.imageCanvas = decoded.canvas;
+  window.dispatchEvent(new CustomEvent("spot-sketch:calculation-guidance-reset"));
 
   if (typeof resetMobileImageNavigation === "function") {
     resetMobileImageNavigation({ immediate: true });
@@ -250,6 +251,7 @@ function confirmImageReplacement() {
 function applyReplacementImage(decoded, positionMode) {
   state.imageSource = decoded.source;
   state.imageCanvas = decoded.canvas;
+  window.dispatchEvent(new CustomEvent("spot-sketch:calculation-guidance-reset"));
 
   if (typeof resetMobileImageNavigation === "function") {
     resetMobileImageNavigation({ immediate: true });

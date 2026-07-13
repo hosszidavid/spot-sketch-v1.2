@@ -686,11 +686,7 @@ function updateActualExposureComparison() {
   - complete Actual Exposure
 */
 function updateActualZonePreview() {
-  if (
-    !actualZonePreview ||
-    !actualZonePreviewCount ||
-    !actualZoneTableBody
-  ) {
+  if (!actualZonePreview || !actualZonePreviewCount || !actualZoneTableBody) {
     return;
   }
 
@@ -698,58 +694,48 @@ function updateActualZonePreview() {
   actualZoneTableBody.innerHTML = "";
   actualZonePreviewCount.textContent = "0 markers";
 
-  if (!isActualExposureComplete()) {
-    return;
-  }
+  if (!isActualExposureComplete()) return;
 
-  const markerZones =
-    getAllMarkerActualZones();
+  const markerZones = getAllMarkerActualZones();
+  if (!markerZones.length) return;
 
-  if (!markerZones.length) {
-    return;
-  }
+  const calculatedExposure = state.calculation?.exposure || null;
+  const hasCalculatedExposure = Boolean(
+    calculatedExposure?.iso && calculatedExposure?.shutter && calculatedExposure?.aperture
+  );
+  const exposuresMatch = hasCalculatedExposure &&
+    Number(state.actualExposure.iso) === Number(calculatedExposure.iso) &&
+    String(state.actualExposure.shutter) === String(calculatedExposure.shutter) &&
+    String(state.actualExposure.aperture) === String(calculatedExposure.aperture);
 
-  actualZonePreviewCount.textContent =
-    markerZones.length === 1
-      ? "1 marker"
-      : `${markerZones.length} markers`;
+  actualZonePreviewCount.textContent = markerZones.length === 1
+    ? "1 marker"
+    : `${markerZones.length} markers`;
 
-  actualZoneTableBody.innerHTML =
-    markerZones.map(({ marker, actualZone }) => {
-      const differenceText =
-        formatExposureDifferenceEv(
-          actualZone.ev
-        );
+  actualZoneTableBody.innerHTML = markerZones.map(({ marker, actualZone }) => {
+    const calculatedZone = hasCalculatedExposure
+      ? calculateSpotReadingZone(marker, calculatedExposure)
+      : null;
+    const zonesMatch = Boolean(
+      calculatedZone && String(calculatedZone.label) === String(actualZone.label)
+    );
+    const statusClass = !calculatedZone
+      ? "is-neutral"
+      : !zonesMatch
+        ? "is-zone-different"
+        : exposuresMatch
+          ? "is-full-match"
+          : "is-zone-match";
 
-      const zoneClass =
-        actualZone.ev < 0
-          ? "is-lower"
-          : actualZone.ev > 0
-            ? "is-higher"
-            : "is-middle";
-
-      return `
-        <div class="actual-zone-table-row">
-
-          <span class="actual-zone-marker-number">
-            #${marker.number}
-          </span>
-
-          <span class="actual-zone-metering-reading">
-            <i>f</i>${actualZone.meteringExposure.aperture}
-          </span>
-
-          <span class="actual-zone-difference">
-            ${differenceText}
-          </span>
-
-          <strong class="actual-zone-result ${zoneClass}">
-            Zone ${actualZone.label}
-          </strong>
-
-        </div>
-      `;
-    }).join("");
+    return `
+      <div class="actual-zone-table-row">
+        <span class="actual-zone-marker-number">#${marker.number}</span>
+        <span class="actual-zone-metering-reading"><i>f</i>${actualZone.meteringExposure.aperture}</span>
+        <span class="actual-zone-calculated">${calculatedZone ? `Zone ${calculatedZone.label}` : "—"}</span>
+        <strong class="actual-zone-result ${statusClass}">Zone ${actualZone.label}</strong>
+      </div>
+    `;
+  }).join("");
 
   actualZonePreview.hidden = false;
 }

@@ -741,6 +741,11 @@ function openLimitSelector(limitKey, button = null) {
     return value !== "B" && value !== "0";
   });
 
+  const photographicStops = new Set(isAperture
+    ? ["1", "1.4", "2", "2.8", "4", "5.6", "8", "11", "16", "22", "32", "45", "64"]
+    : ["1/1000", "1/500", "1/250", "1/125", "1/60", "1/30", "1/15", "1/8", "1/4", "1/2", "1", "2", "4", "8", "15", "30", "60"]
+  );
+
   const currentValue = getLimitValue(limitKey);
   const hasSelectableCurrentValue = values.some(
     value => String(value) === String(currentValue)
@@ -767,7 +772,7 @@ function openLimitSelector(limitKey, button = null) {
     <div class="picker-title">${title}</div>
     ${values.map(value => `
       <button
-        class="picker-option ${String(value) === String(currentValue) ? "current" : ""}"
+        class="picker-option ${String(value) === String(currentValue) ? "current" : ""} ${photographicStops.has(String(value)) ? "is-photographic-stop" : ""}"
         type="button"
         data-gear-limit-key="${limitKey}"
         data-gear-limit-value="${value}">

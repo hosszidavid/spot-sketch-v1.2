@@ -520,11 +520,15 @@ function updateHeader() {
 
   if (initialMeteringDisplay) {
     initialMeteringDisplay.hidden = !hasSetup;
-    initialMeteringDisplay.disabled =
-      !hasSetup || !isWorkflowPhase(WORKFLOW_PHASES.RECORDING);
-    initialMeteringDisplay.title = initialMeteringDisplay.disabled
-      ? "Initial Metering Setup"
-      : "Restart Metering";
+    initialMeteringDisplay.disabled = !hasSetup;
+    const canRestartMetering = isWorkflowPhase(WORKFLOW_PHASES.RECORDING);
+    initialMeteringDisplay.setAttribute(
+      "aria-disabled",
+      canRestartMetering ? "false" : "true"
+    );
+    initialMeteringDisplay.title = canRestartMetering
+      ? "Restart Metering"
+      : "Exit Calculation to restart Initial Metering";
   }
 
   if (initialIsoDisplay) {

@@ -2398,9 +2398,7 @@ body.mobile-shell-active #documentNotesSection{
 body.mobile-shell-active .export-workspace-heading p,
 body.mobile-shell-active #actualExposureSection .export-settings-description,
 body.mobile-shell-active #documentNotesSection > .export-settings-description,
-body.mobile-shell-active #documentNotesSection .export-notes-subsection > .export-settings-description,
-body.mobile-shell-active #actualExposureComparison,
-body.mobile-shell-active #actualZonePreview{
+body.mobile-shell-active #documentNotesSection .export-notes-subsection > .export-settings-description{
   display:none !important;
 }
 
@@ -4548,4 +4546,154 @@ PACKAGE 07 HOTFIX 02 — FIXED MOBILE BAR + CALCULATION DRAWER
   body.mobile-shell-active.mobile-calculation-shell-v2 .mobile-calculation-close-host{
     transition:none !important;
   }
+}
+
+
+/* ==========================================================
+   v1.3 Fine Adjustment Baseline
+   Responsive component corrections
+   ========================================================== */
+
+@media (max-width:900px){
+  /* Solid, unified mobile header with unclipped identifier geometry. */
+  body.mobile-shell-active #appHeader{
+    background:#fff !important;
+    border-radius:0 !important;
+    border-left:0 !important;
+    border-right:0 !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+  body.dark.mobile-shell-active #appHeader{background:#1c1c1e !important}
+  body.mobile-shell-active .image-identifier-wrap{
+    overflow:visible !important;
+    height:27px !important;
+  }
+  body.mobile-shell-active #imageIdentifier{
+    transform-origin:left top !important;
+    box-sizing:border-box !important;
+  }
+  body.mobile-shell-active #imageIdentifier:not(:focus):not(:placeholder-shown){
+    color:var(--muted) !important;
+  }
+  body.mobile-shell-active #initialMeteringDisplay{
+    max-width:none !important;
+    overflow:visible !important;
+    padding-inline:4px !important;
+  }
+  body.mobile-shell-active #initialMeteringDisplay .initial-metering-value{
+    overflow:visible !important;
+    text-overflow:clip !important;
+  }
+
+  /* Setup and Mode retain a small permanent instruction after the timed guide. */
+  body.mobile-shell-active .calculation-mobile-inline-hint{
+    display:block;
+    margin:0;
+    color:var(--muted);
+    font-size:8px;
+    font-weight:500;
+    line-height:1.35;
+    text-align:center;
+  }
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-setup-actions{
+    display:flex !important;
+    justify-content:center !important;
+  }
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-setup-primary-button{
+    width:auto !important;
+    min-width:138px !important;
+    max-width:max-content !important;
+    padding-inline:17px !important;
+    justify-content:center !important;
+    text-align:center !important;
+  }
+
+  /* Equal mobile export actions with centered labels. */
+  body.mobile-shell-active .export-workspace-footer{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+    gap:8px !important;
+  }
+  body.mobile-shell-active .export-workspace-footer-button{
+    width:100% !important;
+    min-width:0 !important;
+    padding-inline:7px !important;
+    display:inline-flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    text-align:center !important;
+  }
+
+  /* Calculated Exposure and Actual Zones are important mobile export context. */
+  body.mobile-shell-active #actualExposureComparison,
+  body.mobile-shell-active #actualZonePreview{
+    display:block;
+  }
+  body.mobile-shell-active #actualExposureComparison[hidden],
+  body.mobile-shell-active #actualZonePreview[hidden]{display:none !important}
+  body.mobile-shell-active .actual-zone-table-header,
+  body.mobile-shell-active .actual-zone-table-row{
+    grid-template-columns:40px 52px minmax(68px,1fr) minmax(68px,1fr);
+    gap:5px;
+    padding-inline:7px;
+  }
+
+  /* Centered notification constrained to the real viewport width. */
+  body.mobile-shell-active .app-notification-stack{
+    position:fixed !important;
+    left:50vw !important;
+    right:auto !important;
+    width:min(78vw,286px) !important;
+    max-width:calc(100vw - 28px - var(--safe-area-left) - var(--safe-area-right)) !important;
+    margin:0 !important;
+    padding:0 !important;
+    box-sizing:border-box !important;
+    transform:translateX(-50%) !important;
+  }
+  body.mobile-shell-active .app-notification{
+    width:100% !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+    overflow:hidden !important;
+  }
+
+  /* Fixed separation between Location fields and geolocation action. */
+  body.mobile-shell-active .location-current-button{margin-top:12px !important}
+
+  /* Guide Hold pauses both the timer and progress presentation. */
+  .calculation-guide-button-group{
+    display:flex;
+    align-items:center;
+    gap:7px;
+  }
+  .calculation-guide-hold-button{
+    width:auto;
+    min-width:66px;
+    height:40px;
+    padding:0 12px;
+    color:var(--text);
+    background:rgba(120,120,128,.08);
+    border:1px solid var(--border);
+    font-size:10px;
+    font-weight:720;
+  }
+  .calculation-guide-hold-button[aria-pressed="true"]{
+    color:var(--accent);
+    border-color:rgba(10,132,255,.28);
+    background:rgba(10,132,255,.09);
+  }
+  .calculation-guide-progress span{
+    animation:none !important;
+    transform:scaleX(1);
+    transition:transform 100ms linear;
+  }
+  .calculation-guide-message p:nth-child(2){
+    color:var(--muted);
+    font-weight:400;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .calculation-status:not([hidden]),
+  .calculation-setup-panel{animation:none !important}
 }

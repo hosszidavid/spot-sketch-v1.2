@@ -63,36 +63,35 @@ function renderQuickSpotReadingRows(model) {
 
 function renderQuickGearRows(model) {
   const order = [
-    "camera",
-    "lens",
-    "filter",
-    "film",
-    "filmHolder",
-    "lightMeter",
-    "lighting",
-    "gearNotes"
+    "camera", "lens", "filter", "film", "filmHolder",
+    "lightMeter", "lighting"
   ];
+  const gearNotes = model.gear.units.gearNotes;
+  const hasGearNotes = Boolean(
+    gearNotes?.value && gearNotes.value !== "Not recorded"
+  );
 
   return `
     <div class="ssq-gear-grid">
       ${order.map(key => {
         const unit = model.gear.units[key];
         const name = unit.value || "Not recorded";
-        const details = [unit.secondary, unit.notes]
-          .filter(Boolean)
-          .join(" · ");
-
+        const details = [unit.secondary, unit.notes].filter(Boolean).join(" · ");
         return `
           <div class="ssq-gear-row">
             <span class="ssq-gear-label">${escapeQuickExportHtml(unit.label)}</span>
             <strong class="ssq-gear-name">${escapeQuickExportHtml(name)}</strong>
-            ${details
-              ? `<small>${escapeQuickExportHtml(details)}</small>`
-              : ""}
+            ${details ? `<small>${escapeQuickExportHtml(details)}</small>` : ""}
           </div>
         `;
       }).join("")}
     </div>
+    ${hasGearNotes ? `
+      <div class="ssq-gear-notes-row">
+        <span class="ssq-gear-label">Gear Notes</span>
+        <p>${escapeQuickExportHtml(gearNotes.value)}</p>
+      </div>
+    ` : ""}
   `;
 }
 
@@ -150,7 +149,12 @@ function renderQuickReadingsSection(model) {
   return `
     <section class="ssq-section ssq-readings-section">
       <h2>Spot Readings</h2>
-      <p class="ssq-reading-guide">Number · Original metered aperture · Calculated Zone · Actual Zone</p>
+      <div class="ssq-reading-guide" aria-hidden="true">
+        <span>Number</span>
+        <span>Original metered aperture</span>
+        <span>Calculated Zone</span>
+        <span>Actual Zone</span>
+      </div>
       ${renderQuickSpotReadingRows(model)}
     </section>
   `;
@@ -164,7 +168,7 @@ function renderQuickActualSection(model) {
       <h2>Exposure</h2>
       <div class="ssq-key-value-list ssq-key-value-list-single">
         <div class="ssq-actual-exposure-row"><strong>Actual Exposure</strong><span>${escapeQuickExportHtml(actual.status)} · ${renderQuickExposureLine(actual.exposure)}</span></div>
-        <div class="ssq-exposure-notes-row"><strong>Exposure Notes</strong><span>${escapeQuickExportHtml(actual.notes)}</span></div>
+        <div class="ssq-exposure-notes-row"><strong>Exposure Notes</strong><span class="ssq-exposure-notes-value">${escapeQuickExportHtml(actual.notes)}</span></div>
       </div>
     </section>
   `;

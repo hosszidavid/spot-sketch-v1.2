@@ -8390,3 +8390,140 @@ body.mobile-shell-active .calculated-exposure-row > .calculation-range-warning{
   max-width:21px !important;
   margin:3px 0 !important;
 }
+
+
+/* ==========================================================
+   v1.3 Fine Adjustment Baseline
+   Shared component corrections
+   ========================================================== */
+
+/* Calculation setup keeps an explicit, compact confirmation action. */
+.calculation-setup-actions{justify-content:center}
+.calculation-setup-primary-button{
+  width:auto !important;
+  max-width:max-content;
+  text-align:center;
+  justify-content:center;
+}
+.calculation-mobile-inline-hint{display:none}
+
+/* Calculation presentation motion. Closing remains state-driven through the
+   existing hidden lifecycle; changing that lifecycle is deliberately deferred. */
+@media (min-width:901px){
+  .calculation-status:not([hidden]),
+  .calculation-setup-panel{
+    animation:calculationPanelFineEnter 220ms cubic-bezier(.2,.8,.2,1) both;
+  }
+  .calculation-setup-panel{animation-name:calculationSetupFineEnter}
+}
+@keyframes calculationPanelFineEnter{
+  from{opacity:0;transform:translate(-50%,8px) scale(.985)}
+  to{opacity:1;transform:translate(-50%,0) scale(1)}
+}
+@keyframes calculationSetupFineEnter{
+  from{opacity:0;transform:translateY(8px) scale(.99)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* Header information is visually informational rather than nested controls. */
+#imageIdentifier:not(:focus):not(:placeholder-shown){
+  color:var(--muted);
+  font-size:12px;
+  font-weight:520;
+}
+
+/* Collapsed Spot Readings are clickable, not recording targets. */
+#photoCanvas.is-over-collapsed-marker{cursor:pointer !important}
+
+/* Export close control remains circular at every density. */
+.export-workspace-close-button{
+  width:34px !important;
+  min-width:34px !important;
+  height:34px !important;
+  min-height:34px !important;
+  padding:0 !important;
+  border-radius:50% !important;
+  aspect-ratio:1;
+}
+
+/* Desktop Gear keeps permanent scrollbar geometry to prevent horizontal shift. */
+@media (min-width:761px){
+  .project-info-menu{
+    overflow-y:scroll !important;
+    scrollbar-gutter:stable !important;
+  }
+  .project-library-autocomplete{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .project-library-autocomplete[hidden]{display:none !important}
+  .project-library-autocomplete-row{
+    min-height:26px;
+    height:26px;
+  }
+  .project-library-autocomplete-label{
+    height:22px;
+    margin:2px 0;
+  }
+  .project-library-autocomplete-delete{
+    height:22px !important;
+    min-height:22px !important;
+    margin:2px 0;
+  }
+}
+
+/* Range picker emphasis follows conventional photographic full stops. */
+.picker-option.is-photographic-stop{font-weight:850}
+
+/* Initial Metering option rows remain transparent in dark mode unless selected. */
+body.dark .metering-setup-option:not(.is-selected){
+  background:transparent !important;
+  box-shadow:none !important;
+}
+
+/* Actual Zone status semantics: red mismatch, blue Zone-only match, green full match. */
+.actual-zone-calculated{color:var(--muted);font-weight:680}
+.actual-zone-result.is-zone-different{background:rgba(255,59,48,.10);color:var(--red)}
+.actual-zone-result.is-zone-match{background:rgba(10,132,255,.10);color:var(--accent)}
+.actual-zone-result.is-full-match{background:rgba(52,199,89,.11);color:#248a3d}
+.actual-zone-result.is-neutral{background:rgba(120,120,128,.10);color:var(--muted)}
+
+/* Quick Export reading explanation aligns with the four table columns. */
+.ssq-reading-guide{
+  display:grid;
+  grid-template-columns:78px 70px 1fr 1fr;
+  gap:8px;
+  align-items:end;
+  margin:-2px 0 5px;
+  padding-bottom:4px;
+  border-bottom:1px solid rgba(0,0,0,.10);
+}
+.ssq-reading-guide span{
+  min-width:0;
+  font-size:7.5px;
+  font-weight:650;
+  line-height:1.2;
+  text-align:left;
+}
+.ssq-gear-notes-row{
+  margin-top:7px;
+  padding-top:6px;
+  border-top:1px solid rgba(0,0,0,.075);
+}
+.ssq-gear-notes-row p,
+.ssq-exposure-notes-value{
+  display:block !important;
+  margin:3px 0 0;
+  color:#444;
+  font-weight:400 !important;
+  line-height:1.45;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+
+/* During Calculation, the Initial value remains clickable only to explain why
+   Restart Metering is unavailable. */
+body.calculation-setup-active #appHeader{pointer-events:auto}
+body.calculation-setup-active #appHeader button:not(#initialMeteringDisplay),
+body.calculation-setup-active #appHeader input{pointer-events:none}
