@@ -69,6 +69,7 @@ function isMobileShellElementOpen(id) {
 }
 
 function getMobileShellSurfaceName() {
+  if (document.body.classList.contains("guide-open")) return "guide";
   if (isMobileShellElementOpen("addMenu")) return "add";
   if (typeof isProjectInfoOpen === "function" && isProjectInfoOpen()) return "gear";
   if (typeof isLocationPanelOpen === "function" && isLocationPanelOpen()) return "location";
@@ -95,7 +96,8 @@ function isMobileShellModalSurfaceOpen(surfaceName) {
     "calculation-guide",
     "image-crop",
     "replace-image",
-    "dialog"
+    "dialog",
+    "guide"
   ].includes(surfaceName);
 }
 

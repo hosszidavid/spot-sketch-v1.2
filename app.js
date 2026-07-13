@@ -61,6 +61,7 @@ Dependencies:
 - calculation-ui.js
 - calculation-mobile.js
 - notifications.js
+- guide.js
 ==========================================================
 */
 
@@ -244,6 +245,7 @@ initializeWelcomeActions();
 initializeProjectManager();
 initializeMobileApplicationShell();
 initializeMobileProjectSurfaces();
+initializeMobileGuide();
 
 updateLimitButtons();
 updateMeteringSetupUi();
