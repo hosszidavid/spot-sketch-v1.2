@@ -139,6 +139,10 @@ function applyFirstImage(decoded) {
   state.imageSource = decoded.source;
   state.imageCanvas = decoded.canvas;
 
+  if (typeof resetMobileImageNavigation === "function") {
+    resetMobileImageNavigation({ immediate: true });
+  }
+
   resetMarkers();
   beginMeteringSetup();
 
@@ -251,6 +255,10 @@ function confirmImageReplacement() {
 function applyReplacementImage(decoded, positionMode) {
   state.imageSource = decoded.source;
   state.imageCanvas = decoded.canvas;
+
+  if (typeof resetMobileImageNavigation === "function") {
+    resetMobileImageNavigation({ immediate: true });
+  }
 
   if (positionMode === "arrange") {
     arrangeSpotReadingsAlongTop();

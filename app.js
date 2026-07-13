@@ -236,6 +236,7 @@ initializeRecordingWorkflow();
 initializeRecordingTouchWorkflow();
 initializeImageCropWorkflow();
 initializeImageReplacement();
+initializeMobileImageNavigation();
 initializeCalculationWorkflow();
 initializeCalculationMobileLayout();
 initializeHeaderMenus();

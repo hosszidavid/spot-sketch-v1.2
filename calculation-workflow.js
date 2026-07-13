@@ -92,6 +92,16 @@ function beginCalculationSetup(event) {
   if (event) event.stopPropagation();
 
   if (
+    typeof isMobileCalculationLayoutActive === "function" &&
+    isMobileCalculationLayoutActive() &&
+    (isCalculationSetupActive() || isCalculationActive()) &&
+    typeof toggleMobileCalculationShell === "function"
+  ) {
+    toggleMobileCalculationShell();
+    return;
+  }
+
+  if (
     !isWorkflowPhase(WORKFLOW_PHASES.RECORDING) ||
     !state.imageCanvas ||
     !hasInitialMeteringSetup() ||

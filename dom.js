@@ -59,6 +59,9 @@ const stage =
 const welcome =
   document.getElementById("welcome");
 
+const imageViewport =
+  document.getElementById("imageViewport");
+
 const imageWrap =
   document.getElementById("imageWrap");
 
@@ -70,6 +73,9 @@ const ctx =
 
 const bubbleLayer =
   document.getElementById("bubbleLayer");
+
+const mobileImageResetBtn =
+  document.getElementById("mobileImageResetBtn");
 
 const picker =
   document.getElementById("picker");

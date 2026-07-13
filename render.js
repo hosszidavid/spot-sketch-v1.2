@@ -150,7 +150,8 @@ function drawMarkers() {
 function fitImage() {
   if (!state.imageCanvas) return;
 
-  const stageRect = stage.getBoundingClientRect();
+  const fitContainer = imageViewport || stage;
+  const stageRect = fitContainer.getBoundingClientRect();
 
   const imageRatio = canvas.width / canvas.height;
   const stageRatio = stageRect.width / stageRect.height;
@@ -168,6 +169,10 @@ function fitImage() {
 
   imageWrap.style.width = `${displayWidth}px`;
   imageWrap.style.height = `${displayHeight}px`;
+
+  if (typeof syncMobileImageNavigationBaseLayout === "function") {
+    syncMobileImageNavigationBaseLayout();
+  }
 }
 
 
@@ -185,7 +190,10 @@ const bubblePlacementCache = new Map();
 function drawBubbles() {
   bubbleLayer.innerHTML = "";
 
-  const rect = bubbleLayer.getBoundingClientRect();
+  const rect = {
+    width: bubbleLayer.clientWidth,
+    height: bubbleLayer.clientHeight
+  };
   const placedBubbles = [];
 
   for (const marker of state.markers) {
@@ -305,9 +313,8 @@ function placeBubbleSafely(bubble, x, y, rect, placedBubbles) {
   const gap = 7;
   const sideGap = 8;
 
-  const bubbleRect = bubble.getBoundingClientRect();
-  const bubbleWidth = bubbleRect.width;
-  const bubbleHeight = bubbleRect.height;
+  const bubbleWidth = bubble.offsetWidth;
+  const bubbleHeight = bubble.offsetHeight;
 
   const isRightSide = x > rect.width / 2;
 
@@ -527,13 +534,27 @@ function updateHeader() {
   }
 
   if (calculationBtn) {
+    const mobileCalculationPhase = Boolean(
+      typeof isMobileCalculationLayoutActive === "function" &&
+      isMobileCalculationLayoutActive() &&
+      (
+        isWorkflowPhase(WORKFLOW_PHASES.CALCULATION_SETUP) ||
+        isWorkflowPhase(WORKFLOW_PHASES.CALCULATION)
+      )
+    );
+
     const calculationContextVisible = Boolean(
       state.imageCanvas &&
       hasSetup &&
-      isWorkflowPhase(WORKFLOW_PHASES.RECORDING)
+      (
+        isWorkflowPhase(WORKFLOW_PHASES.RECORDING) ||
+        mobileCalculationPhase
+      )
     );
+
     const canShowCalculation = Boolean(
-      calculationContextVisible && state.markers.length > 0
+      mobileCalculationPhase ||
+      (calculationContextVisible && state.markers.length > 0)
     );
 
     const hasStoredCalculation = Boolean(
@@ -552,7 +573,13 @@ function updateHeader() {
     const calculationLabel = calculationBtn.querySelector("span:last-child");
     if (calculationLabel) {
       calculationLabel.textContent =
-        hasStoredCalculation ? "RESUME CALCULATION" : "CALCULATION";
+        isWorkflowPhase(WORKFLOW_PHASES.CALCULATION_SETUP)
+          ? "CALCULATION SETUP"
+          : isWorkflowPhase(WORKFLOW_PHASES.CALCULATION)
+            ? "CALCULATION MODE"
+            : hasStoredCalculation
+              ? "RESUME CALCULATION"
+              : "CALCULATION";
     }
     calculationBtn.classList.toggle("has-saved-calculation", hasStoredCalculation);
     calculationBtn.classList.toggle("is-visible", canShowCalculation);
