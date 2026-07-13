@@ -8411,3 +8411,60 @@ body.mobile-shell-active .calculated-exposure-row > .calculation-range-warning{
   margin:0 !important;
   box-sizing:border-box;
 }
+
+
+/* ==========================================================
+   RESPONSIVE DEVELOPMENT PACKAGE 10
+   Shared functional polish
+   ========================================================== */
+
+/* Reserve scrollbar room so Gear content never shifts when it appears. */
+.project-info-menu{
+  scrollbar-gutter:stable;
+}
+
+/* Library rows keep their density while hover backgrounds gain breathing room. */
+.project-library-autocomplete-row{
+  height:30px;
+}
+.project-library-autocomplete-label{
+  height:22px;
+  margin-block:4px;
+}
+.project-library-autocomplete-delete{
+  height:22px !important;
+  min-height:22px !important;
+  margin-block:4px;
+}
+
+.actual-exposure-heading-status{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.actual-exposure-difference-indicator{
+  display:inline-grid;
+  place-items:center;
+  width:16px;
+  height:16px;
+  border:1px solid rgba(120,120,128,.28);
+  border-radius:50%;
+  background:rgba(120,120,128,.08);
+  color:var(--muted);
+  font-size:10px;
+  font-weight:820;
+  cursor:help;
+}
+.actual-exposure-difference-indicator[hidden]{display:none !important}
+
+.location-current-button{
+  width:100%;
+  min-height:34px;
+  margin-top:2px;
+  color:var(--accent);
+  background:rgba(10,132,255,.07);
+  border:1px solid rgba(10,132,255,.15);
+}
+.location-current-button:hover{
+  background:rgba(10,132,255,.12);
+}

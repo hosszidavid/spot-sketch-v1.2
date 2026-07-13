@@ -51,6 +51,8 @@ let recordingTouchLongPressTimer = null;
 let recordingTouchActivePointers = new Set();
 let recordingTouchSuppressClickUntil = 0;
 let recordingTouchLastPointerTime = 0;
+let recordingTouchMoveFrame = null;
+let recordingTouchMovePreview = null;
 
 
 function isRecordingTouchPointer(event) {
@@ -188,18 +190,85 @@ function scheduleRecordingTouchLongPress(event, marker) {
 }
 
 
+function getRecordingPointFromClient(clientX, clientY) {
+  if (!state.imageCanvas || !canvas) return null;
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width || !rect.height) return null;
+  const x = (clientX - rect.left) / rect.width;
+  const y = (clientY - rect.top) / rect.height;
+  if (x < 0 || x > 1 || y < 0 || y > 1) return null;
+  return { x, y };
+}
+
+function beginRecordingTouchMoveDrag(event, markerId) {
+  const marker = state.markers.find(item => item.id === markerId);
+  if (!marker || marker.id !== state.moveMarkerId) return false;
+
+  const rect = canvas.getBoundingClientRect();
+  recordingTouchGesture = {
+    pointerId: event.pointerId,
+    startClientX: event.clientX,
+    startClientY: event.clientY,
+    startTime: performance.now(),
+    markerId,
+    moveDrag: true,
+    moved: false,
+    cancelled: false,
+    longPressed: false,
+    markerOffsetX: event.clientX - (rect.left + marker.x * rect.width),
+    markerOffsetY: event.clientY - (rect.top + marker.y * rect.height)
+  };
+
+  recordingTouchActivePointers.add(event.pointerId);
+  document.body.classList.add("touch-marker-dragging");
+  stopMoveCountdown();
+  const label = moveCursor?.querySelector(".move-cursor-label");
+  if (label) label.textContent = "Drag to move";
+  event.preventDefault();
+  event.stopPropagation();
+  return true;
+}
+
+function updateRecordingTouchMoveDrag(event, gesture) {
+  const point = getRecordingPointFromClient(
+    event.clientX - gesture.markerOffsetX,
+    event.clientY - gesture.markerOffsetY
+  );
+  if (!point) return;
+
+  recordingTouchMovePreview = { markerId: gesture.markerId, point };
+  if (recordingTouchMoveFrame !== null) return;
+
+  recordingTouchMoveFrame = window.requestAnimationFrame(() => {
+    recordingTouchMoveFrame = null;
+    const preview = recordingTouchMovePreview;
+    recordingTouchMovePreview = null;
+    if (!preview) return;
+    moveMarker(preview.markerId, preview.point);
+    render();
+  });
+}
+
+function finishRecordingTouchMoveDrag(event, gesture, cancelled = false) {
+  if (!cancelled) {
+    updateRecordingTouchMoveDrag(event, gesture);
+  }
+
+  state.moveMarkerId = null;
+  recordingTouchActivePointers.delete(event.pointerId);
+  document.body.classList.remove("touch-marker-dragging");
+  hideMoveCursor();
+  suppressNextRecordingCanvasClick(560);
+  recordingTouchGesture = null;
+  window.requestAnimationFrame(render);
+}
+
 function handleRecordingTouchPointerDown(event) {
   if (!isRecordingTouchPointer(event)) return;
   if (!isRecordingTouchEnvironment()) return;
   if (!isRecordingPhaseActive()) return;
 
   recordingTouchLastPointerTime = performance.now();
-  recordingTouchActivePointers.add(event.pointerId);
-
-  if (!event.isPrimary || recordingTouchActivePointers.size > 1) {
-    cancelRecordingTouchGesture({ suppressClick: true });
-    return;
-  }
 
   const point = getCanvasPoint(event);
   if (!point) return;
@@ -207,6 +276,27 @@ function handleRecordingTouchPointerDown(event) {
   const marker = typeof getMarkerAtPoint === "function"
     ? getMarkerAtPoint(point, { inputMode: "touch" })
     : getCollapsedMarkerAtPoint(point);
+
+  if (state.moveMarkerId) {
+    if (marker?.id === state.moveMarkerId) {
+      beginRecordingTouchMoveDrag(event, marker.id);
+    } else {
+      suppressNextRecordingCanvasClick(420);
+      showAppNotification({
+        type: "info",
+        title: "Drag the Spot Reading",
+        message: "Grab the selected marker or its bubble and drag it to the new position."
+      });
+    }
+    return;
+  }
+
+  recordingTouchActivePointers.add(event.pointerId);
+
+  if (!event.isPrimary || recordingTouchActivePointers.size > 1) {
+    cancelRecordingTouchGesture({ suppressClick: true });
+    return;
+  }
 
   recordingTouchGesture = {
     pointerId: event.pointerId,
@@ -229,6 +319,13 @@ function handleRecordingTouchPointerMove(event) {
   const gesture = recordingTouchGesture;
   if (!gesture || gesture.pointerId !== event.pointerId) return;
 
+  if (gesture.moveDrag) {
+    gesture.moved = true;
+    event.preventDefault();
+    updateRecordingTouchMoveDrag(event, gesture);
+    return;
+  }
+
   const distance = getRecordingTouchDistance(event, gesture);
 
   if (distance > RECORDING_TOUCH_CONFIG.longPressMovementTolerance) {
@@ -249,6 +346,13 @@ function handleRecordingTouchPointerUp(event) {
 
   const gesture = recordingTouchGesture;
   if (!gesture || gesture.pointerId !== event.pointerId) {
+    return;
+  }
+
+  if (gesture.moveDrag) {
+    event.preventDefault();
+    event.stopPropagation();
+    finishRecordingTouchMoveDrag(event, gesture, false);
     return;
   }
 
@@ -290,6 +394,12 @@ function handleRecordingTouchPointerUp(event) {
 
 
 function handleRecordingTouchPointerCancel(event) {
+  const gesture = recordingTouchGesture;
+  if (gesture?.moveDrag && gesture.pointerId === event.pointerId) {
+    finishRecordingTouchMoveDrag(event, gesture, true);
+    return;
+  }
+
   recordingTouchActivePointers.delete(event.pointerId);
   cancelRecordingTouchGesture({ suppressClick: true });
   clearRecordingTouchGesture();
@@ -320,19 +430,36 @@ function initializeRecordingTouchWorkflow() {
   canvas.addEventListener(
     "pointerdown",
     handleRecordingTouchPointerDown,
-    { passive: true }
+    { passive: false }
   );
 
-  canvas.addEventListener(
+  document.addEventListener("pointerdown", event => {
+    if (!isRecordingTouchPointer(event) || !state.moveMarkerId) return;
+    const bubble = event.target.closest?.(`.bubble[data-id="${state.moveMarkerId}"]`);
+    if (!bubble) return;
+    beginRecordingTouchMoveDrag(event, state.moveMarkerId);
+  }, { capture: true, passive: false });
+
+  document.addEventListener(
     "pointermove",
     handleRecordingTouchPointerMove,
-    { passive: true }
+    { passive: false }
   );
 
   canvas.addEventListener(
     "pointerup",
     handleRecordingTouchPointerUp,
     { passive: false }
+  );
+
+  document.addEventListener(
+    "pointerup",
+    event => {
+      if (recordingTouchGesture?.moveDrag) {
+        handleRecordingTouchPointerUp(event);
+      }
+    },
+    { capture: true, passive: false }
   );
 
   canvas.addEventListener(
@@ -352,7 +479,10 @@ function initializeRecordingTouchWorkflow() {
     handler gets a chance to consume the duplicate event.
   */
   document.addEventListener("click", event => {
-    if (event.target === canvas) {
+    if (
+      performance.now() <= recordingTouchSuppressClickUntil &&
+      (event.target === canvas || event.target.closest?.("#picker, #bubbleLayer"))
+    ) {
       consumeRecordingTouchClickSuppression(event);
     }
   }, true);

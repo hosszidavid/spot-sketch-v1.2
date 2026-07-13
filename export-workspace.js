@@ -71,12 +71,18 @@ const exportWorkspaceCancelBtn =
 const exportWorkspaceExportBtn =
   document.getElementById("exportWorkspaceExportBtn");
 
+const exportWorkspaceJpegBtn =
+  document.getElementById("exportWorkspaceJpegBtn");
+
 
 /*
   Actual Exposure controls.
 */
 const actualExposureStatusBadge =
   document.getElementById("actualExposureStatusBadge");
+
+const actualExposureDifferenceIndicator =
+  document.getElementById("actualExposureDifferenceIndicator");
 
 const actualExposureNotRecordedBtn =
   document.getElementById("actualExposureNotRecordedBtn");
@@ -373,7 +379,40 @@ function updateDocumentExportControls() {
   const quickExport = state.exportOptions.exportType === "quick";
   const projectScope = state.exportOptions.documentScope === "project";
 
-  if (documentExportType) {
+  if (exportWorkspaceJpegBtn) {
+  exportWorkspaceJpegBtn.addEventListener("click", async event => {
+    event.stopPropagation();
+    const exportDocument = globalThis.exportSpotSketchDocument;
+    if (typeof exportDocument !== "function") return;
+
+    exportWorkspaceJpegBtn.disabled = true;
+    exportWorkspaceJpegBtn.textContent = "Preparing…";
+    try {
+      await exportDocument({
+        type: "quick",
+        scope: "current",
+        format: "jpeg",
+        delivery: "download"
+      });
+      showAppNotification({
+        type: "success",
+        title: "JPEG export complete",
+        message: "A compatibility JPEG copy was created."
+      });
+    } catch (error) {
+      showAppNotification({
+        type: "error",
+        title: "JPEG export failed",
+        message: error?.message || "The JPEG copy could not be created."
+      });
+    } finally {
+      exportWorkspaceJpegBtn.disabled = false;
+      exportWorkspaceJpegBtn.textContent = "Save JPEG";
+    }
+  });
+}
+
+if (documentExportType) {
     documentExportType.value = state.exportOptions.exportType;
   }
 
@@ -414,9 +453,15 @@ function updateDocumentExportControls() {
   }
 
   if (exportWorkspaceExportBtn) {
-    exportWorkspaceExportBtn.textContent = quickExport
-      ? "Export Quick PNG"
-      : "Export Document";
+    exportWorkspaceExportBtn.textContent = isMobileExportWorkflowActive()
+      ? "Share / Export"
+      : quickExport
+        ? "Export Quick PNG"
+        : "Export Document";
+  }
+
+  if (exportWorkspaceJpegBtn) {
+    exportWorkspaceJpegBtn.hidden = !isMobileExportWorkflowActive();
   }
 
   if (exportPreviewLabel) {
@@ -626,6 +671,21 @@ function updateActualExposureComparison() {
     "is-different",
     "is-calculated-reference"
   );
+
+  const actualComplete = isActualExposureComplete();
+  const differsFromCalculated = Boolean(
+    actualComplete &&
+    hasCalculatedExposure &&
+    (
+      Number(state.actualExposure.iso) !== Number(calculatedExposure.iso) ||
+      String(state.actualExposure.shutter) !== String(calculatedExposure.shutter) ||
+      String(state.actualExposure.aperture) !== String(calculatedExposure.aperture)
+    )
+  );
+
+  if (actualExposureDifferenceIndicator) {
+    actualExposureDifferenceIndicator.hidden = !differsFromCalculated;
+  }
 
   if (!hasCalculatedExposure) {
     actualExposureComparison.hidden = true;
@@ -1038,6 +1098,7 @@ if (exportWorkspaceExportBtn) {
             type: "quick",
             scope: "current",
             format: "png",
+            delivery: "share",
             orientation: state.exportOptions.documentOrientation
           }
         : {
@@ -1050,8 +1111,14 @@ if (exportWorkspaceExportBtn) {
       const result = await exportDocument(exportRequest);
 
       const pageCount = result?.pageCount || 1;
+      if (result?.delivery === "cancelled") {
+        return;
+      }
+
       const message = result?.type === "quick"
-        ? "The image-led Quick Export PNG was created."
+        ? result?.delivery === "share"
+          ? "The Quick Export was sent to the device sharing panel."
+          : `The image-led Quick Export ${String(result?.format || "png").toUpperCase()} was created.`
         : state.exportOptions.documentScope === "project"
           ? `The complete Project PDF was created with ${pageCount} A4 page${pageCount === 1 ? "" : "s"}.`
           : `The ${String(result?.format || state.exportOptions.documentFormat).toUpperCase()} document was created with ${pageCount} A4 page${pageCount === 1 ? "" : "s"}.`;

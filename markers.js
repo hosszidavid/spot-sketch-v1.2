@@ -195,7 +195,7 @@ function showMoveCursor(event) {
     moveCursor.style.removeProperty("top");
 
     const label = moveCursor.querySelector(".move-cursor-label");
-    if (label) label.textContent = "Tap the new position";
+    if (label) label.textContent = "Drag to move";
   } else {
     document.body.classList.remove("touch-marker-move-active");
 

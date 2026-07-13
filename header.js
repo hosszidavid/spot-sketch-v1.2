@@ -321,6 +321,16 @@ function getOpenTransientSurface() {
     return { element: headerAddToProjectMenu, trigger: null, close: closeHeaderMenus };
   }
 
+  /*
+    A picker opened from Gear is visually and interactively above the Gear
+    surface. It must therefore win the transient-surface priority. Otherwise
+    the capture guard interprets a range selection as a click outside Gear,
+    closes the editor, and prevents the selected value from being committed.
+  */
+  if (typeof isPickerOpen === "function" && isPickerOpen()) {
+    return { element: picker, trigger: null, close: hidePicker };
+  }
+
   if (typeof isProjectInfoOpen === "function" && isProjectInfoOpen()) {
     return {
       element: document.getElementById("projectInfoMenu"),
@@ -335,10 +345,6 @@ function getOpenTransientSurface() {
       trigger: document.getElementById("locationBtn"),
       close: closeLocationPanel
     };
-  }
-
-  if (typeof isPickerOpen === "function" && isPickerOpen()) {
-    return { element: picker, trigger: null, close: hidePicker };
   }
 
   return null;

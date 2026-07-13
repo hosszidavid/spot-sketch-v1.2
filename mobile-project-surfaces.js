@@ -154,6 +154,12 @@ function applyMobileMetadataInputHints() {
   }
 }
 
+function getMobileFieldScrollContainer(field) {
+  return field?.closest(
+    "#projectInfoMenu, #locationPanel, .project-manager, .add-menu, .dialog"
+  ) || null;
+}
+
 function scrollMobileProjectFieldIntoView(field, behavior = "smooth") {
   if (!isMobileProjectSurfaceLayoutActive() || !isMobileProjectEditable(field)) {
     return;
@@ -163,13 +169,33 @@ function scrollMobileProjectFieldIntoView(field, behavior = "smooth") {
   mobileFocusedFieldTimer = window.setTimeout(() => {
     if (document.activeElement !== field) return;
 
-    field.scrollIntoView({
-      block: "center",
-      inline: "nearest",
-      behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
-        ? "auto"
-        : behavior
-    });
+    const viewport = window.visualViewport;
+    const viewportTop = viewport?.offsetTop || 0;
+    const viewportBottom = viewportTop + (viewport?.height || window.innerHeight);
+    const safeTop = viewportTop + 12;
+    const safeBottom = viewportBottom - 14;
+    const rect = field.getBoundingClientRect();
+    const container = getMobileFieldScrollContainer(field);
+
+    let delta = 0;
+    if (rect.bottom > safeBottom) {
+      delta = rect.bottom - safeBottom;
+    } else if (rect.top < safeTop) {
+      delta = rect.top - safeTop;
+    }
+
+    if (Math.abs(delta) > 1) {
+      if (container && container.scrollHeight > container.clientHeight) {
+        container.scrollBy({
+          top: delta,
+          behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
+            ? "auto"
+            : behavior
+        });
+      } else {
+        window.scrollBy({ top: delta, behavior: "auto" });
+      }
+    }
 
     if (typeof repositionProjectLibraryAutocomplete === "function") {
       window.requestAnimationFrame(repositionProjectLibraryAutocomplete);
@@ -207,8 +233,13 @@ function handleMobileProjectFocusOut(event) {
     const activeSurface = getMobileProjectSurfaceForElement(document.activeElement);
     if (!activeSurface || !isMobileProjectEditable(document.activeElement)) {
       document.documentElement.dataset.mobileForm = "idle";
+      window.requestAnimationFrame(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+        if (typeof fitImage === "function") fitImage();
+        if (typeof drawBubbles === "function") drawBubbles();
+      });
     }
-  }, 80);
+  }, 120);
 }
 
 function synchronizeMobileProjectSurfaceState() {
@@ -267,6 +298,14 @@ function initializeMobileProjectSurfaces() {
   document.addEventListener("focusin", handleMobileProjectFocusIn);
   document.addEventListener("focusout", handleMobileProjectFocusOut);
   document.addEventListener("pointerdown", handleMobileProjectPointerDown, true);
+
+  document.getElementById("imageIdentifier")?.addEventListener("focusout", () => {
+    window.setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      if (typeof fitImage === "function") fitImage();
+      if (typeof drawBubbles === "function") drawBubbles();
+    }, 160);
+  });
 
   window.addEventListener(
     "spot-sketch:viewport-change",

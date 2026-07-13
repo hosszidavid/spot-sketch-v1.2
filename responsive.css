@@ -3856,3 +3856,107 @@ PACKAGE 07 HOTFIX 02 — FIXED MOBILE BAR + CALCULATION DRAWER
     grid-template-areas:none !important;
   }
 }
+
+
+/* ==========================================================
+   RESPONSIVE DEVELOPMENT PACKAGE 10
+   Mobile Interaction and Form Stability
+   ========================================================== */
+
+@media (max-width:900px){
+  /* Match desktop selected-value contrast inside Initial Metering Setup. */
+  body.mobile-shell-active .metering-setup-option.is-selected,
+  body.mobile-shell-active .metering-setup-option.is-selected *{
+    color:#fff !important;
+  }
+
+  /* Initial and LAT are peer information, not differently scaled controls. */
+  body.mobile-shell-active #initialMeteringDisplay,
+  body.mobile-shell-active #drBtn,
+  body.mobile-shell-active #initialMeteringDisplay :is(.initial-metering-label,.initial-metering-value),
+  body.mobile-shell-active #drBtn{
+    font-size:10px !important;
+    line-height:1.15 !important;
+  }
+
+  /* iOS does not page-zoom fields whose effective font size is at least 16px. */
+  body.mobile-shell-active :is(
+    #imageIdentifier,
+    #projectInfoMenu input,
+    #projectInfoMenu textarea,
+    #locationPanel input,
+    #locationPanel textarea,
+    #projectManagerOverlay input,
+    #exportWorkspace input,
+    #exportWorkspace textarea,
+    #exportWorkspace select
+  ){
+    font-size:16px !important;
+  }
+
+  /* Mobile close affordances share one red, background-free visual language. */
+  body.mobile-shell-active button[aria-label^="Close"],
+  body.mobile-shell-active button[aria-label^="Exit"]{
+    color:#ff453a !important;
+    background:transparent !important;
+    border-color:transparent !important;
+    box-shadow:none !important;
+  }
+
+  /* Device location is an explicit draft action, never an automatic request. */
+  body.mobile-shell-active .location-current-button{
+    min-height:44px;
+    margin:0 12px 10px;
+    width:calc(100% - 24px);
+  }
+
+  /* The desktop moon icon is reused in the mobile action bar. */
+  body.mobile-shell-active .mobile-theme-desktop-icon{
+    width:18px;
+    height:18px;
+    fill:currentColor;
+  }
+
+  /* Notifications stay away from the lower touch workflow. */
+  body.mobile-shell-active .app-notification-stack{
+    top:calc(var(--safe-area-top) + var(--header-height, 44px) + 8px) !important;
+    right:max(10px,var(--safe-area-right)) !important;
+    bottom:auto !important;
+    left:max(10px,var(--safe-area-left)) !important;
+    width:auto !important;
+    gap:6px !important;
+  }
+  body.mobile-shell-active .app-notification{
+    width:100% !important;
+    max-width:430px !important;
+    min-height:0 !important;
+    padding:9px 10px !important;
+    margin-inline:auto;
+    grid-template-columns:28px minmax(0,1fr) 28px !important;
+    border-radius:13px !important;
+  }
+  body.mobile-shell-active .app-notification-title{font-size:11px !important}
+  body.mobile-shell-active .app-notification-message{font-size:10px !important;line-height:1.3 !important}
+
+  /* Move mode is a direct bubble/marker drag on touch devices. */
+  body.mobile-shell-active.touch-marker-move-active .bubble,
+  body.mobile-shell-active.touch-marker-dragging .bubble{
+    touch-action:none !important;
+  }
+  body.mobile-shell-active.touch-marker-dragging #imageWrap{
+    touch-action:none !important;
+  }
+
+  /* Mobile export: primary share action plus a quiet compatibility JPEG. */
+  body.mobile-shell-active .export-workspace-footer{
+    display:grid !important;
+    grid-template-columns:auto auto minmax(0,1fr) !important;
+    gap:7px !important;
+  }
+  body.mobile-shell-active .export-workspace-jpeg-button{
+    display:inline-flex !important;
+    color:var(--muted);
+    background:transparent;
+  }
+  body.mobile-shell-active .export-workspace-jpeg-button[hidden]{display:none !important}
+}

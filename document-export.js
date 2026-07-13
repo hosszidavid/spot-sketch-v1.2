@@ -283,16 +283,60 @@ function buildRasterPdf(jpegPages) {
   return new Blob([concatBytes(chunks)], { type: "application/pdf" });
 }
 
-async function exportQuickSpotSketch() {
+async function createQuickSpotSketchFile(format = "png") {
   const model = buildSpotSketchDocumentModel();
   const element = createQuickExportElement(model);
   const canvas = await rasterizeExportElement(element);
-  const blob = await canvasToBlob(canvas, "image/png");
+  const jpeg = format === "jpeg";
+  const mimeType = jpeg ? "image/jpeg" : "image/png";
+  const extension = jpeg ? "jpg" : "png";
+  const blob = await canvasToBlob(
+    canvas,
+    mimeType,
+    jpeg ? 0.92 : undefined
+  );
   const identifier = sanitizeProjectFileName(
     state.project.imageIdentifier || "Spot Sketch"
   );
 
-  downloadBlob(blob, `${identifier}-Spot-Sketch-Quick.png`);
+  return {
+    blob,
+    filename: `${identifier}-Spot-Sketch-Quick.${extension}`,
+    format: jpeg ? "jpeg" : "png"
+  };
+}
+
+async function exportQuickSpotSketch(options = {}) {
+  const fileData = await createQuickSpotSketchFile(options.format);
+  let delivery = "download";
+
+  if (options.delivery === "share" && typeof navigator.share === "function") {
+    const file = new File(
+      [fileData.blob],
+      fileData.filename,
+      { type: fileData.blob.type }
+    );
+
+    const shareData = {
+      files: [file],
+      title: "Spot Sketch Export"
+    };
+
+    if (typeof navigator.canShare !== "function" || navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+        delivery = "share";
+        return { ...fileData, delivery };
+      } catch (error) {
+        if (error?.name === "AbortError") {
+          return { ...fileData, delivery: "cancelled" };
+        }
+      }
+    }
+  }
+
+  downloadBlob(fileData.blob, fileData.filename);
+  return { ...fileData, delivery };
 }
 
 async function exportA4Document(options) {
@@ -362,8 +406,16 @@ async function exportSpotSketchDocument(options = {}) {
   const type = options.type === "quick" ? "quick" : "document";
 
   if (type === "quick") {
-    await exportQuickSpotSketch();
-    return { pageCount: 1, format: "png", type: "quick" };
+    const result = await exportQuickSpotSketch({
+      format: options.format === "jpeg" ? "jpeg" : "png",
+      delivery: options.delivery === "share" ? "share" : "download"
+    });
+    return {
+      pageCount: 1,
+      format: result.format,
+      type: "quick",
+      delivery: result.delivery
+    };
   }
 
   return exportA4Document(options);

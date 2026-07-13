@@ -1228,6 +1228,7 @@ function initializeLocationPanel() {
   const cancelButton = document.getElementById("locationCancelBtn");
   const saveButton = document.getElementById("locationSaveBtn");
   const clearButton = document.getElementById("locationClearBtn");
+  const currentLocationButton = document.getElementById("locationUseCurrentBtn");
 
   if (!button || !panel) return;
 
@@ -1291,6 +1292,60 @@ function initializeLocationPanel() {
       notes: ""
     };
     syncFields();
+  });
+
+  currentLocationButton?.addEventListener("click", () => {
+    if (!navigator.geolocation) {
+      showAppNotification({
+        type: "warning",
+        title: "Location is unavailable",
+        message: "This browser does not provide device location access."
+      });
+      return;
+    }
+
+    currentLocationButton.disabled = true;
+    currentLocationButton.textContent = "Locating…";
+
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        if (!locationPanelDraft) locationPanelDraft = createLocationDraft();
+        const coordinates = position.coords;
+        locationPanelDraft.latitude = Number(coordinates.latitude.toFixed(6));
+        locationPanelDraft.longitude = Number(coordinates.longitude.toFixed(6));
+        locationPanelDraft.altitude = Number.isFinite(coordinates.altitude)
+          ? Number(coordinates.altitude.toFixed(1))
+          : null;
+        locationPanelDraft.accuracy = Number.isFinite(coordinates.accuracy)
+          ? Number(coordinates.accuracy.toFixed(1))
+          : null;
+        syncFields();
+        showAppNotification({
+          type: "success",
+          title: "Current location added",
+          message: "Review the coordinates, then press Save to keep them."
+        });
+        currentLocationButton.disabled = false;
+        currentLocationButton.textContent = "Use Current Location";
+      },
+      error => {
+        const message = error?.code === 1
+          ? "Location permission was not granted. Manual entry is still available."
+          : "The current position could not be determined. Try again or enter it manually.";
+        showAppNotification({
+          type: "warning",
+          title: "Current location unavailable",
+          message
+        });
+        currentLocationButton.disabled = false;
+        currentLocationButton.textContent = "Use Current Location";
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 12000,
+        maximumAge: 30000
+      }
+    );
   });
 
   for (const field of fields) {
