@@ -99,11 +99,6 @@ async function requestImageLoad(file) {
   return true;
 }
 
-/* Compatibility entry point used by existing modules. */
-function loadImage(file) {
-  return requestImageLoad(file);
-}
-
 function decodeImageFile(file) {
   return new Promise((resolve, reject) => {
     if (!file.type || !file.type.startsWith("image/")) {

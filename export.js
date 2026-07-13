@@ -291,4 +291,4 @@ function renderQuickExport(target, model) {
   target.appendChild(createQuickExportElement(model));
 }
 
-/* Compatibility entry point for any legacy caller. */
+

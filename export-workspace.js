@@ -1361,8 +1361,8 @@ if (developmentNotesInput) {
 }
 
 /*
-  One shared preview refresh path keeps Package A simple. Every stateful
-  control inside the workspace may trigger the same document renderer.
+  One shared preview refresh path keeps rendering centralized. Every
+  stateful control inside the workspace may trigger the same renderer.
 */
 if (exportWorkspace) {
   exportWorkspace.addEventListener("input", refreshSpotSketchDocumentPreview);

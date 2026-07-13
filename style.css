@@ -1,9 +1,9 @@
 /*
 ==========================================================
-SPOT SKETCH v1.2 — DESKTOP & EXPORT BASELINE
+SPOT SKETCH v1.3 — RESPONSIVE BASELINE
 
 Purpose:
-Defines the consolidated visual system for the confirmed v1.2 baseline.
+Defines the desktop, export, and shared visual system for the v1.3 responsive baseline.
 Responsive/mobile rules added after this baseline must use the shared tokens
 and preserve the documented surface and layer contracts.
 ==========================================================
@@ -5738,7 +5738,7 @@ Project Finalization 01 — Layer System
 
 /*
 ────────────────────────────────────────────
-Spot Sketch Document Architecture — Package A
+Spot Sketch Document Architecture — Shared Model and Preview
 ────────────────────────────────────────────
 */
 
@@ -5804,7 +5804,7 @@ Spot Sketch Document Architecture — Package A
 
 /*
 ────────────────────────────────────────────
-Spot Sketch Document System — Package B
+Spot Sketch Document System — Fixed Page Rendering
 ────────────────────────────────────────────
 */
 
@@ -7565,8 +7565,8 @@ Motion Foundation
 
 
 /* ========================================================
-   UI REFRESH PACKAGES 07–08
-   Gear Workspace + Notifications / unavailable states
+   GEAR WORKSPACE AND NOTIFICATION STATES
+   Gear surface, notifications, and unavailable controls
    ======================================================== */
 
 .project-info-overlay{
@@ -7654,7 +7654,6 @@ body.dark .project-info-menu > .metadata-section{
 }
 
 body.project-info-open #appHeader{z-index:var(--layer-header)}
-body.project-info-open .header-controls > *{pointer-events:none}
 body.project-info-open .project-info-wrap{pointer-events:auto}
 
 [aria-disabled="true"],
@@ -7848,7 +7847,6 @@ body.dark .calculation-save-actual-button{
     z-index:calc(var(--layer-header) + 20) !important;
   }
   body.dark .project-info-menu{background:rgba(36,36,40,.98) !important}
-  .project-info-menu[hidden]{display:none !important}
   .project-info-menu > .metadata-section{
     display:flex !important;
     margin:0 !important;
@@ -7882,14 +7880,13 @@ body.dark .calculation-save-actual-button{
 .app-notification.is-leaving{transform:translateY(12px) scale(.985)}
 
 @media (max-width:620px){
-  .calculated-exposure-fields{grid-template-columns:repeat(2,minmax(0,1fr)) !important}
   .app-notification-stack{left:14px !important;right:14px !important;width:auto !important}
 }
 
 
 /* ==========================================================
-   UI REFRESH PACKAGES 11–12
-   Surface Stability, Gear Dropdown, Range Picker, Dark Cleanup
+   FINAL DESKTOP SURFACE CORRECTIONS
+   Surface stability, Gear dropdown, range picker, and dark-theme cleanup
    ========================================================== */
 
 /* Desktop: Gear Settings is anchored by the header wrapper itself. */

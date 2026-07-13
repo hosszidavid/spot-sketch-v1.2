@@ -10,7 +10,7 @@ Project Manager
 Purpose:
 Owns the multi-Spot-Sketch project lifecycle interface.
 
-v1.2 baseline scope:
+Project Manager scope:
 - Project Manager overlay
 - project naming
 - Spot Sketch list and switching
@@ -32,17 +32,6 @@ Dependencies:
 let projectManagerInitialized = false;
 let pendingSpotSketchSourceId = null;
 let pendingMergeProjectDocument = null;
-
-const PROJECT_COPY_GROUPS = Object.freeze({
-  gear: "gear",
-  image: "image",
-  setup: "initialMeteringSetup",
-  readings: "spotReadings",
-  calculation: "calculation",
-  actualExposure: "actualExposure",
-  imageNotes: "imageNotes",
-  exportSettings: "exportSettings"
-});
 
 function isProjectManagerOpen() {
   const overlay = document.getElementById("projectManagerOverlay");

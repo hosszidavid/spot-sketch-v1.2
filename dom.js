@@ -189,7 +189,3 @@ const calculationExitBtn =
 const appNotificationStack =
   document.getElementById("appNotificationStack");
 
-/* Legacy aliases retained for modules that only check their existence. */
-const appNotification = null;
-const appNotificationTitle = null;
-const appNotificationMessage = null;

@@ -44,7 +44,6 @@ let mobileShellObserver = null;
 let mobileShellBarHeight = 0;
 let mobileActionBarExpanded = true;
 let mobileActionBarTimer = null;
-const MOBILE_ACTION_BAR_AUTO_HIDE_MS = 0;
 
 const mobileSurfaceOrigins = new Map();
 
