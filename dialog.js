@@ -49,6 +49,7 @@ Dependencies:
 */
 let dialogConfirmCallback = null;
 let dialogCancelCallback = null;
+let dialogActionInProgress = false;
 
 
 /*
@@ -71,6 +72,12 @@ let dialogCancelCallback = null;
   - onConfirm
   - onCancel
 */
+function isDialogOpen() {
+  const overlay = document.getElementById("dialogOverlay");
+  return Boolean(overlay && !overlay.hidden);
+}
+
+
 function showDialog(options = {}) {
   const overlay = document.getElementById("dialogOverlay");
   const title = document.getElementById("dialogTitle");
@@ -78,52 +85,25 @@ function showDialog(options = {}) {
   const cancelButton = document.getElementById("dialogCancelBtn");
   const okButton = document.getElementById("dialogOkBtn");
 
-  if (!overlay || !title || !message || !cancelButton || !okButton) return;
+  if (!overlay || !title || !message || !cancelButton || !okButton) {
+    return false;
+  }
 
   /*
-  ────────────────────────────────────────
-  Dialog Content
-  ────────────────────────────────────────
+    The reusable dialog is intentionally single-instance. Refusing a second
+    open request protects the active callbacks from being overwritten by an
+    underlying surface guard or a duplicated destructive action.
   */
+  if (isDialogOpen() || dialogActionInProgress) {
+    return false;
+  }
 
   title.textContent = options.title ?? "";
   message.textContent = options.message ?? "";
 
-  /*
-  ────────────────────────────────────────
-  Button Labels
-  ────────────────────────────────────────
-  */
-
   cancelButton.textContent = options.cancelText ?? "Cancel";
   okButton.textContent = options.okText ?? "OK";
-
-  /*
-  ────────────────────────────────────────
-  Cancel Button
-
-  Visible by default.
-
-  Set:
-    showCancel: false
-
-  for simple information dialogs.
-  ────────────────────────────────────────
-  */
-
   cancelButton.hidden = options.showCancel === false;
-
-  /*
-  ────────────────────────────────────────
-  Confirm Button Style
-
-  Supported styles:
-
-  - default
-  - danger
-  - success
-  ────────────────────────────────────────
-  */
 
   okButton.classList.remove(
     "dialog-button-danger",
@@ -138,22 +118,15 @@ function showDialog(options = {}) {
     okButton.classList.add("dialog-button-success");
   }
 
-  /*
-  ────────────────────────────────────────
-  Callbacks
-  ────────────────────────────────────────
-  */
-
+  cancelButton.disabled = false;
+  okButton.disabled = false;
+  dialogActionInProgress = false;
   dialogConfirmCallback = options.onConfirm ?? null;
   dialogCancelCallback = options.onCancel ?? null;
 
-  /*
-  ────────────────────────────────────────
-  Show Dialog
-  ────────────────────────────────────────
-  */
-
   overlay.hidden = false;
+  overlay.dataset.dialogOpen = "true";
+  return true;
 }
 
 
@@ -168,13 +141,54 @@ function showDialog(options = {}) {
 */
 function closeDialog() {
   const overlay = document.getElementById("dialogOverlay");
+  const cancelButton = document.getElementById("dialogCancelBtn");
+  const okButton = document.getElementById("dialogOkBtn");
 
   if (overlay) {
     overlay.hidden = true;
+    delete overlay.dataset.dialogOpen;
   }
+
+  if (cancelButton) cancelButton.disabled = false;
+  if (okButton) okButton.disabled = false;
 
   dialogConfirmCallback = null;
   dialogCancelCallback = null;
+  dialogActionInProgress = false;
+}
+
+
+function resolveDialog(action) {
+  if (!isDialogOpen() || dialogActionInProgress) return false;
+
+  dialogActionInProgress = true;
+
+  const cancelButton = document.getElementById("dialogCancelBtn");
+  const okButton = document.getElementById("dialogOkBtn");
+  if (cancelButton) cancelButton.disabled = true;
+  if (okButton) okButton.disabled = true;
+
+  const callback = action === "confirm"
+    ? dialogConfirmCallback
+    : dialogCancelCallback;
+
+  closeDialog();
+
+  if (typeof callback === "function") {
+    callback();
+  }
+
+  return true;
+}
+
+
+function cancelDialog() {
+  return resolveDialog("cancel");
+}
+
+
+function confirmDialog() {
+  return resolveDialog("confirm");
 }
 
 
@@ -184,33 +198,31 @@ function closeDialog() {
 ────────────────────────────────────────────
 */
 
-/*
-  Cancel closes the dialog first, then runs the optional cancel callback.
-*/
-document
-  .getElementById("dialogCancelBtn")
-  .addEventListener("click", () => {
-    const callback = dialogCancelCallback;
-
-    closeDialog();
-
-    if (callback) {
-      callback();
-    }
-  });
-
+const dialogOverlayElement = document.getElementById("dialogOverlay");
+const dialogCancelButtonElement = document.getElementById("dialogCancelBtn");
+const dialogOkButtonElement = document.getElementById("dialogOkBtn");
 
 /*
-  OK closes the dialog first, then runs the optional confirm callback.
+  Keep modal pointer events inside the dialog layer. This is deliberately
+  separate from the transient-surface guard so modal priority remains stable
+  even if more surfaces are added later.
 */
-document
-  .getElementById("dialogOkBtn")
-  .addEventListener("click", () => {
-    const callback = dialogConfirmCallback;
+dialogOverlayElement?.addEventListener("pointerdown", event => {
+  event.stopPropagation();
+});
 
-    closeDialog();
+dialogOverlayElement?.addEventListener("click", event => {
+  event.stopPropagation();
+});
 
-    if (callback) {
-      callback();
-    }
-  });
+dialogCancelButtonElement?.addEventListener("click", event => {
+  event.preventDefault();
+  event.stopPropagation();
+  cancelDialog();
+});
+
+dialogOkButtonElement?.addEventListener("click", event => {
+  event.preventDefault();
+  event.stopPropagation();
+  confirmDialog();
+});

@@ -272,7 +272,7 @@ function createProjectLibraryAutocompleteRow(input, config, item) {
   deleteButton.textContent = "×";
   deleteButton.setAttribute("aria-label", "Delete library item");
 
-  deleteButton.addEventListener("mousedown", event => {
+  deleteButton.addEventListener("click", event => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -304,8 +304,8 @@ function requestDeleteProjectLibraryItem(input, config, item) {
       saveLocalAppData();
 
       window.setTimeout(() => {
+        if (!isProjectInfoOpen()) return;
         showProjectLibraryAutocomplete(input, config);
-        input.focus();
       }, 0);
     }
   });

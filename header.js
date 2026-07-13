@@ -310,6 +310,9 @@ function isAddToProjectMenuOpen() {
   conflicting panel transitions.
 */
 function getOpenTransientSurface() {
+  if (typeof isDialogOpen === "function" && isDialogOpen()) {
+    return null;
+  }
   if (headerAddMenu && !headerAddMenu.hidden) {
     return { element: headerAddMenu, trigger: headerAddBtn, close: closeHeaderMenus };
   }
@@ -343,6 +346,13 @@ function getOpenTransientSurface() {
 
 function bindTransientSurfaceGuard() {
   document.addEventListener("click", event => {
+    if (
+      (typeof isDialogOpen === "function" && isDialogOpen()) ||
+      event.target.closest("#dialogOverlay")
+    ) {
+      return;
+    }
+
     const surface = getOpenTransientSurface();
     if (!surface || !surface.element) return;
 

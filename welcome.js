@@ -11,7 +11,8 @@ Purpose:
 Handles the welcome screen logo animation.
 
 Table of Contents:
-1. Welcome Logo Animation
+1. Welcome Actions
+2. Welcome Logo Animation
 
 Owns:
 - welcome logo entrance animation
@@ -24,14 +25,45 @@ Does NOT own:
 - welcome screen layout
 
 Dependencies:
-- none
+- header.js owns the shared project file input change handler
 ==========================================================
 */
 
 
+
+
+let welcomeActionsInitialized = false;
+
+
 /*
 ────────────────────────────────────────────
-1. Welcome Logo Animation
+1. Welcome Actions
+────────────────────────────────────────────
+*/
+
+function initializeWelcomeActions() {
+  if (welcomeActionsInitialized) return;
+  welcomeActionsInitialized = true;
+
+  const openProjectButton = document.getElementById("welcomeOpenProject");
+  const projectInput = document.getElementById("projectFileInput");
+
+  openProjectButton?.addEventListener("click", event => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!projectInput) return;
+
+    /* Allow the same project file to be selected again after cancellation. */
+    projectInput.value = "";
+    projectInput.click();
+  });
+}
+
+
+/*
+────────────────────────────────────────────
+2. Welcome Logo Animation
 ────────────────────────────────────────────
 */
 

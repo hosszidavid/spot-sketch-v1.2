@@ -107,6 +107,16 @@ function isEditableEventTarget(event) {
 document.addEventListener("keydown", event => {
   if (
     event.key === "Escape" &&
+    typeof isDialogOpen === "function" &&
+    isDialogOpen()
+  ) {
+    event.preventDefault();
+    cancelDialog();
+    return;
+  }
+
+  if (
+    event.key === "Escape" &&
     typeof isProjectInfoOpen === "function" &&
     isProjectInfoOpen()
   ) {
@@ -229,6 +239,7 @@ initializeImageReplacement();
 initializeCalculationWorkflow();
 initializeCalculationMobileLayout();
 initializeHeaderMenus();
+initializeWelcomeActions();
 initializeProjectManager();
 initializeMobileApplicationShell();
 initializeMobileProjectSurfaces();

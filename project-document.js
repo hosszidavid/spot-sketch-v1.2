@@ -675,7 +675,11 @@ function captureRuntimeProjectSnapshot() {
     selectedId: state.selectedId,
     pendingPoint: structuredClone(state.pendingPoint),
     moveMarkerId: state.moveMarkerId,
-    project: structuredClone(state.project),
+    project: structuredClone(
+      typeof getCommittedProjectInfoState === "function"
+        ? getCommittedProjectInfoState()
+        : state.project
+    ),
     actualExposure: structuredClone(state.actualExposure),
     exportOptions: structuredClone(state.exportOptions),
     documentNotes: state.documentNotes,
@@ -884,7 +888,7 @@ function closeProjectSurfacesBeforeRestore() {
   hideMoveCursor();
 
   if (isProjectInfoOpen()) {
-    closeProjectInfoPanel({ restore: false });
+    closeProjectInfoPanel();
   }
 
   if (isExportWorkspaceOpen()) {

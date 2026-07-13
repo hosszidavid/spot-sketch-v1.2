@@ -83,6 +83,7 @@ const PROJECT_TEXT_FIELDS = [
 
 let projectSavedState = null;
 let projectInfoDirty = false;
+let projectInfoTransaction = null;
 
 /*
   There are no boolean Gear fields in the v1.2 baseline. An empty
@@ -349,6 +350,61 @@ function updateProjectFields() {
 
 
 /*
+  Starts an isolated Gear editing transaction.
+
+  The committed metadata object is retained while state.project points to a
+  cloned draft. Existing field, range-picker and library-apply code can keep
+  using the central project shape without mutating the committed object.
+*/
+function beginProjectInfoTransaction() {
+  ensureProjectStructure();
+
+  const committed = structuredClone(state.project);
+  const draft = structuredClone(committed);
+
+  projectInfoTransaction = { committed, draft };
+  projectSavedState = structuredClone(committed);
+  state.project = draft;
+  projectInfoDirty = false;
+}
+
+
+function commitProjectInfoTransaction() {
+  const committed = structuredClone(state.project);
+
+  state.project = committed;
+  projectSavedState = structuredClone(committed);
+  projectInfoTransaction = null;
+  projectInfoDirty = false;
+}
+
+
+function rollbackProjectInfoTransaction(options = {}) {
+  const restoreCommitted = options.restoreCommitted !== false;
+
+  if (
+    restoreCommitted &&
+    projectInfoTransaction?.committed
+  ) {
+    state.project = structuredClone(projectInfoTransaction.committed);
+  }
+
+  projectInfoTransaction = null;
+  projectInfoDirty = false;
+}
+
+
+function isProjectInfoTransactionActive() {
+  return Boolean(projectInfoTransaction);
+}
+
+
+function getCommittedProjectInfoState() {
+  return projectInfoTransaction?.committed || state.project;
+}
+
+
+/*
   Accepts the current project state as the new clean Project Info baseline.
 
   Project document restore uses this after replacing state.project so a later
@@ -356,6 +412,7 @@ function updateProjectFields() {
 */
 function commitProjectInfoBaseline() {
   ensureProjectStructure();
+  projectInfoTransaction = null;
   projectSavedState = structuredClone(state.project);
   projectInfoDirty = false;
 }
@@ -858,11 +915,12 @@ function positionProjectInfoDropdown() {
 }
 
 function openProjectInfoPanel() {
+  if (isProjectInfoOpen()) return;
+
   ensureProjectStructure();
+  beginProjectInfoTransaction();
 
   document.body.classList.add("project-info-open");
-
-  projectInfoDirty = false;
 
   const overlay = document.getElementById("projectInfoOverlay");
   const menu = document.getElementById("projectInfoMenu");
@@ -897,7 +955,13 @@ function openProjectInfoPanel() {
 /*
   Closes Project Info without changing state.
 */
-function closeProjectInfoPanel() {
+function closeProjectInfoPanel(options = {}) {
+  if (projectInfoTransaction) {
+    rollbackProjectInfoTransaction({
+      restoreCommitted: options.restore !== false
+    });
+  }
+
   document.body.classList.remove("project-info-open");
 
   const overlay = document.getElementById("projectInfoOverlay");
@@ -927,6 +991,8 @@ function closeProjectInfoPanel() {
   - named metadata blocks into their independent libraries
 */
 function saveProjectInfoPanel() {
+  if (!isProjectInfoTransactionActive()) return;
+
   readProjectFieldsFromUI();
   ensureProjectStructure();
 
@@ -937,12 +1003,10 @@ function saveProjectInfoPanel() {
   saveCurrentFilmToLibrary();
   saveCurrentLightMeterToLibrary();
 
+  commitProjectInfoTransaction();
   saveLocalAppData();
 
-  projectSavedState = structuredClone(state.project);
-  projectInfoDirty = false;
-
-  closeProjectInfoPanel();
+  closeProjectInfoPanel({ restore: false });
   render();
 }
 
@@ -954,6 +1018,9 @@ function saveProjectInfoPanel() {
   for confirmation first.
 */
 function requestCancelProjectInfoPanel() {
+  if (!isProjectInfoOpen()) return;
+  if (typeof isDialogOpen === "function" && isDialogOpen()) return;
+
   if (!projectInfoDirty) {
     cancelProjectInfoPanel();
     return;
@@ -981,16 +1048,12 @@ function requestCancelProjectInfoPanel() {
   Nothing is written to localStorage or Library.
 */
 function cancelProjectInfoPanel() {
-  if (projectSavedState) {
-    state.project = structuredClone(projectSavedState);
-  }
-
-  projectInfoDirty = false;
+  rollbackProjectInfoTransaction({ restoreCommitted: true });
 
   updateProjectFields();
   updateLimitButtons();
 
-  closeProjectInfoPanel();
+  closeProjectInfoPanel({ restore: false });
   render();
 }
 
@@ -1002,6 +1065,9 @@ function cancelProjectInfoPanel() {
   The cleared state is only committed if the user presses Save.
 */
 function requestClearProjectInfoPanel() {
+  if (!isProjectInfoOpen()) return;
+  if (typeof isDialogOpen === "function" && isDialogOpen()) return;
+
   showDialog({
     title: "",
     message:
