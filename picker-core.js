@@ -100,6 +100,7 @@ function preparePickerForOpen(html) {
   picker.style.removeProperty("bottom");
   picker.removeAttribute("data-picker-owner");
   picker.innerHTML = html;
+  picker.scrollTop = 0;
 }
 
 

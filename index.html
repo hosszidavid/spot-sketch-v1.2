@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
   <title>Spot Sketch</title>
-  <link rel="stylesheet" href="style.css?v=1.3-responsive-p08">
-  <link rel="stylesheet" href="responsive.css?v=1.3-responsive-p08">
+  <link rel="stylesheet" href="style.css?v=1.3-responsive-p09">
+  <link rel="stylesheet" href="responsive.css?v=1.3-responsive-p09">
 </head>
 
 
@@ -609,7 +609,7 @@
       <div class="metadata-section">
         <div class="metadata-title-row">
           <span>Camera</span>
-          <button id="cameraNotesBtn" class="notes-button" aria-label="Camera notes">✎</button>
+          <button id="cameraNotesBtn" class="notes-button" type="button" aria-label="Camera notes">NOTES</button>
         </div>
         <input id="cameraNameInput" class="metadata-input" placeholder="Camera name">
         <div id="cameraNotesPopover" class="metadata-notes-wrap" hidden>
@@ -623,7 +623,7 @@
       <div class="metadata-section">
         <div class="metadata-title-row">
           <span>Lens</span>
-          <button id="lensNotesBtn" class="notes-button" aria-label="Lens notes">✎</button>
+          <button id="lensNotesBtn" class="notes-button" type="button" aria-label="Lens notes">NOTES</button>
         </div>
         <input id="lensNameInput" class="metadata-input" placeholder="Lens name">
         <div id="lensNotesPopover" class="metadata-notes-wrap" hidden>
@@ -661,7 +661,7 @@
       <div class="metadata-section">
         <div class="metadata-title-row">
           <span>Filter</span>
-          <button id="filterNotesBtn" class="notes-button" aria-label="Filter notes">✎</button>
+          <button id="filterNotesBtn" class="notes-button" type="button" aria-label="Filter notes">NOTES</button>
         </div>
         <input id="filterNameInput" class="metadata-input" placeholder="Filter name (optional)">
         <input id="filterEvInput" class="metadata-input" placeholder="Filter compensation / factor (optional)">
@@ -676,7 +676,7 @@
       <div class="metadata-section">
         <div class="metadata-title-row">
           <span>Film</span>
-          <button id="filmNotesBtn" class="notes-button" aria-label="Film notes">✎</button>
+          <button id="filmNotesBtn" class="notes-button" type="button" aria-label="Film notes">NOTES</button>
         </div>
         <input id="filmNameInput" class="metadata-input" placeholder="Film name">
         <input id="filmBoxIsoInput" class="metadata-input" inputmode="numeric" placeholder="Box ISO">
@@ -691,7 +691,7 @@
       <div class="metadata-section">
         <div class="metadata-title-row">
           <span>Film Holder</span>
-          <button id="filmHolderNotesBtn" class="notes-button" aria-label="Film holder notes">✎</button>
+          <button id="filmHolderNotesBtn" class="notes-button" type="button" aria-label="Film holder notes">NOTES</button>
         </div>
         <input id="filmHolderNameInput" class="metadata-input" placeholder="Film holder name">
         <div id="filmHolderNotesPopover" class="metadata-notes-wrap" hidden>
@@ -705,7 +705,7 @@
       <div class="metadata-section">
         <div class="metadata-title-row">
           <span>Light Meter</span>
-          <button id="lightMeterNotesBtn" class="notes-button" aria-label="Light meter notes">✎</button>
+          <button id="lightMeterNotesBtn" class="notes-button" type="button" aria-label="Light meter notes">NOTES</button>
         </div>
         <input id="lightMeterNameInput" class="metadata-input" placeholder="Light meter name">
         <div id="lightMeterNotesPopover" class="metadata-notes-wrap" hidden>
@@ -728,7 +728,7 @@
       <div class="metadata-section">
         <div class="metadata-title-row">
           <span>Gear Notes</span>
-          <button id="gearNotesBtn" class="notes-button" aria-label="Gear notes">✎</button>
+          <button id="gearNotesBtn" class="notes-button" type="button" aria-label="Gear notes">NOTES</button>
         </div>
         <div id="gearNotesPopover" class="metadata-notes-wrap" hidden>
           <textarea id="gearNotesInput" class="metadata-notes" placeholder="Tripod, release, support and other gear notes"></textarea>
@@ -1173,6 +1173,8 @@
       </button>
     </div>
 
+    <div id="calculationRangeWarning" class="calculation-range-warning" hidden role="status"></div>
+
   </div>
 
   <div class="calculation-guidance">
@@ -1180,8 +1182,6 @@
       id="calculatedExposureMessage"
       class="calculated-exposure-message">
     </p>
-
-    <div id="calculationRangeWarning" class="calculation-range-warning" hidden role="status"></div>
 
     <p class="calculation-limit-note">
       Reciprocity, bellows compensation and filter factor are not calculated.
@@ -1287,49 +1287,49 @@
   <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
   <input id="projectFileInput" type="file" accept=".spotsketch,application/x-spotsketch+json,application/json" hidden>
 </div>
-<script src="responsive.js?v=1.3-responsive-p08"></script>
-<script src="dom.js?v=1.3-responsive-p08"></script>
-<script src="data.js?v=1.3-responsive-p08"></script>
-<script src="storage.js?v=1.3-responsive-p08"></script>
-<script src="exposure.js?v=1.3-responsive-p08"></script>
-<script src="picker-core.js?v=1.3-responsive-p08"></script>
-<script src="recording-pickers.js?v=1.3-responsive-p08"></script>
-<script src="calculation-pickers.js?v=1.3-responsive-p08"></script>
-<script src="notifications.js?v=1.3-responsive-p08"></script>
-<script src="calculation-ui.js?v=1.3-responsive-p08"></script>
-<script src="render.js?v=1.3-responsive-p08"></script>
-<script src="markers.js?v=1.3-responsive-p08"></script>
-<script src="image.js?v=1.3-responsive-p08"></script>
-<script src="image-crop.js?v=1.3-responsive-p08"></script>
-<script src="welcome.js?v=1.3-responsive-p08"></script>
-<script src="export.js?v=1.3-responsive-p08"></script>
-<script src="dialog.js?v=1.3-responsive-p08"></script>
-<script src="project.js?v=1.3-responsive-p08"></script>
-<script src="project-library.js?v=1.3-responsive-p08"></script>
-<script src="project-document.js?v=1.3-responsive-p08"></script>
-<script src="project-manager.js?v=1.3-responsive-p08"></script>
-<script src="header.js?v=1.3-responsive-p08"></script>
-<script src="document-layout.js?v=1.3-responsive-p08"></script>
-<script src="document-model.js?v=1.3-responsive-p08"></script>
-<script src="document-renderer.js?v=1.3-responsive-p08"></script>
+<script src="responsive.js?v=1.3-responsive-p09"></script>
+<script src="dom.js?v=1.3-responsive-p09"></script>
+<script src="data.js?v=1.3-responsive-p09"></script>
+<script src="storage.js?v=1.3-responsive-p09"></script>
+<script src="exposure.js?v=1.3-responsive-p09"></script>
+<script src="picker-core.js?v=1.3-responsive-p09"></script>
+<script src="recording-pickers.js?v=1.3-responsive-p09"></script>
+<script src="calculation-pickers.js?v=1.3-responsive-p09"></script>
+<script src="notifications.js?v=1.3-responsive-p09"></script>
+<script src="calculation-ui.js?v=1.3-responsive-p09"></script>
+<script src="render.js?v=1.3-responsive-p09"></script>
+<script src="markers.js?v=1.3-responsive-p09"></script>
+<script src="image.js?v=1.3-responsive-p09"></script>
+<script src="image-crop.js?v=1.3-responsive-p09"></script>
+<script src="welcome.js?v=1.3-responsive-p09"></script>
+<script src="export.js?v=1.3-responsive-p09"></script>
+<script src="dialog.js?v=1.3-responsive-p09"></script>
+<script src="project.js?v=1.3-responsive-p09"></script>
+<script src="project-library.js?v=1.3-responsive-p09"></script>
+<script src="project-document.js?v=1.3-responsive-p09"></script>
+<script src="project-manager.js?v=1.3-responsive-p09"></script>
+<script src="header.js?v=1.3-responsive-p09"></script>
+<script src="document-layout.js?v=1.3-responsive-p09"></script>
+<script src="document-model.js?v=1.3-responsive-p09"></script>
+<script src="document-renderer.js?v=1.3-responsive-p09"></script>
 <script
-  src="html2canvas.js?v=1.3-responsive-p08"
+  src="html2canvas.js?v=1.3-responsive-p09"
   onload="globalThis.__spotSketchModuleStatus = globalThis.__spotSketchModuleStatus || {}; globalThis.__spotSketchModuleStatus.html2canvas = typeof globalThis.html2canvas === 'function' ? 'ready' : 'loaded without global';"
   onerror="globalThis.__spotSketchModuleStatus = globalThis.__spotSketchModuleStatus || {}; globalThis.__spotSketchModuleStatus.html2canvas = 'load failed';">
 </script>
 <script
-  src="document-export.js?v=1.3-responsive-p08"
+  src="document-export.js?v=1.3-responsive-p09"
   onerror="globalThis.__spotSketchModuleStatus = globalThis.__spotSketchModuleStatus || {}; globalThis.__spotSketchModuleStatus.documentExport = 'load failed';">
 </script>
-<script src="export-workspace.js?v=1.3-responsive-p08"></script>
-<script src="metering-setup.js?v=1.3-responsive-p08"></script>
-<script src="recording-workflow.js?v=1.3-responsive-p08"></script>
-<script src="recording-touch.js?v=1.3-responsive-p08"></script>
-<script src="calculation-workflow.js?v=1.3-responsive-p08"></script>
-<script src="calculation-mobile.js?v=1.3-responsive-p08"></script>
-<script src="mobile-shell.js?v=1.3-responsive-p08"></script>
-<script src="mobile-project-surfaces.js?v=1.3-responsive-p08"></script>
-<script src="app.js?v=1.3-responsive-p08"></script>
+<script src="export-workspace.js?v=1.3-responsive-p09"></script>
+<script src="metering-setup.js?v=1.3-responsive-p09"></script>
+<script src="recording-workflow.js?v=1.3-responsive-p09"></script>
+<script src="recording-touch.js?v=1.3-responsive-p09"></script>
+<script src="calculation-workflow.js?v=1.3-responsive-p09"></script>
+<script src="calculation-mobile.js?v=1.3-responsive-p09"></script>
+<script src="mobile-shell.js?v=1.3-responsive-p09"></script>
+<script src="mobile-project-surfaces.js?v=1.3-responsive-p09"></script>
+<script src="app.js?v=1.3-responsive-p09"></script>
 
 </body>
 </html>

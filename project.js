@@ -742,6 +742,19 @@ function openLimitSelector(limitKey, button = null) {
   });
 
   const currentValue = getLimitValue(limitKey);
+  const hasSelectableCurrentValue = values.some(
+    value => String(value) === String(currentValue)
+  );
+  const defaultScrollValueByLimit = {
+    apertureMin: null,
+    apertureMax: "64",
+    shutterMax: "1/500",
+    shutterMin: null
+  };
+  const initialScrollValue = hasSelectableCurrentValue
+    ? currentValue
+    : defaultScrollValueByLimit[limitKey] ?? null;
+
   const titleByLimit = {
     apertureMin: "Maximum Aperture",
     apertureMax: "Minimum Aperture",
@@ -769,7 +782,7 @@ function openLimitSelector(limitKey, button = null) {
     "gear-range",
     {
       scrollAttribute: "data-gear-limit-value",
-      scrollValue: currentValue,
+      scrollValue: initialScrollValue,
       smooth: false
     }
   );
@@ -940,15 +953,6 @@ function openProjectInfoPanel() {
   updateProjectFields();
   updateLimitButtons();
 
-  const mobileSurfaceActive =
-    typeof isMobileApplicationShellActive === "function" &&
-    isMobileApplicationShellActive();
-
-  if (!mobileSurfaceActive) {
-    window.setTimeout(() => {
-      document.getElementById("cameraNameInput")?.focus({ preventScroll: true });
-    }, 0);
-  }
 }
 
 

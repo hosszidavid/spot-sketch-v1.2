@@ -612,14 +612,42 @@ function isActualExposureComplete() {
 function updateActualExposureComparison() {
   if (!actualExposureComparison) return;
 
-  actualExposureComparison.hidden = true;
-  actualExposureComparison.innerHTML = "";
+  const calculatedExposure = state.calculation?.exposure;
+  const hasCalculatedExposure = Boolean(
+    calculatedExposure &&
+    calculatedExposure.iso &&
+    calculatedExposure.shutter &&
+    calculatedExposure.aperture
+  );
 
   actualExposureComparison.classList.remove(
     "is-exact",
     "is-equivalent",
-    "is-different"
+    "is-different",
+    "is-calculated-reference"
   );
+
+  if (!hasCalculatedExposure) {
+    actualExposureComparison.hidden = true;
+    actualExposureComparison.innerHTML = "";
+    return;
+  }
+
+  actualExposureComparison.innerHTML = `
+    <span class="actual-exposure-comparison-label">
+      Calculated Exposure
+    </span>
+    <strong>
+      ISO ${calculatedExposure.iso}
+      · ${formatShutterLabel(calculatedExposure.shutter)}
+      · <i>f</i>${calculatedExposure.aperture}
+    </strong>
+  `;
+
+  actualExposureComparison.classList.add(
+    "is-calculated-reference"
+  );
+  actualExposureComparison.hidden = false;
 }
 
 /*

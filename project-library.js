@@ -269,8 +269,8 @@ function createProjectLibraryAutocompleteRow(input, config, item) {
   const deleteButton = document.createElement("button");
   deleteButton.type = "button";
   deleteButton.className = "project-library-autocomplete-delete";
-  deleteButton.textContent = "×";
   deleteButton.setAttribute("aria-label", "Delete library item");
+  deleteButton.setAttribute("title", "Delete saved item");
 
   deleteButton.addEventListener("click", event => {
     event.preventDefault();

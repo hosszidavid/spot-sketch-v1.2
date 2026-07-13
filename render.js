@@ -375,7 +375,41 @@ function placeBubbleSafely(bubble, x, y, rect, placedBubbles) {
   };
 
   const placementKey = bubble.dataset.placementKey || bubble.dataset.id || "";
-  const cachedName = bubblePlacementCache.get(placementKey);
+  const cachedPlacement = bubblePlacementCache.get(placementKey);
+  const cachedName = typeof cachedPlacement === "string"
+    ? cachedPlacement
+    : cachedPlacement?.name;
+
+  const calculationPlacementLocked = Boolean(
+    placementKey &&
+    typeof isWorkflowPhase === "function" &&
+    isWorkflowPhase(WORKFLOW_PHASES.CALCULATION) &&
+    !document.body.classList.contains("mobile-shell-active") &&
+    cachedPlacement &&
+    typeof cachedPlacement === "object" &&
+    cachedPlacement.phase === WORKFLOW_PHASES.CALCULATION &&
+    Math.abs(cachedPlacement.rectWidth - rect.width) < 0.5 &&
+    Math.abs(cachedPlacement.rectHeight - rect.height) < 0.5 &&
+    Math.abs(cachedPlacement.markerX - x) < 0.5 &&
+    Math.abs(cachedPlacement.markerY - y) < 0.5
+  );
+
+  if (calculationPlacementLocked) {
+    bubble.style.left = `${cachedPlacement.left}px`;
+    bubble.style.top = `${cachedPlacement.top}px`;
+    bubble.style.transform = "none";
+    bubble.style.marginTop = "0";
+
+    placedBubbles.push({
+      left: cachedPlacement.left,
+      top: cachedPlacement.top - 16,
+      right: cachedPlacement.left + bubbleWidth,
+      bottom: cachedPlacement.top + bubbleHeight
+    });
+
+    return;
+  }
+
   const orderedCandidates = cachedName
     ? [
         ...candidates.filter(candidate => candidate.name === cachedName),
@@ -397,10 +431,6 @@ function placeBubbleSafely(bubble, x, y, rect, placedBubbles) {
       !placedBubbles.some(existing => boxesOverlap(bubbleBox, existing))
     );
   }) || orderedCandidates[0];
-
-  if (placementKey && best) {
-    bubblePlacementCache.set(placementKey, best.name);
-  }
 
   /*
     Small screens can run out of collision-free candidates. Clamp the chosen
@@ -427,6 +457,19 @@ function placeBubbleSafely(bubble, x, y, rect, placedBubbles) {
   bubble.style.top = `${safeTop}px`;
   bubble.style.transform = "none";
   bubble.style.marginTop = "0";
+
+  if (placementKey && best) {
+    bubblePlacementCache.set(placementKey, {
+      name: best.name,
+      left: safeLeft,
+      top: safeTop,
+      rectWidth: rect.width,
+      rectHeight: rect.height,
+      markerX: x,
+      markerY: y,
+      phase: state.workflow?.phase || null
+    });
+  }
 
   placedBubbles.push({
     left: safeLeft,
