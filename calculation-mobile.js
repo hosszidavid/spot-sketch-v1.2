@@ -8,14 +8,16 @@ Module:
 Calculation Mobile Layout
 
 Purpose:
-Provides first-entry mobile guidance and a compact responsive presentation
-contract for Calculation Setup and active Calculation Mode.
+Provides first-entry mobile guidance and one shared pull-up drawer contract
+for Calculation Setup and active Calculation Mode.
 
 Owns:
 - mobile-only Calculation education dialog
 - automatic guide dismissal and countdown
 - device-local guide completion preferences
-- Calculation phase observation for mobile entry
+- Calculation drawer expansion / collapse state
+- mobile control re-parenting for the drawer layout
+- temporary drawer collapse while a Calculation picker is open
 
 Does NOT own:
 - Calculation mathematics
@@ -38,7 +40,16 @@ let calculationMobileLayoutInitialized = false;
 let calculationGuideTimeout = null;
 let calculationGuideCountdownTimer = null;
 let calculationGuideMutationObserver = null;
+let calculationPickerMutationObserver = null;
 let lastMobileCalculationPhase = "none";
+let calculationMobileTopRow = null;
+let calculationPickerWasOpen = false;
+let calculationDrawerExpandedBeforePicker = true;
+const calculationMobileControlOrigins = new Map();
+const calculationDrawerExpanded = {
+  setup: true,
+  mode: true
+};
 
 const CALCULATION_MOBILE_GUIDES = Object.freeze({
   setup: {
@@ -68,6 +79,90 @@ function isMobileCalculationLayoutActive() {
 }
 
 
+function rememberCalculationMobileControlOrigin(element) {
+  if (!element || calculationMobileControlOrigins.has(element)) return;
+
+  const marker = document.createComment(
+    `spot-sketch-calculation-mobile-origin:${element.id || element.className}`
+  );
+
+  element.parentNode?.insertBefore(marker, element);
+  calculationMobileControlOrigins.set(element, marker);
+}
+
+
+function restoreCalculationMobileControlOrigin(element) {
+  const marker = calculationMobileControlOrigins.get(element);
+  if (!element || !marker?.parentNode) return;
+  marker.parentNode.insertBefore(element, marker.nextSibling);
+}
+
+
+function ensureCalculationMobileTopRow() {
+  const row = document.querySelector(".calculated-exposure-row");
+  if (!row) return null;
+
+  if (!calculationMobileTopRow) {
+    calculationMobileTopRow = document.createElement("div");
+    calculationMobileTopRow.className = "calculation-mobile-primary-row";
+    calculationMobileTopRow.setAttribute(
+      "aria-label",
+      "Calculation mode and confirmation"
+    );
+  }
+
+  if (calculationMobileTopRow.parentElement !== row) {
+    row.prepend(calculationMobileTopRow);
+  }
+
+  return calculationMobileTopRow;
+}
+
+
+function syncCalculationMobileControlLayout() {
+  const modeButton = document.getElementById("calculationControlModeBtn");
+  const confirmButton = document.getElementById("calculationSaveActualBtn");
+  const exitButton = document.getElementById("calculationExitBtn");
+  const setupExitButton = document.getElementById("calculationSetupCancelBtn");
+  const modeHeading = document.querySelector(".calculation-status-heading");
+  const setupHeading = document.querySelector(".calculation-setup-heading");
+
+  const controls = [
+    modeButton,
+    confirmButton,
+    exitButton,
+    setupExitButton
+  ].filter(Boolean);
+
+  for (const control of controls) {
+    rememberCalculationMobileControlOrigin(control);
+  }
+
+  if (isMobileCalculationLayoutActive()) {
+    const topRow = ensureCalculationMobileTopRow();
+
+    if (topRow) {
+      if (modeButton) topRow.appendChild(modeButton);
+      if (confirmButton) topRow.appendChild(confirmButton);
+    }
+
+    if (modeHeading && exitButton) {
+      modeHeading.appendChild(exitButton);
+    }
+
+    if (setupHeading && setupExitButton) {
+      setupHeading.appendChild(setupExitButton);
+    }
+  } else {
+    for (const control of controls) {
+      restoreCalculationMobileControlOrigin(control);
+    }
+
+    calculationMobileTopRow?.remove();
+  }
+}
+
+
 function getMobileCalculationPhase() {
   if (isWorkflowPhase(WORKFLOW_PHASES.CALCULATION_SETUP)) {
     return "setup";
@@ -78,6 +173,166 @@ function getMobileCalculationPhase() {
   }
 
   return "none";
+}
+
+
+function getCalculationDrawerElement(type) {
+  if (type === "setup") {
+    return document.querySelector(".calculation-setup-panel");
+  }
+
+  if (type === "mode") {
+    return document.getElementById("calculationStatus");
+  }
+
+  return null;
+}
+
+
+function getCalculationDrawerHandle(type) {
+  if (type === "setup") {
+    return document.querySelector(".calculation-setup-heading");
+  }
+
+  if (type === "mode") {
+    return document.querySelector(".calculation-status-heading");
+  }
+
+  return null;
+}
+
+
+function setCalculationDrawerExpanded(type, expanded) {
+  if (!Object.prototype.hasOwnProperty.call(calculationDrawerExpanded, type)) {
+    return;
+  }
+
+  calculationDrawerExpanded[type] = Boolean(expanded);
+
+  const drawer = getCalculationDrawerElement(type);
+  const handle = getCalculationDrawerHandle(type);
+
+  drawer?.classList.toggle(
+    "is-collapsed",
+    !calculationDrawerExpanded[type]
+  );
+
+  drawer?.classList.toggle(
+    "is-expanded",
+    calculationDrawerExpanded[type]
+  );
+
+  handle?.setAttribute(
+    "aria-expanded",
+    calculationDrawerExpanded[type] ? "true" : "false"
+  );
+
+  handle?.setAttribute(
+    "aria-label",
+    calculationDrawerExpanded[type]
+      ? `Collapse Calculation ${type === "setup" ? "Setup" : "Mode"}`
+      : `Expand Calculation ${type === "setup" ? "Setup" : "Mode"}`
+  );
+}
+
+
+function syncCalculationDrawerPresentation() {
+  if (!isMobileCalculationLayoutActive()) {
+    for (const type of ["setup", "mode"]) {
+      const drawer = getCalculationDrawerElement(type);
+      const handle = getCalculationDrawerHandle(type);
+      drawer?.classList.remove("is-collapsed", "is-expanded");
+      handle?.removeAttribute("role");
+      handle?.removeAttribute("tabindex");
+      handle?.removeAttribute("aria-expanded");
+      handle?.removeAttribute("aria-label");
+    }
+    return;
+  }
+
+  for (const type of ["setup", "mode"]) {
+    const handle = getCalculationDrawerHandle(type);
+    if (handle) {
+      handle.setAttribute("role", "button");
+      handle.setAttribute("tabindex", "0");
+    }
+    setCalculationDrawerExpanded(type, calculationDrawerExpanded[type]);
+  }
+}
+
+
+function toggleCalculationDrawer(type) {
+  if (!isMobileCalculationLayoutActive()) return;
+  setCalculationDrawerExpanded(type, !calculationDrawerExpanded[type]);
+}
+
+
+function handleCalculationDrawerToggle(event, type) {
+  if (!isMobileCalculationLayoutActive()) return;
+
+  if (event.target.closest("button")) {
+    return;
+  }
+
+  if (event.type === "keydown") {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+  }
+
+  event.stopPropagation();
+  toggleCalculationDrawer(type);
+}
+
+
+function bindCalculationDrawerHandles() {
+  const setupHandle = getCalculationDrawerHandle("setup");
+  const modeHandle = getCalculationDrawerHandle("mode");
+
+  for (const [handle, type] of [
+    [setupHandle, "setup"],
+    [modeHandle, "mode"]
+  ]) {
+    if (!handle || handle.dataset.drawerToggleBound === "true") continue;
+
+    handle.dataset.drawerToggleBound = "true";
+    handle.addEventListener("click", event => {
+      handleCalculationDrawerToggle(event, type);
+    });
+    handle.addEventListener("keydown", event => {
+      handleCalculationDrawerToggle(event, type);
+    });
+  }
+}
+
+
+function isCalculationPickerVisible() {
+  const picker = document.getElementById("picker");
+  if (!picker || picker.hidden) return false;
+
+  return Boolean(
+    picker.classList.contains("picker-mobile-calculation") ||
+    picker.classList.contains("picker-mobile-zone")
+  );
+}
+
+
+function syncCalculationDrawerForPicker() {
+  const pickerOpen = isCalculationPickerVisible();
+  const phase = getMobileCalculationPhase();
+
+  if (pickerOpen && !calculationPickerWasOpen && phase !== "none") {
+    calculationDrawerExpandedBeforePicker = calculationDrawerExpanded[phase];
+    setCalculationDrawerExpanded(phase, false);
+  }
+
+  if (!pickerOpen && calculationPickerWasOpen && phase !== "none") {
+    setCalculationDrawerExpanded(
+      phase,
+      calculationDrawerExpandedBeforePicker
+    );
+  }
+
+  calculationPickerWasOpen = pickerOpen;
 }
 
 
@@ -224,6 +479,10 @@ function showMobileCalculationGuide(type) {
 
 
 function syncMobileCalculationGuide() {
+  syncCalculationMobileControlLayout();
+  bindCalculationDrawerHandles();
+  syncCalculationDrawerPresentation();
+
   if (!isMobileCalculationLayoutActive()) {
     lastMobileCalculationPhase = "none";
 
@@ -241,10 +500,12 @@ function syncMobileCalculationGuide() {
     return;
   }
 
-  if (phase === lastMobileCalculationPhase) return;
-
-  lastMobileCalculationPhase = phase;
-  showMobileCalculationGuide(phase);
+  if (phase !== lastMobileCalculationPhase) {
+    calculationDrawerExpanded[phase] = true;
+    setCalculationDrawerExpanded(phase, true);
+    lastMobileCalculationPhase = phase;
+    showMobileCalculationGuide(phase);
+  }
 }
 
 
@@ -265,7 +526,6 @@ function initializeCalculationMobileLayout() {
   document
     .getElementById("calculationGuideOverlay")
     ?.addEventListener("click", event => {
-      /* The education dialog is intentionally closed only by OK or timeout. */
       event.preventDefault();
       event.stopPropagation();
     });
@@ -279,10 +539,30 @@ function initializeCalculationMobileLayout() {
     attributeFilter: ["class"]
   });
 
+  const picker = document.getElementById("picker");
+  if (picker) {
+    calculationPickerMutationObserver = new MutationObserver(
+      syncCalculationDrawerForPicker
+    );
+
+    calculationPickerMutationObserver.observe(picker, {
+      attributes: true,
+      attributeFilter: ["hidden", "class", "data-picker-owner"]
+    });
+  }
+
   window.addEventListener(
     "spot-sketch:viewport-change",
     syncMobileCalculationGuide
   );
 
+  window.addEventListener(
+    "spot-sketch:picker-closed",
+    syncCalculationDrawerForPicker
+  );
+
+  syncCalculationMobileControlLayout();
+  bindCalculationDrawerHandles();
+  syncCalculationDrawerPresentation();
   syncMobileCalculationGuide();
 }

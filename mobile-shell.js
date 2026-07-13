@@ -42,9 +42,9 @@ let mobileApplicationShellInitialized = false;
 let mobileShellSyncFrame = null;
 let mobileShellObserver = null;
 let mobileShellBarHeight = 0;
-let mobileActionBarExpanded = false;
+let mobileActionBarExpanded = true;
 let mobileActionBarTimer = null;
-const MOBILE_ACTION_BAR_AUTO_HIDE_MS = 3600;
+const MOBILE_ACTION_BAR_AUTO_HIDE_MS = 0;
 
 const mobileSurfaceOrigins = new Map();
 
@@ -88,13 +88,13 @@ function getMobileShellSurfaceName() {
 
 function isMobileShellModalSurfaceOpen(surfaceName) {
   return [
+    "add",
     "gear",
+    "location",
     "export",
     "project-manager",
     "metering-setup",
     "calculation-guide",
-    "calculation-setup",
-    "calculation",
     "image-crop",
     "replace-image",
     "dialog"
@@ -183,7 +183,7 @@ function mobileShellForwardAction(sourceId, fallbackMessage) {
   }
 
   source.click();
-  setMobileActionBarExpanded(false, { autoHide: false });
+  setMobileActionBarExpanded();
   scheduleMobileApplicationShellSync();
 }
 
@@ -203,41 +203,26 @@ function clearMobileActionBarTimer() {
   mobileActionBarTimer = null;
 }
 
-function setMobileActionBarExpanded(expanded, options = {}) {
-  mobileActionBarExpanded = Boolean(expanded);
+function setMobileActionBarExpanded() {
+  mobileActionBarExpanded = true;
+
   const root = document.documentElement;
   const bar = document.getElementById("mobileActionBar");
   const handle = document.getElementById("mobileActionHandle");
 
-  root.classList.toggle("mobile-action-bar-open", mobileActionBarExpanded);
-  bar?.classList.toggle("is-expanded", mobileActionBarExpanded);
-  handle?.setAttribute("aria-expanded", mobileActionBarExpanded ? "true" : "false");
-  handle?.setAttribute(
-    "aria-label",
-    mobileActionBarExpanded ? "Hide application menu" : "Show application menu"
-  );
+  root.classList.add("mobile-action-bar-open");
+  bar?.classList.add("is-expanded");
+  handle?.setAttribute("aria-expanded", "true");
+  handle?.setAttribute("aria-label", "Application menu");
 
   clearMobileActionBarTimer();
-  if (mobileActionBarExpanded && options.autoHide !== false) {
-    mobileActionBarTimer = window.setTimeout(() => {
-      setMobileActionBarExpanded(false, { autoHide: false });
-    }, MOBILE_ACTION_BAR_AUTO_HIDE_MS);
-  }
 }
 
 function keepMobileActionBarOpen() {
-  if (mobileActionBarExpanded) {
-    setMobileActionBarExpanded(true);
-  }
+  setMobileActionBarExpanded();
 }
 
 function bindMobileShellActions() {
-  document.getElementById("mobileActionHandle")?.addEventListener("click", event => {
-    event.preventDefault();
-    event.stopPropagation();
-    setMobileActionBarExpanded(!mobileActionBarExpanded);
-  });
-
   document.getElementById("mobileActionBar")?.addEventListener("pointerdown", keepMobileActionBarOpen);
 
   bindMobileShellAction("mobileAddAction", "addBtn");
@@ -323,6 +308,11 @@ function syncMobileShellBarHeight() {
     "--mobile-action-bar-height",
     `${height}px`
   );
+
+  window.requestAnimationFrame(() => {
+    if (typeof fitImage === "function") fitImage();
+    if (typeof drawBubbles === "function") drawBubbles();
+  });
 }
 
 function syncMobileApplicationShell() {
@@ -342,9 +332,11 @@ function syncMobileApplicationShell() {
     root.dataset.mobileSurface = "none";
     root.classList.remove("mobile-shell-surface-open", "mobile-action-bar-open");
     clearMobileActionBarTimer();
-    mobileActionBarExpanded = false;
+    mobileActionBarExpanded = true;
     return;
   }
+
+  setMobileActionBarExpanded();
 
   const surfaceName = getMobileShellSurfaceName();
   const keyboardVisible = root.dataset.keyboard === "visible";
@@ -357,7 +349,7 @@ function syncMobileApplicationShell() {
   bar.setAttribute("aria-hidden", suppressBar ? "true" : "false");
 
   if (suppressBar && mobileActionBarExpanded) {
-    setMobileActionBarExpanded(false, { autoHide: false });
+    setMobileActionBarExpanded();
   } else {
     bar.classList.toggle("is-expanded", mobileActionBarExpanded);
     root.classList.toggle("mobile-action-bar-open", mobileActionBarExpanded);

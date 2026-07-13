@@ -56,6 +56,10 @@ Dependencies:
   Redraws the current image, markers, marker bubbles, and header state.
 */
 function render() {
+  if (stage) {
+    stage.classList.toggle("has-image", Boolean(state.imageCanvas));
+  }
+
   if (!state.imageCanvas) {
     updateHeader();
     return;
