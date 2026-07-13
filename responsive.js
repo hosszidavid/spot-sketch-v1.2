@@ -65,6 +65,7 @@ const RESPONSIVE_KEYBOARD_THRESHOLD = 140;
 let responsiveFoundationInitialized = false;
 let responsiveFrameRequest = null;
 let responsiveState = null;
+let responsiveStableWorkspaceHeight = 0;
 
 
 /*
@@ -199,8 +200,23 @@ function syncResponsiveDomState(nextState) {
   root.dataset.touch = nextState.touchAvailable ? "true" : "false";
   root.dataset.keyboard = nextState.keyboardVisible ? "visible" : "hidden";
 
+  if (!nextState.keyboardVisible) {
+    responsiveStableWorkspaceHeight = Math.max(
+      nextState.height,
+      nextState.layoutHeight
+    );
+  }
+
+  const workspaceHeight = nextState.keyboardVisible
+    ? Math.max(
+        responsiveStableWorkspaceHeight || nextState.layoutHeight,
+        nextState.layoutHeight
+      )
+    : nextState.height;
+
   root.style.setProperty("--app-viewport-width", `${nextState.width}px`);
-  root.style.setProperty("--app-viewport-height", `${nextState.height}px`);
+  root.style.setProperty("--app-visual-viewport-height", `${nextState.height}px`);
+  root.style.setProperty("--app-viewport-height", `${workspaceHeight}px`);
   root.style.setProperty("--app-layout-viewport-width", `${nextState.layoutWidth}px`);
   root.style.setProperty("--app-layout-viewport-height", `${nextState.layoutHeight}px`);
   root.style.setProperty("--app-viewport-offset-top", `${nextState.offsetTop}px`);

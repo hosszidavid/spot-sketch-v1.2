@@ -241,6 +241,14 @@ function handleRecordingCanvasPoint(event, point, options = {}) {
 
   state.pendingPoint = point;
   showValuePicker(event);
+
+  if (
+    options.inputMode === "touch" &&
+    typeof armRecordingTouchPickerGuard === "function"
+  ) {
+    armRecordingTouchPickerGuard();
+  }
+
   return true;
 }
 

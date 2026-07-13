@@ -93,12 +93,19 @@ function beginCalculationSetup(event) {
 
   if (
     typeof isMobileCalculationLayoutActive === "function" &&
-    isMobileCalculationLayoutActive() &&
-    (isCalculationSetupActive() || isCalculationActive()) &&
-    typeof toggleMobileCalculationShell === "function"
+    isMobileCalculationLayoutActive()
   ) {
-    toggleMobileCalculationShell();
-    return;
+    /* Setup remains open until Start Calculation or the red X is used.
+       In active Calculation Mode the trigger is the one collapse control. */
+    if (isCalculationSetupActive()) return;
+
+    if (
+      isCalculationActive() &&
+      typeof toggleMobileCalculationShell === "function"
+    ) {
+      toggleMobileCalculationShell();
+      return;
+    }
   }
 
   if (

@@ -4333,3 +4333,385 @@ PACKAGE 07 HOTFIX 02 — FIXED MOBILE BAR + CALCULATION DRAWER
     justify-content:center !important;
   }
 }
+
+/* ==========================================================
+   RESPONSIVE DEVELOPMENT PACKAGE 12
+   Final Mobile Polish and Baseline Candidate
+   ========================================================== */
+
+@media (max-width:900px){
+  /* Hidden workflow surfaces must remain hidden despite later component
+     display overrides. */
+  body.mobile-shell-active .calculation-status[hidden],
+  body.mobile-shell-active .calculation-setup-overlay[hidden],
+  body.mobile-shell-active .floating-calculation-button[hidden]{
+    display:none !important;
+  }
+
+  /* A lower, calmer single-row header. The identifier keeps a computed 16px
+     input font to prevent iOS focus zoom, then scales visually with its box. */
+  body.mobile-shell-active #appHeader{
+    min-height:38px !important;
+    margin-left:calc(var(--safe-area-left) + 13px) !important;
+    margin-right:calc(var(--safe-area-right) + 13px) !important;
+    margin-top:calc(var(--safe-area-top) + 5px) !important;
+    margin-bottom:5px !important;
+    padding:4px 7px !important;
+    column-gap:8px !important;
+    grid-template-columns:24px minmax(70px,1fr) auto auto !important;
+  }
+
+  body.mobile-shell-active .header-logo{
+    min-width:24px !important;
+  }
+
+  body.mobile-shell-active .header-logo .logo-dot{
+    width:22px !important;
+    height:22px !important;
+  }
+
+  body.mobile-shell-active .image-identifier-wrap{
+    height:27px;
+    overflow:hidden;
+  }
+
+  body.mobile-shell-active #imageIdentifier{
+    width:114.286% !important;
+    height:30px !important;
+    min-height:30px !important;
+    padding:0 8px !important;
+    font-size:16px !important;
+    line-height:30px !important;
+    border-radius:9px !important;
+    transform:scale(.875);
+    transform-origin:left center;
+  }
+
+  body.mobile-shell-active #initialMeteringDisplay,
+  body.mobile-shell-active #drBtn{
+    min-height:27px !important;
+    height:27px !important;
+    font-size:9px !important;
+  }
+
+  body.mobile-shell-active #initialMeteringDisplay{
+    max-width:116px !important;
+    padding-inline:6px !important;
+  }
+
+  body.mobile-shell-active #drBtn{
+    min-width:36px !important;
+  }
+
+  /* The keyboard overlays the application workspace. Only each open editor's
+     own scroll area compensates for the visual viewport. */
+  html[data-keyboard="visible"] body.mobile-shell-active{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:var(--app-viewport-height);
+    overflow:hidden;
+  }
+
+  html[data-keyboard="visible"] body.mobile-shell-active main,
+  html[data-keyboard="visible"] body.mobile-shell-active #stage{
+    height:var(--app-viewport-height) !important;
+    max-height:var(--app-viewport-height) !important;
+    transform:none !important;
+  }
+
+  html[data-keyboard="visible"] body.mobile-shell-active #mobileSurfacePortal > .project-info-menu,
+  html[data-keyboard="visible"] body.mobile-shell-active #mobileSurfacePortal > .location-panel,
+  html[data-keyboard="visible"] body.mobile-shell-active .project-manager{
+    height:var(--app-viewport-height) !important;
+    max-height:var(--app-viewport-height) !important;
+    padding-bottom:calc(var(--app-keyboard-inset) + var(--safe-area-bottom) + 18px) !important;
+    scroll-padding-top:58px;
+    scroll-padding-bottom:calc(var(--app-keyboard-inset) + 76px);
+    overscroll-behavior:contain;
+  }
+
+  /* A little more separation between the Add title and project context. */
+  body.mobile-shell-active .mobile-add-project-context{
+    margin-top:13px !important;
+  }
+
+  /* Theme icon follows the current state and never becomes a blue selected
+     action. */
+  body.mobile-shell-active #mobileThemeAction,
+  body.mobile-shell-active #mobileThemeAction:hover,
+  body.mobile-shell-active #mobileThemeAction:focus,
+  body.mobile-shell-active #mobileThemeAction:focus-visible,
+  body.mobile-shell-active #mobileThemeAction.is-dark-active{
+    background:transparent !important;
+    color:var(--muted) !important;
+  }
+
+  body.mobile-shell-active #mobileThemeAction .mobile-theme-moon{
+    display:block;
+    fill:currentColor !important;
+    stroke:none !important;
+  }
+
+  body.mobile-shell-active #mobileThemeAction .mobile-theme-sun{
+    display:none;
+    fill:none !important;
+    stroke:currentColor !important;
+  }
+
+  body.mobile-shell-active #mobileThemeAction.is-dark-active .mobile-theme-moon{
+    display:none !important;
+  }
+
+  body.mobile-shell-active #mobileThemeAction.is-dark-active .mobile-theme-sun{
+    display:block !important;
+  }
+
+  /* Compact, centered notifications immediately below the measured header. */
+  body.mobile-shell-active .app-notification-stack{
+    top:calc(var(--safe-area-top) + 50px) !important;
+    left:50% !important;
+    right:auto !important;
+    width:min(82vw,310px) !important;
+    max-width:calc(100vw - var(--safe-area-left) - var(--safe-area-right) - 24px) !important;
+    transform:translateX(-50%) !important;
+    align-items:stretch !important;
+  }
+
+  body.mobile-shell-active .app-notification{
+    width:100% !important;
+    max-width:none !important;
+    padding:7px 8px !important;
+    grid-template-columns:22px minmax(0,1fr) 22px !important;
+    gap:6px !important;
+    border-radius:11px !important;
+  }
+
+  body.mobile-shell-active .app-notification-icon{
+    width:22px !important;
+    height:22px !important;
+  }
+
+  body.mobile-shell-active .app-notification-title{
+    font-size:10px !important;
+  }
+
+  body.mobile-shell-active .app-notification-message{
+    font-size:9px !important;
+    line-height:1.28 !important;
+  }
+
+  /* Primary mobile export is the JPEG Save/share action. PNG remains a quiet
+     optional middle action. */
+  body.mobile-shell-active .export-workspace-footer{
+    grid-template-columns:auto minmax(92px,.8fr) minmax(112px,1fr) !important;
+    align-items:center !important;
+    gap:8px !important;
+  }
+
+  body.mobile-shell-active .export-workspace-footer-button{
+    min-height:40px !important;
+    border-radius:11px !important;
+  }
+
+  body.mobile-shell-active .export-workspace-export-button{
+    order:2;
+    color:var(--muted) !important;
+    background:rgba(120,120,128,.07) !important;
+    border:1px solid var(--border) !important;
+    box-shadow:none !important;
+  }
+
+  body.mobile-shell-active .export-workspace-jpeg-button{
+    order:3;
+    display:inline-flex !important;
+    justify-content:center;
+    color:#fff !important;
+    background:var(--accent) !important;
+    border:1px solid var(--accent) !important;
+    font-weight:760 !important;
+  }
+
+  body.mobile-shell-active #exportWorkspaceCancelBtn{
+    order:1;
+  }
+
+  /* Mobile Spot Reading menus are compact sheets rather than nearly
+     full-width panels. */
+  body.mobile-shell-active #picker.picker-mobile-marker-menu{
+    left:50% !important;
+    right:auto !important;
+    width:min(85vw,320px) !important;
+    max-width:calc(100vw - var(--safe-area-left) - var(--safe-area-right) - 24px) !important;
+    transform:translateX(-50%) !important;
+  }
+
+  /* Move guidance is attached to the selected bubble and follows every drag
+     render. The old central move cursor is not duplicated on touch. */
+  body.mobile-shell-active.touch-marker-move-active #moveCursor,
+  body.mobile-shell-active.touch-marker-dragging #moveCursor{
+    display:none !important;
+  }
+
+  body.mobile-shell-active .bubble-touch-move-target{
+    overflow:visible !important;
+    z-index:5;
+  }
+
+  body.mobile-shell-active .bubble-move-instruction{
+    position:absolute;
+    left:50%;
+    bottom:calc(100% + 7px);
+    transform:translateX(-50%);
+    min-width:max-content;
+    padding:4px 7px;
+    border:1px solid rgba(10,132,255,.18);
+    border-radius:999px;
+    background:rgba(250,250,251,.96);
+    color:var(--accent);
+    box-shadow:0 5px 14px rgba(0,0,0,.13);
+    font-size:8px;
+    font-weight:800;
+    letter-spacing:.06em;
+    line-height:1;
+    text-transform:uppercase;
+    pointer-events:none;
+  }
+
+  body.dark.mobile-shell-active .bubble-move-instruction{
+    background:rgba(31,31,35,.97);
+    border-color:rgba(92,190,255,.23);
+  }
+
+  /* Calculation Setup is a non-collapsible, stable vertical layout. */
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-setup-panel{
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:stretch !important;
+    justify-content:flex-start !important;
+    gap:10px !important;
+    min-height:0 !important;
+    overflow-y:auto !important;
+  }
+
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-setup-selection{
+    position:static !important;
+    inset:auto !important;
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    width:100% !important;
+    flex:0 0 auto !important;
+    gap:8px !important;
+    margin:0 !important;
+  }
+
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-setup-selection > div{
+    position:static !important;
+    min-width:0 !important;
+    width:auto !important;
+    height:auto !important;
+    min-height:42px !important;
+    box-sizing:border-box !important;
+  }
+
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-setup-actions{
+    position:static !important;
+    inset:auto !important;
+    display:block !important;
+    width:100% !important;
+    flex:0 0 auto !important;
+    margin:0 !important;
+    padding:0 !important;
+  }
+
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-setup-primary-button{
+    position:static !important;
+    inset:auto !important;
+    display:flex !important;
+    width:100% !important;
+    max-width:none !important;
+    margin:0 !important;
+  }
+
+  body.mobile-shell-active.calculation-setup-active .floating-calculation-button{
+    cursor:default !important;
+  }
+
+  /* Shorter desktop-proportioned S/A switch with a vertically centered thumb. */
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-mobile-primary-row{
+    grid-template-columns:112px minmax(126px,1fr) !important;
+    gap:9px !important;
+  }
+
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-control-mode{
+    width:108px !important;
+    min-width:108px !important;
+    max-width:108px !important;
+    height:32px !important;
+    padding:0 7px !important;
+    grid-template-columns:15px 48px 15px !important;
+    gap:5px !important;
+    border-radius:999px !important;
+  }
+
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-control-track{
+    width:48px !important;
+    min-width:48px !important;
+    height:18px !important;
+  }
+
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-control-thumb{
+    top:50% !important;
+    left:3px !important;
+    width:14px !important;
+    height:14px !important;
+    transform:translateY(-50%) !important;
+    transition:left 230ms cubic-bezier(.2,.8,.2,1), background 180ms ease, box-shadow 180ms ease !important;
+  }
+
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-control-mode.is-aperture .calculation-control-thumb{
+    left:calc(100% - 17px) !important;
+    transform:translateY(-50%) !important;
+  }
+
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-setup-panel,
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-status{
+    will-change:transform,opacity;
+    transition:transform 280ms cubic-bezier(.22,.82,.2,1), opacity 180ms ease !important;
+  }
+
+  body.mobile-shell-active.mobile-calculation-shell-v2 .floating-calculation-button,
+  body.mobile-shell-active.mobile-calculation-shell-v2 .mobile-calculation-close-host{
+    will-change:bottom,opacity,transform;
+  }
+}
+
+@media (max-width:390px){
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-mobile-primary-row{
+    grid-template-columns:104px minmax(118px,1fr) !important;
+    gap:7px !important;
+  }
+
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-control-mode{
+    width:100px !important;
+    min-width:100px !important;
+    max-width:100px !important;
+    grid-template-columns:14px 44px 14px !important;
+    gap:4px !important;
+  }
+
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-control-track{
+    width:44px !important;
+    min-width:44px !important;
+  }
+}
+
+@media (prefers-reduced-motion:reduce){
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-control-thumb,
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-setup-panel,
+  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-status,
+  body.mobile-shell-active.mobile-calculation-shell-v2 .floating-calculation-button,
+  body.mobile-shell-active.mobile-calculation-shell-v2 .mobile-calculation-close-host{
+    transition:none !important;
+  }
+}

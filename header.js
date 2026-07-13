@@ -282,26 +282,6 @@ function bindHeaderOutsideClick() {
   });
 }
 
-/*
-  Returns whether the Add menu is currently open.
-*/
-function isAddMenuOpen() {
-  return Boolean(
-    headerAddMenu &&
-    !headerAddMenu.hidden
-  );
-}
-
-
-/*
-  Returns whether the Add to Project menu is currently open.
-*/
-function isAddToProjectMenuOpen() {
-  return Boolean(
-    headerAddToProjectMenu &&
-    !headerAddToProjectMenu.hidden
-  );
-}
 
 /*
   While a transient menu, location editor, or picker is open, the first click

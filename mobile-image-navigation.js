@@ -57,9 +57,6 @@ function isMobileImageNavigationAvailable() {
   );
 }
 
-function isMobileImageNavigationGestureActive() {
-  return mobileImageGestureActive;
-}
 
 function getMobileImageViewport() {
   return document.getElementById("imageViewport");

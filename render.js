@@ -224,6 +224,11 @@ function drawBubbles() {
           : getSpotReadingDisplayedZone(marker);
 
     const isLimit = false;
+    const isTouchMoveTarget = Boolean(
+      state.moveMarkerId === marker.id &&
+      typeof isTouchMarkerMovePresentation === "function" &&
+      isTouchMarkerMovePresentation()
+    );
 
     const bubble = document.createElement("button");
 
@@ -238,7 +243,8 @@ function drawBubbles() {
       isCalculationReference ? "bubble-calculation-reference" : "",
       isWorkflowPhase(WORKFLOW_PHASES.CALCULATION_SETUP)
         ? "bubble-calculation-candidate"
-        : ""
+        : "",
+      isTouchMoveTarget ? "bubble-touch-move-target" : ""
     ]
       .filter(Boolean)
       .join(" ");
@@ -251,6 +257,7 @@ function drawBubbles() {
     );
 
     bubble.innerHTML = `
+      ${isTouchMoveTarget ? `<span class="bubble-move-instruction">Drag to move</span>` : ""}
       <div class="bubble-identity">
         <span class="num">#${marker.number}</span>
         ${
@@ -315,6 +322,9 @@ function placeBubbleSafely(bubble, x, y, rect, placedBubbles) {
 
   const bubbleWidth = bubble.offsetWidth;
   const bubbleHeight = bubble.offsetHeight;
+  const bubbleTopExtra = bubble.classList.contains("bubble-touch-move-target")
+    ? 34
+    : 16;
 
   const isRightSide = x > rect.width / 2;
 
@@ -402,16 +412,25 @@ function placeBubbleSafely(bubble, x, y, rect, placedBubbles) {
   );
 
   if (calculationPlacementLocked) {
-    bubble.style.left = `${cachedPlacement.left}px`;
-    bubble.style.top = `${cachedPlacement.top}px`;
+    const cachedSafeLeft = Math.min(
+      Math.max(2, rect.width - bubbleWidth - 2),
+      Math.max(2, cachedPlacement.left)
+    );
+    const cachedSafeTop = Math.min(
+      Math.max(bubbleTopExtra, rect.height - bubbleHeight - 2),
+      Math.max(bubbleTopExtra, cachedPlacement.top)
+    );
+
+    bubble.style.left = `${cachedSafeLeft}px`;
+    bubble.style.top = `${cachedSafeTop}px`;
     bubble.style.transform = "none";
     bubble.style.marginTop = "0";
 
     placedBubbles.push({
-      left: cachedPlacement.left,
-      top: cachedPlacement.top - 16,
-      right: cachedPlacement.left + bubbleWidth,
-      bottom: cachedPlacement.top + bubbleHeight
+      left: cachedSafeLeft,
+      top: cachedSafeTop - bubbleTopExtra,
+      right: cachedSafeLeft + bubbleWidth,
+      bottom: cachedSafeTop + bubbleHeight
     });
 
     return;
@@ -427,7 +446,7 @@ function placeBubbleSafely(bubble, x, y, rect, placedBubbles) {
   const best = orderedCandidates.find(candidate => {
     const bubbleBox = {
       left: candidate.left,
-      top: candidate.top - 16,
+      top: candidate.top - bubbleTopExtra,
       right: candidate.left + bubbleWidth,
       bottom: candidate.top + bubbleHeight
     };
@@ -448,7 +467,7 @@ function placeBubbleSafely(bubble, x, y, rect, placedBubbles) {
     document.documentElement.dataset.viewportSize
   );
   const edgeInset = compactViewport ? 6 : 2;
-  const numberInset = compactViewport ? 17 : 16;
+  const numberInset = Math.max(bubbleTopExtra, compactViewport ? 17 : 16);
 
   const safeLeft = Math.min(
     Math.max(edgeInset, rect.width - bubbleWidth - edgeInset),

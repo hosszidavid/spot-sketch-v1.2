@@ -8468,3 +8468,126 @@ body.mobile-shell-active .calculated-exposure-row > .calculation-range-warning{
 .location-current-button:hover{
   background:rgba(10,132,255,.12);
 }
+
+/* ==========================================================
+   RESPONSIVE DEVELOPMENT PACKAGE 12
+   Shared Export and Desktop Baseline Polish
+   ========================================================== */
+
+/* Quick Export: keep the requested Exposure labels centered while preserving
+   the existing value alignment and information density. */
+.ssq-actual-section > h2,
+.ssq-actual-section .ssq-key-value-list > div > strong{
+  text-align:center;
+}
+
+.ssq-actual-section .ssq-exposure-notes-row > span{
+  font-weight:400 !important;
+}
+
+.ssq-reading-guide{
+  margin:-2px 0 8px;
+  color:#6e6e73;
+  font-size:10px;
+  font-weight:500;
+  line-height:1.35;
+}
+
+/* Quick Export reading labels default above the pin and switch direction near
+   image edges, keeping both the pin and the source-reading bubble visible. */
+.ssq-reading-bubble{
+  left:50% !important;
+  right:auto !important;
+  top:auto !important;
+  bottom:calc(50% + 22px) !important;
+  transform:translateX(-50%) !important;
+}
+
+.ssq-reading-annotation.is-near-top .ssq-reading-bubble{
+  top:calc(50% + 22px) !important;
+  bottom:auto !important;
+}
+
+.ssq-reading-annotation.is-near-left .ssq-reading-bubble{
+  left:calc(50% + 22px) !important;
+  transform:none !important;
+}
+
+.ssq-reading-annotation.is-near-right .ssq-reading-bubble{
+  left:auto !important;
+  right:calc(50% + 22px) !important;
+  transform:none !important;
+}
+
+.ssq-reading-annotation.is-near-left.is-near-top .ssq-reading-bubble,
+.ssq-reading-annotation.is-near-right.is-near-top .ssq-reading-bubble{
+  top:calc(50% + 18px) !important;
+}
+
+/* Desktop Gear reserves a permanent scrollbar lane. The thumb stays quiet
+   until interaction, but content geometry never changes. */
+@media (min-width:901px){
+  .project-info-menu{
+    overflow-y:scroll !important;
+    overflow-x:hidden !important;
+    scrollbar-gutter:stable !important;
+    scrollbar-width:thin;
+    scrollbar-color:transparent transparent;
+  }
+
+  .project-info-menu:hover,
+  .project-info-menu:focus-within{
+    scrollbar-color:rgba(120,120,128,.32) transparent;
+  }
+
+  .project-info-menu::-webkit-scrollbar{
+    width:8px;
+  }
+
+  .project-info-menu::-webkit-scrollbar-track{
+    background:transparent;
+  }
+
+  .project-info-menu::-webkit-scrollbar-thumb{
+    border:2px solid transparent;
+    border-radius:999px;
+    background:transparent;
+    background-clip:padding-box;
+  }
+
+  .project-info-menu:hover::-webkit-scrollbar-thumb,
+  .project-info-menu:focus-within::-webkit-scrollbar-thumb{
+    background:rgba(120,120,128,.32);
+    background-clip:padding-box;
+  }
+}
+
+/* Compact library rows with a real gap. The visual hover capsule no longer
+   fills the full row height or touches its neighbors. */
+.project-library-autocomplete{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+
+.project-library-autocomplete-row{
+  height:27px !important;
+  min-height:27px;
+  gap:5px;
+}
+
+.project-library-autocomplete-label{
+  height:23px !important;
+  min-height:23px;
+  margin:2px 0 !important;
+  padding-inline:9px;
+}
+
+.project-library-autocomplete-delete{
+  height:21px !important;
+  min-height:21px !important;
+  width:21px !important;
+  min-width:21px !important;
+  max-width:21px !important;
+  margin:3px 0 !important;
+}

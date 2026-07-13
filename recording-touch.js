@@ -53,6 +53,7 @@ let recordingTouchSuppressClickUntil = 0;
 let recordingTouchLastPointerTime = 0;
 let recordingTouchMoveFrame = null;
 let recordingTouchMovePreview = null;
+let recordingTouchPickerGuardActive = false;
 
 
 function isRecordingTouchPointer(event) {
@@ -113,6 +114,38 @@ function consumeRecordingTouchClickSuppression(event) {
     event.stopImmediatePropagation?.();
   }
 
+  recordingTouchSuppressClickUntil = 0;
+  return true;
+}
+
+
+function armRecordingTouchPickerGuard() {
+  recordingTouchPickerGuardActive = true;
+}
+
+function releaseRecordingTouchPickerGuard() {
+  recordingTouchPickerGuardActive = false;
+}
+
+function acceptNewRecordingPickerPointer(event) {
+  if (!recordingTouchPickerGuardActive) return;
+  if (!isRecordingTouchPointer(event)) return;
+  if (!event.target.closest?.("#picker")) return;
+
+  /* A pointerdown inside the already-open picker is necessarily a new
+     interaction sequence. It may select an option normally. */
+  recordingTouchPickerGuardActive = false;
+  recordingTouchSuppressClickUntil = 0;
+}
+
+function consumeOpeningRecordingPickerClick(event) {
+  if (!recordingTouchPickerGuardActive) return false;
+  if (!event?.target?.closest?.("#picker")) return false;
+
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation?.();
+  releaseRecordingTouchPickerGuard();
   recordingTouchSuppressClickUntil = 0;
   return true;
 }
@@ -478,7 +511,14 @@ function initializeRecordingTouchWorkflow() {
     guard. Otherwise that guard would close the picker before the canvas click
     handler gets a chance to consume the duplicate event.
   */
+  document.addEventListener("pointerdown", acceptNewRecordingPickerPointer, {
+    capture: true,
+    passive: true
+  });
+
   document.addEventListener("click", event => {
+    if (consumeOpeningRecordingPickerClick(event)) return;
+
     if (
       performance.now() <= recordingTouchSuppressClickUntil &&
       (event.target === canvas || event.target.closest?.("#picker, #bubbleLayer"))
@@ -490,5 +530,6 @@ function initializeRecordingTouchWorkflow() {
   window.addEventListener("blur", () => {
     recordingTouchActivePointers.clear();
     clearRecordingTouchGesture();
+    releaseRecordingTouchPickerGuard();
   });
 }

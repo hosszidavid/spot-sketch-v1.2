@@ -200,7 +200,8 @@ function scheduleMobileCalculationShellMeasure() {
 }
 
 function setMobileCalculationShellExpanded(expanded, options = {}) {
-  calculationShellExpanded = Boolean(expanded);
+  const phase = getMobileCalculationPhase();
+  calculationShellExpanded = phase === "setup" ? true : Boolean(expanded);
 
   const body = document.body;
   const panel = getMobileCalculationPanel();
@@ -222,9 +223,11 @@ function setMobileCalculationShellExpanded(expanded, options = {}) {
 
   calculationBtn?.setAttribute(
     "aria-label",
-    calculationShellExpanded
-      ? "Collapse Calculation controls"
-      : "Expand Calculation controls"
+    phase === "setup"
+      ? "Calculation Setup is open"
+      : calculationShellExpanded
+        ? "Collapse Calculation controls"
+        : "Expand Calculation controls"
   );
 
   if (options.focusTrigger) {
@@ -236,7 +239,7 @@ function setMobileCalculationShellExpanded(expanded, options = {}) {
 
 function toggleMobileCalculationShell() {
   if (!isMobileCalculationLayoutActive()) return false;
-  if (getMobileCalculationPhase() === "none") return false;
+  if (getMobileCalculationPhase() !== "mode") return false;
   setMobileCalculationShellExpanded(!calculationShellExpanded);
   return true;
 }
@@ -259,12 +262,12 @@ function syncCalculationShellForPicker() {
     return;
   }
 
-  if (pickerOpen && !calculationPickerWasOpen) {
+  if (pickerOpen && !calculationPickerWasOpen && phase === "mode") {
     calculationShellExpandedBeforePicker = calculationShellExpanded;
     setMobileCalculationShellExpanded(false);
   }
 
-  if (!pickerOpen && calculationPickerWasOpen) {
+  if (!pickerOpen && calculationPickerWasOpen && phase === "mode") {
     setMobileCalculationShellExpanded(calculationShellExpandedBeforePicker);
   }
 
@@ -375,11 +378,14 @@ function syncMobileCalculationShell() {
 
   if (phase === "none") {
     lastMobileCalculationPhase = "none";
+    calculationShellExpanded = true;
     document.body.classList.remove(
       "mobile-calculation-shell-expanded",
-      "mobile-calculation-shell-collapsed"
+      "mobile-calculation-shell-collapsed",
+      "calculation-mobile-panel-visible"
     );
     ensureCalculationMobileCloseHost().hidden = true;
+    document.documentElement.style.setProperty("--mobile-calculation-panel-height", "0px");
     return;
   }
 
@@ -389,6 +395,7 @@ function syncMobileCalculationShell() {
     showMobileCalculationGuide(phase);
   }
 
+  document.body.classList.add("calculation-mobile-panel-visible");
   setMobileCalculationShellExpanded(calculationShellExpanded);
   scheduleMobileCalculationShellMeasure();
 

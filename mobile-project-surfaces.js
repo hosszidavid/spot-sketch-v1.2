@@ -172,10 +172,14 @@ function scrollMobileProjectFieldIntoView(field, behavior = "smooth") {
     const viewport = window.visualViewport;
     const viewportTop = viewport?.offsetTop || 0;
     const viewportBottom = viewportTop + (viewport?.height || window.innerHeight);
-    const safeTop = viewportTop + 12;
-    const safeBottom = viewportBottom - 14;
     const rect = field.getBoundingClientRect();
     const container = getMobileFieldScrollContainer(field);
+    const stickyHeader = container?.querySelector?.(
+      ":scope > .mobile-surface-heading, :scope > .mobile-gear-heading, :scope > .location-panel-heading, :scope > .project-manager-header"
+    );
+    const headerBottom = stickyHeader?.getBoundingClientRect().bottom || viewportTop;
+    const safeTop = Math.max(viewportTop + 8, headerBottom + 8);
+    const safeBottom = viewportBottom - 12;
 
     let delta = 0;
     if (rect.bottom > safeBottom) {
@@ -184,17 +188,17 @@ function scrollMobileProjectFieldIntoView(field, behavior = "smooth") {
       delta = rect.top - safeTop;
     }
 
-    if (Math.abs(delta) > 1) {
-      if (container && container.scrollHeight > container.clientHeight) {
-        container.scrollBy({
-          top: delta,
-          behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
-            ? "auto"
-            : behavior
-        });
-      } else {
-        window.scrollBy({ top: delta, behavior: "auto" });
-      }
+    if (
+      Math.abs(delta) > 1 &&
+      container &&
+      container.scrollHeight > container.clientHeight
+    ) {
+      container.scrollBy({
+        top: delta,
+        behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
+          ? "auto"
+          : behavior
+      });
     }
 
     if (typeof repositionProjectLibraryAutocomplete === "function") {
@@ -234,8 +238,7 @@ function handleMobileProjectFocusOut(event) {
     if (!activeSurface || !isMobileProjectEditable(document.activeElement)) {
       document.documentElement.dataset.mobileForm = "idle";
       window.requestAnimationFrame(() => {
-        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-        if (typeof fitImage === "function") fitImage();
+        document.scrollingElement?.scrollTo?.({ top: 0, left: 0, behavior: "auto" });
         if (typeof drawBubbles === "function") drawBubbles();
       });
     }
@@ -301,8 +304,7 @@ function initializeMobileProjectSurfaces() {
 
   document.getElementById("imageIdentifier")?.addEventListener("focusout", () => {
     window.setTimeout(() => {
-      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-      if (typeof fitImage === "function") fitImage();
+      document.scrollingElement?.scrollTo?.({ top: 0, left: 0, behavior: "auto" });
       if (typeof drawBubbles === "function") drawBubbles();
     }, 160);
   });

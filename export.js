@@ -96,10 +96,19 @@ function renderQuickGearRows(model) {
   `;
 }
 
+function getQuickReadingAnnotationPlacement(reading) {
+  const x = Number(reading?.x ?? 0.5);
+  const y = Number(reading?.y ?? 0.5);
+  const horizontal = x < 0.13 ? "near-left" : x > 0.87 ? "near-right" : "center";
+  const vertical = y < 0.16 ? "near-top" : y > 0.84 ? "near-bottom" : "middle";
+  return `is-${horizontal} is-${vertical}`;
+}
+
+
 function renderQuickImage(model) {
   const markers = model.image.readings.map(reading => `
     <span
-      class="ssq-reading-annotation ${reading.isReference ? "is-reference" : ""}"
+      class="ssq-reading-annotation ${reading.isReference ? "is-reference" : ""} ${getQuickReadingAnnotationPlacement(reading)}"
       style="left:${reading.x * 100}%;top:${reading.y * 100}%">
       <span class="ssq-reading-pin"></span>
       <span class="ssq-reading-bubble">
@@ -141,6 +150,7 @@ function renderQuickReadingsSection(model) {
   return `
     <section class="ssq-section ssq-readings-section">
       <h2>Spot Readings</h2>
+      <p class="ssq-reading-guide">Number · Original metered aperture · Calculated Zone · Actual Zone</p>
       ${renderQuickSpotReadingRows(model)}
     </section>
   `;
@@ -153,8 +163,8 @@ function renderQuickActualSection(model) {
     <section class="ssq-section ssq-actual-section">
       <h2>Exposure</h2>
       <div class="ssq-key-value-list ssq-key-value-list-single">
-        <div><strong>Actual Exposure</strong><span>${escapeQuickExportHtml(actual.status)} · ${renderQuickExposureLine(actual.exposure)}</span></div>
-        <div><strong>Exposure Notes</strong><span>${escapeQuickExportHtml(actual.notes)}</span></div>
+        <div class="ssq-actual-exposure-row"><strong>Actual Exposure</strong><span>${escapeQuickExportHtml(actual.status)} · ${renderQuickExposureLine(actual.exposure)}</span></div>
+        <div class="ssq-exposure-notes-row"><strong>Exposure Notes</strong><span>${escapeQuickExportHtml(actual.notes)}</span></div>
       </div>
     </section>
   `;

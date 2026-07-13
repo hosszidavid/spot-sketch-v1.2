@@ -379,40 +379,7 @@ function updateDocumentExportControls() {
   const quickExport = state.exportOptions.exportType === "quick";
   const projectScope = state.exportOptions.documentScope === "project";
 
-  if (exportWorkspaceJpegBtn) {
-  exportWorkspaceJpegBtn.addEventListener("click", async event => {
-    event.stopPropagation();
-    const exportDocument = globalThis.exportSpotSketchDocument;
-    if (typeof exportDocument !== "function") return;
-
-    exportWorkspaceJpegBtn.disabled = true;
-    exportWorkspaceJpegBtn.textContent = "Preparing…";
-    try {
-      await exportDocument({
-        type: "quick",
-        scope: "current",
-        format: "jpeg",
-        delivery: "download"
-      });
-      showAppNotification({
-        type: "success",
-        title: "JPEG export complete",
-        message: "A compatibility JPEG copy was created."
-      });
-    } catch (error) {
-      showAppNotification({
-        type: "error",
-        title: "JPEG export failed",
-        message: error?.message || "The JPEG copy could not be created."
-      });
-    } finally {
-      exportWorkspaceJpegBtn.disabled = false;
-      exportWorkspaceJpegBtn.textContent = "Save JPEG";
-    }
-  });
-}
-
-if (documentExportType) {
+  if (documentExportType) {
     documentExportType.value = state.exportOptions.exportType;
   }
 
@@ -454,7 +421,7 @@ if (documentExportType) {
 
   if (exportWorkspaceExportBtn) {
     exportWorkspaceExportBtn.textContent = isMobileExportWorkflowActive()
-      ? "Share / Export"
+      ? "Export PNG"
       : quickExport
         ? "Export Quick PNG"
         : "Export Document";
@@ -462,6 +429,7 @@ if (documentExportType) {
 
   if (exportWorkspaceJpegBtn) {
     exportWorkspaceJpegBtn.hidden = !isMobileExportWorkflowActive();
+    exportWorkspaceJpegBtn.textContent = "Save";
   }
 
   if (exportPreviewLabel) {
@@ -1048,6 +1016,47 @@ function hasSelectedExportContent() {
   ].some(key => state.exportOptions[key]);
 }
 
+if (exportWorkspaceJpegBtn) {
+  exportWorkspaceJpegBtn.addEventListener("click", async event => {
+    event.stopPropagation();
+
+    const exportDocument = globalThis.exportSpotSketchDocument;
+    if (typeof exportDocument !== "function") return;
+
+    exportWorkspaceJpegBtn.disabled = true;
+    exportWorkspaceJpegBtn.textContent = "Preparing…";
+
+    try {
+      const result = await exportDocument({
+        type: "quick",
+        scope: "current",
+        format: "jpeg",
+        delivery: "share"
+      });
+
+      if (result?.delivery === "cancelled") return;
+
+      showAppNotification({
+        type: "success",
+        title: result?.delivery === "share" ? "Ready to share" : "JPEG saved",
+        message: result?.delivery === "share"
+          ? "The JPEG export was sent to the device sharing panel."
+          : "A compatible JPEG copy was downloaded."
+      });
+    } catch (error) {
+      showAppNotification({
+        type: "error",
+        title: "JPEG export failed",
+        message: error?.message || "The JPEG copy could not be created."
+      });
+    } finally {
+      exportWorkspaceJpegBtn.disabled = false;
+      exportWorkspaceJpegBtn.textContent = "Save";
+    }
+  });
+}
+
+
 if (exportWorkspaceExportBtn) {
   exportWorkspaceExportBtn.addEventListener("click", async event => {
     event.stopPropagation();
@@ -1098,7 +1107,7 @@ if (exportWorkspaceExportBtn) {
             type: "quick",
             scope: "current",
             format: "png",
-            delivery: "share",
+            delivery: "download",
             orientation: state.exportOptions.documentOrientation
           }
         : {
