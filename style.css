@@ -1,9 +1,9 @@
 /*
 ==========================================================
-SPOT SKETCH v1.3 — RESPONSIVE BASELINE
+SPOT SKETCH v1.3 — SHARED AND DESKTOP COMPONENTS
 
 Purpose:
-Defines the desktop, export, and shared visual system for the v1.3 responsive baseline.
+Owns shared, desktop, workflow, project, and export component presentation.
 Responsive/mobile rules added after this baseline must use the shared tokens
 and preserve the documented surface and layer contracts.
 ==========================================================
@@ -14,96 +14,6 @@ and preserve the documented surface and layer contracts.
 1. Design Tokens
 ────────────────────────────────────────────
 */
-
-:root{
-
-  /*
-    Shared application layer system.
-
-    Component-local layers (for example panels inside Project Manager)
-    remain small relative values. Full-screen surfaces use these tokens.
-  */
-
-  --bg:#f4f4f5;
-
-  --panel:rgba(255,255,255,.72);
-
-  --text:#1d1d1f;
-
-  --muted:#8a8a8f;
-
-  --accent:#0A84FF;
-
-  --orange:#ff9500;
-
-  --border:rgba(0,0,0,.08);
-
-  --green:#34c759;
-
-  --yellow:#ffcc00;
-
-  --red:#ff3b30;
-
-  --layer-header:1200;
-
-  --layer-workflow-overlay:4000;
-
-  --layer-workspace:4800;
-
-  --layer-project-manager:5000;
-
-  --layer-image-replacement:5200;
-
-  --layer-dialog:7000;
-
-  --layer-notification:7200;
-
-  --layer-autocomplete:7400;
-
-  --layer-move-cursor:7600;
-
-  --layer-panel:40;
-
-  --layer-floating:80;
-
-  --layer-picker:2200;
-
-  --motion-fast:140ms;
-
-  --motion-standard:220ms;
-
-  --motion-panel:280ms;
-
-  --ease-enter:cubic-bezier(.2,.8,.2,1);
-
-  --ease-exit:cubic-bezier(.4,0,1,1);
-
-  --space-1:4px;
-
-  --space-2:8px;
-
-  --space-3:12px;
-
-  --space-4:16px;
-
-  --space-5:20px;
-
-  --space-6:24px;
-
-  --space-8:32px;
-
-  --radius-control:999px;
-
-  --radius-panel:20px;
-
-  --touch-target-min:44px;
-
-  --viewport-mobile-max:620px;
-
-  --viewport-tablet-max:900px;
-
-  --viewport-laptop-max:1280px;
-}
 
 body.dark{
   --bg:#171719;
@@ -613,9 +523,6 @@ body.dark .bubble{
   transform:translateX(-50%);
   color:var(--accent);
   opacity:1;
-  font-size:10px;
-  line-height:1;
-  font-weight:800;
 }
 
 .topline{
@@ -968,7 +875,6 @@ body.move-marker *{
  left:calc(50% - 125px);
   width:250px;
   max-height:calc(var(--app-viewport-height, 100dvh) - 96px);
-  overflow:auto;
   padding:8px;
   border-radius:18px;
   background:white;
@@ -1142,13 +1048,10 @@ body.project-info-open .header-controls > *{
 }
 
 body.project-info-open .project-info-wrap{
-  pointer-events:auto;
   z-index:1300;
 }
 
 .project-info-overlay{
-  position:fixed;
-  inset:0;
   z-index:900;
   background:rgba(0,0,0,.28);
   backdrop-filter:blur(3px);
@@ -1211,7 +1114,6 @@ body.dark .metadata-footer{
   align-items:center;
   background:rgba(0,0,0,.18);
   backdrop-filter:blur(5px);
-  z-index:var(--layer-dialog);
 }
 
 .dialog-overlay[hidden]{
@@ -1300,7 +1202,6 @@ Dialog Success Button
 }
 
 .project-library-autocomplete-row{
-  height:30px;
   display:flex;
   align-items:center;
   gap:4px;
@@ -1477,15 +1378,12 @@ body.dark .metering-setup-panel{
 }
 
 .metering-setup-control{
-  min-width:0;
   min-height:0;
 
   display:grid;
   grid-template-rows:auto minmax(0, 1fr);
 
   overflow:hidden;
-
-  border:1px solid var(--border);
   border-radius:20px;
 
   background:rgba(120,120,128,.055);
@@ -1549,13 +1447,10 @@ body.dark .metering-setup-control{
 
   border:1px solid transparent;
   border-radius:12px;
-
-  background:transparent;
   color:inherit;
 
   font-size:13px;
   font-weight:560;
-  text-align:center;
 
   transition:
     background .16s ease,
@@ -1699,7 +1594,6 @@ body.metering-setup-active #appHeader{
   }
 
   .metering-setup-controls{
-    grid-template-columns:1fr;
     overflow-y:auto;
     padding:14px;
   }
@@ -1882,7 +1776,6 @@ body.dark .export-workspace-header{
 
   font-size:22px;
   font-weight:300;
-  line-height:1;
 }
 
 body.dark .export-workspace-close-button{
@@ -2049,13 +1942,11 @@ body.dark .export-preview-toolbar{
 .export-preview-stage{
   flex:1;
   min-height:0;
-  overflow:auto;
 
   padding:32px;
 
   display:flex;
   align-items:center;
-  justify-content:center;
 }
 
 
@@ -2682,7 +2573,6 @@ body.dark .actual-zone-table-row{
 
 .export-content-option{
   min-height:58px;
-  padding:10px 11px;
 
   display:flex;
   align-items:center;
@@ -2693,13 +2583,10 @@ body.dark .actual-zone-table-row{
   border-radius:13px;
 
   background:rgba(0,0,0,.025);
-
-  cursor:pointer;
 }
 
 body.dark .export-content-option{
   border-color:rgba(255,255,255,.07);
-  background:rgba(255,255,255,.035);
 }
 
 .export-content-option:hover{
@@ -2896,8 +2783,6 @@ body.dark .calculation-setup-panel{
 
 .calculation-setup-heading{
   min-width:0;
-  display:flex;
-  align-items:flex-start;
   gap:13px;
 }
 
@@ -3112,19 +2997,14 @@ body.dark .calculation-status{
 }
 
 .calculation-status-copy{
-  min-width:0;
-  display:flex;
-  flex-direction:column;
   gap:3px;
 }
 
 .calculation-status-copy span{
-  color:#2aa7a1;
   font-size:10px;
   line-height:1;
   font-weight:850;
   letter-spacing:.08em;
-  text-transform:uppercase;
 }
 
 body.dark .calculation-status-copy span{
@@ -3229,8 +3109,6 @@ Calculated Exposure Controls
 .calculation-status{
   width:min(760px, calc(100% - 40px));
   max-width:none;
-  display:grid;
-  gap:10px;
   padding:12px;
 }
 
@@ -3245,7 +3123,6 @@ Calculated Exposure Controls
 .calculated-exposure-row{
   display:grid;
   grid-template-columns:auto minmax(0,1fr);
-  align-items:center;
   gap:12px;
 }
 
@@ -3295,8 +3172,6 @@ Calculated Exposure Controls
 
 .calculation-control-thumb{
   position:absolute;
-  top:3px;
-  left:3px;
   width:16px;
   height:16px;
   border-radius:50%;
@@ -3319,12 +3194,10 @@ Calculated Exposure Controls
 
 .calculated-exposure-field{
   min-width:0;
-  height:40px;
   padding:0 12px;
   border:1px solid var(--border);
   border-radius:12px;
   background:rgba(120,120,128,.06);
-  color:var(--text);
   font-size:13px;
   font-weight:740;
   white-space:nowrap;
@@ -3358,21 +3231,17 @@ Calculated Exposure Controls
 
 .calculated-exposure-field.is-calculated{
   opacity:.62;
-  cursor:help;
 }
 
 .calculated-exposure-message{
   margin:0;
   padding:0 4px;
-  color:var(--muted);
-  font-size:10px;
   line-height:1.3;
   text-align:center;
 }
 
 .app-notification{
   position:fixed;
-  z-index:var(--layer-notification);
   left:50%;
   bottom:154px;
   width:max-content;
@@ -3380,7 +3249,6 @@ Calculated Exposure Controls
   padding:11px 16px;
   display:flex;
   flex-direction:column;
-  align-items:center;
   gap:3px;
   transform:translate(-50%,8px) scale(.98);
   border:1px solid rgba(42,167,161,.2);
@@ -3390,16 +3258,15 @@ Calculated Exposure Controls
   box-shadow:0 14px 34px rgba(0,0,0,.16);
   backdrop-filter:blur(18px);
   -webkit-backdrop-filter:blur(18px);
-  opacity:0;
   pointer-events:none;
   transition:opacity .18s ease,transform .18s ease;
 }
 
 .app-notification[hidden]{display:none}
-.app-notification.is-visible{opacity:1;transform:translate(-50%,0) scale(1)}
+.app-notification.is-visible{transform:translate(-50%,0) scale(1)}
 body.dark .app-notification{background:rgba(36,36,40,.96);border-color:rgba(50,184,176,.28)}
-.app-notification-title{font-size:12px;font-weight:760;line-height:1.25;text-align:center}
-.app-notification-message{color:var(--muted);font-size:11px;font-weight:500;line-height:1.35;text-align:center}
+.app-notification-title{font-weight:760;text-align:center}
+.app-notification-message{color:var(--muted);line-height:1.35;text-align:center}
 
 body.calculation-active .bubble-calculation-reference{
   background:#2aa7a1;
@@ -3412,12 +3279,7 @@ body.dark.calculation-active .bubble-calculation-reference .num{color:#8fe0dc}
 
 @media (max-width:720px){
   .calculation-status{
-    width:calc(100% - 20px);
     bottom:10px;
-  }
-
-  .calculated-exposure-row{
-    grid-template-columns:1fr;
   }
 
   .calculation-control-mode{
@@ -3514,14 +3376,11 @@ body.dark .bubble-calculation{
 
 .bubble-calculation .zone{
   color:inherit;
-  font-size:11px;
-  font-weight:900;
   letter-spacing:.01em;
 }
 
 .bubble-calculation .ev{
   color:inherit;
-  font-size:10px;
   font-weight:500;
   opacity:.7;
 }
@@ -3831,10 +3690,6 @@ body.dark .calculation-exit-button:hover{
   .calculation-status{
     width:calc(100% - 20px);
   }
-
-  .calculated-exposure-fields{
-    grid-template-columns:repeat(3,minmax(0,1fr));
-  }
 }
 
 
@@ -3978,11 +3833,6 @@ body.dark .metering-setup-panel{
   padding:16px 18px;
 }
 
-.metering-setup-control{
-  border-radius:18px;
-  background:#fff;
-}
-
 body.dark .metering-setup-control{
   background:#303034;
 }
@@ -3993,8 +3843,6 @@ body.dark .metering-setup-control{
 }
 
 .metering-setup-options{
-  gap:2px;
-  padding:8px;
   scrollbar-width:none;
 }
 
@@ -4006,7 +3854,6 @@ body.dark .metering-setup-control{
 .metering-setup-option{
   min-height:34px;
   padding:6px 8px;
-  border-radius:999px;
 }
 
 .metering-setup-footer{
@@ -4037,10 +3884,7 @@ body.dark .metering-setup-control{
 }
 
 .calculation-control-mode{
-  width:108px;
   padding:0 4px;
-  grid-template-columns:15px 1fr 15px;
-  gap:3px;
 }
 
 .calculated-exposure-fields{
@@ -4051,9 +3895,6 @@ body.dark .metering-setup-control{
 }
 
 @media (max-width:720px){
-  .calculation-setup-panel{
-    grid-template-columns:1fr;
-  }
 
   .metering-setup-panel{
     max-height:calc(var(--app-viewport-height, 100dvh) - 88px);
@@ -4064,15 +3905,12 @@ body.dark .metering-setup-control{
   }
 
   .calculated-exposure-row{
-    grid-template-columns:1fr;
     row-gap:8px;
   }
 
   .calculated-exposure-fields{
     max-width:none;
-    width:100%;
     justify-self:stretch;
-    grid-template-columns:repeat(3,minmax(0,1fr));
   }
 }
 
@@ -4092,11 +3930,7 @@ Interaction Feedback
 /* Current Reference remains informational and visually consistent with muted menu rows. */
 .picker-option.current-reference-muted,
 body.dark .picker-option.current-reference-muted{
-  color:rgba(10,132,255,.58);
-  background:transparent;
   font-weight:500;
-  opacity:.72;
-  cursor:help;
 }
 
 .picker-option.current-reference-muted:hover,
@@ -4108,29 +3942,17 @@ body.dark .picker-option.current-reference-muted:hover{
 /* A visibly flatter, coherent Calculation Setup composition. */
 .calculation-setup-panel{
   width:min(650px,calc(100% - 24px));
-  min-height:0;
-  grid-template-columns:minmax(0,1fr) auto;
-  grid-template-areas:
-    "heading heading"
-    "selection actions";
-  align-items:end;
-  column-gap:18px;
-  row-gap:12px;
-  padding:15px 17px;
 }
 
 .calculation-setup-heading{
-  grid-area:heading;
   align-items:center;
 }
 
 .calculation-setup-heading p{
   max-width:500px;
-  margin-top:4px;
 }
 
 .calculation-setup-selection{
-  grid-area:selection;
   grid-template-columns:repeat(2,minmax(116px,1fr));
   gap:14px;
 }
@@ -4140,7 +3962,6 @@ body.dark .picker-option.current-reference-muted:hover{
 }
 
 .calculation-setup-actions{
-  grid-area:actions;
   align-self:center;
 }
 
@@ -4161,8 +3982,6 @@ body.dark .picker-option.current-reference-muted:hover{
 }
 
 .calculated-exposure-fields{
-  width:auto;
-  grid-template-columns:repeat(3,108px);
   gap:7px;
 }
 
@@ -4176,7 +3995,6 @@ body.dark .picker-option.current-reference-muted:hover{
   width:112px;
   padding:0 5px;
   grid-template-columns:16px 1fr 16px;
-  gap:3px;
 }
 
 /* Calculation canvas explains its disabled recording state through the same help cursor. */
@@ -4259,7 +4077,7 @@ body.calculation-active #photoCanvas{
 
 /*
 ────────────────────────────────────────────
-Calculation Final Cleanup · Stable UI corrections
+Calculation Component Corrections
 ────────────────────────────────────────────
 */
 
@@ -4376,7 +4194,6 @@ body.dark .calculation-status{
 .calculated-exposure-row{
   width:100%;
   display:flex;
-  align-items:center;
   justify-content:center;
   gap:18px;
 }
@@ -4531,7 +4348,7 @@ body.dark .picker-option.danger:hover{
 
 /*
 ────────────────────────────────────────────
-Calculation Final Polish 02
+Calculation and Metering Component Overrides
 ────────────────────────────────────────────
 */
 
@@ -4701,7 +4518,7 @@ body.calculation-active #photoCanvas{
 
 /*
 ────────────────────────────────────────────
-Recording + Calculation Consolidation 01
+Recording and Calculation Interaction Presentation
 ────────────────────────────────────────────
 
 This block contains the final interaction-only corrections for the stable
@@ -4744,7 +4561,6 @@ left unchanged in this cautious cleanup.
   flex-direction:column;
   align-items:flex-start;
   gap:2px;
-  min-width:0;
 }
 
 .calculation-status-copy .calculation-reference-help,
@@ -4789,7 +4605,6 @@ body.project-manager-open{
 .project-manager-overlay{
   position:fixed;
   inset:0;
-  z-index:var(--layer-project-manager);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -5266,7 +5081,6 @@ body.replace-image-open{
 .replace-image-overlay{
   position:fixed;
   inset:0;
-  z-index:var(--layer-image-replacement);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -5406,7 +5220,6 @@ Project Merge
 .project-manager-new-project-button{
   color:var(--text);
   background:rgba(120,120,128,.08);
-  border-color:var(--border);
 }
 
 .project-merge-panel{
@@ -5559,7 +5372,7 @@ body.dark .project-merge-confirm-button{
 
 /*
 ────────────────────────────────────────────
-Project UI Refinement 02
+Project Metadata Presentation
 ────────────────────────────────────────────
 */
 
@@ -5709,7 +5522,7 @@ body.dark .location-panel{background:rgba(36,36,40,.98)}
 
 /*
 ────────────────────────────────────────────
-Project Finalization 01 — Layer System
+Project and Dialog Layer Contracts
 ────────────────────────────────────────────
 */
 
@@ -5751,7 +5564,6 @@ Spot Sketch Document Architecture — Shared Model and Preview
 
 .document-preview-root{
   width:100%;
-  display:flex;
   justify-content:center;
 }
 
@@ -5989,7 +5801,7 @@ body.calculation-active #exportBtn{
 
 /*
 ────────────────────────────────────────────
-Spot Sketch Document Integration Fix 03
+Document Page Integration
 ────────────────────────────────────────────
 */
 
@@ -6157,7 +5969,7 @@ Spot Sketch Document Integration Fix 03
 
 /*
 ────────────────────────────────────────────
-Spot Sketch Export Refinement 02
+Document and Quick Export Components
 One A4 page per Spot Sketch + compact modular Quick Export
 ────────────────────────────────────────────
 */
@@ -6619,7 +6431,6 @@ One A4 page per Spot Sketch + compact modular Quick Export
   display:grid;
   place-items:center;
   border-radius:50%;
-  background:#0A84FF;
 }
 
 .ssq-logo-dot span{
@@ -6983,7 +6794,7 @@ body.dark .export-content-option{
 
 /*
 ────────────────────────────────────────────
-Quick Export Baseline 03
+Quick Export Annotation Components
 ────────────────────────────────────────────
 Final readability and annotation refinements.
 */
@@ -7097,7 +6908,6 @@ Final readability and annotation refinements.
 }
 
 .ssq-reading-annotation.is-reference .ssq-reading-pin{
-  background:#0A84FF;
   box-shadow:0 0 0 3px rgba(255,255,255,.88),0 1px 5px rgba(0,0,0,.28);
 }
 
@@ -7108,7 +6918,7 @@ Final readability and annotation refinements.
 
 /*
 ────────────────────────────────────────────
-Export and Header Workflow
+Export and Header Workflow Components
 Export readability + floating Calculation foundation
 ────────────────────────────────────────────
 */
@@ -7267,7 +7077,7 @@ body.calculation-active .floating-calculation-button{display:none!important}
 
 /*
 ────────────────────────────────────────────
-Calculation Persistence and Surface Guard
+Calculation Persistence Presentation
 ────────────────────────────────────────────
 */
 
@@ -7318,7 +7128,6 @@ Calculation Persistence and Surface Guard
   background:#239a94;
   border-color:rgba(42,167,161,.36);
   box-shadow:0 12px 30px rgba(22,104,100,.27);
-  transform:translate(-50%,0) scale(1);
 }
 .floating-calculation-button.has-saved-calculation{
   background:rgba(42,167,161,.82);
@@ -7369,7 +7178,6 @@ body.dark .initial-metering-display:hover:not(:disabled){
   color:#208f89;
   background:rgba(42,167,161,.09);
   border-color:rgba(42,167,161,.19);
-  font-size:11px;
   font-weight:720;
 }
 .calculation-save-actual-button:hover{
@@ -7625,7 +7433,6 @@ body.dark .project-info-menu > .metadata-section{
   text-align:left;
 }
 .project-info-menu .metadata-subtitle{text-align:left;padding-top:7px}
-.project-info-menu .notes-button{right:0}
 .project-info-menu .metadata-input{
   height:38px;
   border-radius:12px;
@@ -7697,7 +7504,7 @@ body.project-info-open .project-info-wrap{pointer-events:auto}
   pointer-events:auto;
   overflow:hidden;
 }
-.app-notification.is-visible{opacity:1;transform:translateY(0) scale(1)}
+.app-notification.is-visible{opacity:1}
 .app-notification.is-leaving{opacity:0;transform:translateY(-10px) scale(.985)}
 
 .app-notification-icon{
@@ -7829,14 +7636,10 @@ body.dark .calculation-save-actual-button{
   .project-info-menu{
     position:fixed !important;
     inset:auto !important;
-    width:340px !important;
-    height:auto !important;
-    max-height:min(76vh,680px) !important;
     display:block !important;
     grid-template-columns:none !important;
     gap:0 !important;
     padding:14px !important;
-    transform:none !important;
     border-radius:22px !important;
     overflow:auto !important;
     background:rgba(248,248,250,.97) !important;
@@ -7892,7 +7695,6 @@ body.dark .calculation-save-actual-button{
 /* Desktop: Gear Settings is anchored by the header wrapper itself. */
 @media (min-width:761px){
   .project-info-wrap{
-    position:relative !important;
     z-index:calc(var(--layer-header) + 30) !important;
   }
 

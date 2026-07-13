@@ -50,6 +50,8 @@ Dependencies:
 let snapTimeout = null;
 let pickerCloseTimeout = null;
 let pickerDragState = null;
+let pickerSessionSequence = 0;
+let pickerSession = null;
 
 
 /*
@@ -62,6 +64,27 @@ function isPickerOpen() {
   return !picker.hidden;
 }
 
+function getPickerSession() {
+  return pickerSession ? { ...pickerSession } : null;
+}
+
+function beginPickerSession(options = {}) {
+  pickerSession = {
+    id: ++pickerSessionSequence,
+    owner: options.owner || null,
+    presentation: options.presentation || "floating",
+    anchor: options.anchor || null,
+    openedAt: performance.now(),
+    closing: false
+  };
+
+  if (pickerSession.owner) {
+    picker.dataset.pickerOwner = pickerSession.owner;
+  } else {
+    picker.removeAttribute("data-picker-owner");
+  }
+}
+
 
 /*
 ────────────────────────────────────────────
@@ -72,7 +95,7 @@ function isPickerOpen() {
 /*
   Cancels an unfinished close animation before the shared picker is reused.
 */
-function preparePickerForOpen(html) {
+function preparePickerForOpen(html, sessionOptions = {}) {
   window.clearTimeout(
     pickerCloseTimeout
   );
@@ -98,7 +121,7 @@ function preparePickerForOpen(html) {
 
   picker.style.removeProperty("right");
   picker.style.removeProperty("bottom");
-  picker.removeAttribute("data-picker-owner");
+  beginPickerSession(sessionOptions);
   picker.innerHTML = html;
   picker.scrollTop = 0;
 }
@@ -118,7 +141,7 @@ function openMobileRecordingPicker(
   owner,
   scrollOptions = null
 ) {
-  preparePickerForOpen(html);
+  preparePickerForOpen(html, { owner, presentation: "mobile-sheet" });
 
   picker.classList.add(
     "picker-viewport-fixed",
@@ -136,7 +159,6 @@ function openMobileRecordingPicker(
     );
   }
 
-  picker.dataset.pickerOwner = owner;
   picker.style.removeProperty("left");
   picker.style.removeProperty("top");
   picker.scrollTop = 0;
@@ -157,7 +179,10 @@ function openMobileCalculationPicker(
   owner,
   scrollOptions = null
 ) {
-  preparePickerForOpen(html);
+  preparePickerForOpen(html, {
+    owner: owner || "calculation",
+    presentation: "mobile-sheet"
+  });
 
   picker.classList.add(
     "picker-viewport-fixed",
@@ -169,7 +194,6 @@ function openMobileCalculationPicker(
     picker.classList.add("picker-zone", "picker-mobile-zone");
   }
 
-  picker.dataset.pickerOwner = owner || "calculation";
   picker.style.removeProperty("left");
   picker.style.removeProperty("top");
   picker.scrollTop = 0;
@@ -198,7 +222,11 @@ function openPickerFromPoint(
   const stageRect =
     stage.getBoundingClientRect();
 
-  preparePickerForOpen(html);
+  preparePickerForOpen(html, {
+    owner: "recording-aperture",
+    presentation: "point",
+    anchor: { x: event.clientX, y: event.clientY }
+  });
 
   picker.style.left =
     `${event.clientX - stageRect.left}px`;
@@ -242,12 +270,14 @@ function openPickerFromButton(
   const buttonRect =
     button.getBoundingClientRect();
 
-  preparePickerForOpen(html);
+  preparePickerForOpen(html, {
+    owner,
+    presentation: owner === "gear-range" ? "viewport-anchor" : "button-anchor",
+    anchor: button.id || null
+  });
 
   if (owner === "gear-range") {
     picker.classList.add("picker-viewport-fixed");
-    picker.dataset.pickerOwner = owner;
-
     const margin = 12;
     const preferredLeft =
       buttonRect.left + buttonRect.width / 2 - picker.offsetWidth / 2;
@@ -307,14 +337,13 @@ function openCenteredPicker(
     return;
   }
 
-  preparePickerForOpen(html);
+  preparePickerForOpen(html, {
+    owner,
+    presentation: "centered"
+  });
   picker.scrollTop = 0;
 
   picker.classList.add("picker-centered");
-
-  if (owner) {
-    picker.dataset.pickerOwner = owner;
-  }
 
   if (owner === "calculation-zone") {
     picker.classList.add("picker-zone");
@@ -375,7 +404,11 @@ function openPickerFromMarker(marker, html) {
   const layerRect =
     bubbleLayer.getBoundingClientRect();
 
-  preparePickerForOpen(html);
+  preparePickerForOpen(html, {
+    owner: "marker-menu",
+    presentation: "marker-anchor",
+    anchor: marker.id || marker.number || null
+  });
 
   const markerX =
     layerRect.left -
@@ -402,14 +435,19 @@ function openPickerFromMarker(marker, html) {
   A pending close timer is cancelled before a new one is created so an old
   animation cannot later hide newly opened picker content.
 */
-function dispatchPickerClosed() {
+function dispatchPickerClosed(reason = "dismiss") {
   window.dispatchEvent(
-    new CustomEvent("spot-sketch:picker-closed")
+    new CustomEvent("spot-sketch:picker-closed", {
+      detail: {
+        reason,
+        session: getPickerSession()
+      }
+    })
   );
 }
 
 
-function hidePicker() {
+function hidePicker(reason = "dismiss") {
   window.clearTimeout(pickerCloseTimeout);
   window.clearTimeout(snapTimeout);
 
@@ -426,7 +464,8 @@ function hidePicker() {
     instructions correct even when the user closes a picker by clicking a
     panel rather than selecting an option.
   */
-  dispatchPickerClosed();
+  if (pickerSession) pickerSession.closing = true;
+  dispatchPickerClosed(reason);
 
   picker.classList.add("closing");
 
@@ -444,6 +483,7 @@ function hidePicker() {
     picker.removeAttribute("data-picker-owner");
     picker.innerHTML = "";
     pickerDragState = null;
+    pickerSession = null;
     pickerCloseTimeout = null;
   }, 160);
 }

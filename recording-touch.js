@@ -51,10 +51,18 @@ let recordingTouchLongPressTimer = null;
 let recordingTouchActivePointers = new Set();
 let recordingTouchSuppressClickUntil = 0;
 let recordingTouchLastPointerTime = 0;
-let recordingTouchMoveFrame = null;
 let recordingTouchMovePreview = null;
 let recordingTouchPickerGuardActive = false;
 
+
+
+const scheduleRecordingTouchMovePreview = createFrameScheduler(() => {
+  const preview = recordingTouchMovePreview;
+  recordingTouchMovePreview = null;
+  if (!preview) return;
+  moveMarker(preview.markerId, preview.point);
+  render();
+});
 
 function isRecordingTouchPointer(event) {
   return Boolean(
@@ -270,16 +278,7 @@ function updateRecordingTouchMoveDrag(event, gesture) {
   if (!point) return;
 
   recordingTouchMovePreview = { markerId: gesture.markerId, point };
-  if (recordingTouchMoveFrame !== null) return;
-
-  recordingTouchMoveFrame = window.requestAnimationFrame(() => {
-    recordingTouchMoveFrame = null;
-    const preview = recordingTouchMovePreview;
-    recordingTouchMovePreview = null;
-    if (!preview) return;
-    moveMarker(preview.markerId, preview.point);
-    render();
-  });
+  scheduleRecordingTouchMovePreview();
 }
 
 function finishRecordingTouchMoveDrag(event, gesture, cancelled = false) {

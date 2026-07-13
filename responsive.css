@@ -1,7 +1,7 @@
 /*
 ==========================================================
-SPOT SKETCH v1.3 RESPONSIVE DEVELOPMENT
-PACKAGE 01 — RESPONSIVE FOUNDATION
+SPOT SKETCH v1.3 — RESPONSIVE PRESENTATION
+Owns viewport, mobile-shell, touch, and compact-surface presentation.
 
 Purpose:
 Defines shared responsive contracts without redesigning individual
@@ -16,44 +16,6 @@ viewport attributes instead of introducing isolated breakpoint logic.
 1. Responsive Runtime Tokens
 ────────────────────────────────────────────
 */
-
-:root{
-  /* JavaScript replaces the viewport values with VisualViewport pixels. */
-  --app-viewport-width:100vw;
-  --app-viewport-height:100vh;
-  --app-layout-viewport-width:100vw;
-  --app-layout-viewport-height:100vh;
-  --app-viewport-offset-top:0px;
-  --app-viewport-offset-left:0px;
-  --app-keyboard-inset:0px;
-  --app-device-pixel-ratio:1;
-
-  /* Native safe-area contracts. */
-  --safe-area-top:env(safe-area-inset-top, 0px);
-  --safe-area-right:env(safe-area-inset-right, 0px);
-  --safe-area-bottom:env(safe-area-inset-bottom, 0px);
-  --safe-area-left:env(safe-area-inset-left, 0px);
-
-  /* Layout contracts consumed by the future application shell. */
-  --responsive-app-gutter:20px;
-  --responsive-surface-inset:24px;
-  --responsive-header-top:14px;
-  --responsive-header-bottom:12px;
-  --responsive-header-inline:20px;
-  --responsive-header-padding-inline:16px;
-  --responsive-header-padding-block:10px;
-  --responsive-header-gap:14px;
-  --responsive-control-gap:10px;
-  --responsive-panel-radius:24px;
-  --responsive-dialog-radius:18px;
-  --responsive-control-height:36px;
-  --responsive-touch-target:44px;
-  --responsive-mobile-action-offset:12px;
-  --responsive-notification-offset:20px;
-  --responsive-metering-top-inset:96px;
-  --responsive-calculation-top-inset:84px;
-  --responsive-type-scale:1;
-}
 
 @supports (height:100dvh){
   :root{
@@ -394,16 +356,6 @@ mobile without changing the underlying desktop workflow or data model.
 ────────────────────────────────────────────
 */
 
-:root{
-  --mobile-action-bar-height:72px;
-  --mobile-action-bar-gap:10px;
-  --mobile-shell-inline:10px;
-  --mobile-shell-header-radius:22px;
-  --mobile-shell-surface-radius:24px;
-  --mobile-shell-z:1380;
-  --mobile-sheet-z:1520;
-}
-
 .mobile-only,
 .mobile-header-title,
 .mobile-action-bar{
@@ -463,7 +415,6 @@ mobile without changing the underlying desktop workflow or data model.
   }
 
   body.mobile-shell-active .header-logo{
-    grid-area:brand;
     min-width:0;
     display:flex;
     align-items:center;
@@ -497,8 +448,6 @@ mobile without changing the underlying desktop workflow or data model.
   }
 
   body.mobile-shell-active .image-identifier-wrap{
-    grid-area:identifier;
-    min-width:0;
     width:100%;
     display:block;
   }
@@ -520,7 +469,6 @@ mobile without changing the underlying desktop workflow or data model.
   }
 
   body.mobile-shell-active #initialMeteringDisplay{
-    grid-area:metering;
     justify-self:start;
     min-width:0;
     max-width:100%;
@@ -530,7 +478,6 @@ mobile without changing the underlying desktop workflow or data model.
     overflow:hidden;
     border-radius:12px;
     font-size:11px;
-    transform:none !important;
   }
 
   body.mobile-shell-active #initialMeteringDisplay .initial-metering-value{
@@ -539,7 +486,6 @@ mobile without changing the underlying desktop workflow or data model.
   }
 
   body.mobile-shell-active #drBtn{
-    grid-area:lat;
     justify-self:end;
     width:auto;
     min-width:64px;
@@ -760,7 +706,6 @@ mobile without changing the underlying desktop workflow or data model.
     max-height:min(62vh,520px) !important;
     padding:8px 10px 12px !important;
     border-radius:var(--mobile-shell-surface-radius) !important;
-    overflow:auto !important;
     background:rgba(250,250,251,.98) !important;
     border:1px solid rgba(0,0,0,.10) !important;
     box-shadow:0 24px 70px rgba(0,0,0,.25) !important;
@@ -801,7 +746,6 @@ mobile without changing the underlying desktop workflow or data model.
     max-height:min(72vh,620px) !important;
     padding:16px !important;
     border-radius:var(--mobile-shell-surface-radius) !important;
-    overflow:auto !important;
     background:rgba(250,250,251,.985) !important;
     border:1px solid rgba(0,0,0,.10) !important;
     box-shadow:0 24px 70px rgba(0,0,0,.25) !important;
@@ -815,9 +759,7 @@ mobile without changing the underlying desktop workflow or data model.
   body.mobile-shell-active #mobileSurfacePortal > .project-info-menu{
     position:fixed !important;
     z-index:calc(var(--layer-workspace) + 1) !important;
-    inset:0 !important;
     width:100% !important;
-    height:var(--app-viewport-height) !important;
     max-width:none !important;
     max-height:none !important;
     margin:0 !important;
@@ -826,7 +768,6 @@ mobile without changing the underlying desktop workflow or data model.
       max(0px,var(--safe-area-right))
       var(--safe-area-bottom)
       max(0px,var(--safe-area-left)) !important;
-    display:block !important;
     overflow:auto !important;
     border:0 !important;
     border-radius:0 !important;
@@ -913,11 +854,9 @@ mobile without changing the underlying desktop workflow or data model.
       max(10px,var(--safe-area-right))
       calc(var(--safe-area-bottom) + 10px)
       max(10px,var(--safe-area-left)) !important;
-    align-items:flex-end !important;
   }
 
   body.mobile-shell-active .calculation-setup-panel{
-    width:100% !important;
     max-height:min(74vh,620px);
     overflow:auto;
     border-radius:24px !important;
@@ -1111,12 +1050,6 @@ Touch-safe marker hit areas, mobile Recording pickers, compact bubble
 presentation, and explicit touch move guidance.
 ==========================================================
 */
-
-:root{
-  --recording-touch-hit-size:60px;
-  --recording-mobile-picker-gap:12px;
-  --recording-mobile-picker-max-height:58vh;
-}
 
 html[data-touch="true"] #photoCanvas{
   touch-action:manipulation;
@@ -1515,14 +1448,10 @@ body.dark .calculation-guide-ok-button{
       max(8px,var(--safe-area-right))
       calc(var(--safe-area-bottom) + 8px)
       max(8px,var(--safe-area-left)) !important;
-    align-items:flex-end !important;
   }
 
   body.mobile-shell-active .calculation-setup-panel{
     width:100% !important;
-    min-height:0 !important;
-    max-height:none !important;
-    display:grid !important;
     grid-template-columns:minmax(0,1fr) auto;
     grid-template-areas:
       "setup-heading setup-actions"
@@ -1590,7 +1519,6 @@ body.dark .calculation-guide-ok-button{
   body.mobile-shell-active .calculation-setup-primary-button{
     width:auto !important;
     min-width:128px !important;
-    height:38px !important;
     padding:0 13px !important;
     font-size:10px;
   }
@@ -1604,7 +1532,6 @@ body.dark .calculation-guide-ok-button{
     bottom:calc(var(--safe-area-bottom) + 8px) !important;
     width:auto !important;
     max-width:none !important;
-    display:grid !important;
     grid-template-rows:auto auto !important;
     row-gap:7px !important;
     padding:9px !important;
@@ -1615,7 +1542,6 @@ body.dark .calculation-guide-ok-button{
   body.mobile-shell-active .calculation-status-heading{
     min-height:28px;
     padding:0 1px 4px !important;
-    align-items:center !important;
     border-bottom:0 !important;
   }
 
@@ -1640,7 +1566,6 @@ body.dark .calculation-guide-ok-button{
   }
 
   body.mobile-shell-active .calculated-exposure-row{
-    display:grid !important;
     grid-template-columns:88px minmax(0,1fr) !important;
     align-items:center !important;
     gap:8px !important;
@@ -1810,12 +1735,6 @@ editing surfaces while keeping desktop presentation unchanged.
 ==========================================================
 */
 
-:root{
-  --mobile-form-footer-gap:10px;
-  --mobile-project-card-radius:18px;
-  --mobile-project-control-height:46px;
-}
-
 .mobile-add-project-context,
 .project-manager-mobile-order{
   display:none;
@@ -1884,9 +1803,7 @@ editing surfaces while keeping desktop presentation unchanged.
      ---------------------------------------------------- */
   body.mobile-shell-active #mobileSurfacePortal > .project-info-menu{
     display:block !important;
-    overflow-y:auto !important;
     scroll-padding-bottom:calc(84px + var(--safe-area-bottom));
-    overscroll-behavior:contain;
     -webkit-overflow-scrolling:touch;
   }
 
@@ -2516,11 +2433,6 @@ PACKAGE 07 — MOBILE POLISH & BASELINE CANDIDATE
 ==========================================================
 */
 
-:root{
-  --mobile-collapsed-bar-peek:13px;
-  --mobile-expanded-bar-height:52px;
-}
-
 /* Uniform mobile surface title language. */
 .mobile-surface-title{
   min-width:0;
@@ -2573,7 +2485,6 @@ PACKAGE 07 — MOBILE POLISH & BASELINE CANDIDATE
   body.mobile-shell-active #imageIdentifier{
     width:100% !important;
     min-width:0 !important;
-    height:30px !important;
     padding:0 9px !important;
     font-size:10px !important;
   }
@@ -2584,8 +2495,6 @@ PACKAGE 07 — MOBILE POLISH & BASELINE CANDIDATE
 
   body.mobile-shell-active #initialMeteringDisplay{
     grid-area:metering;
-    width:auto !important;
-    min-width:0 !important;
     max-width:128px !important;
     min-height:30px !important;
     height:30px !important;
@@ -2738,8 +2647,6 @@ PACKAGE 07 — MOBILE POLISH & BASELINE CANDIDATE
 
   body.mobile-shell-active .mobile-action-bar.is-suppressed{
     transform:translateY(110%) !important;
-    opacity:0 !important;
-    pointer-events:none !important;
   }
 
   body.mobile-shell-active .mobile-action-items{
@@ -2780,8 +2687,6 @@ PACKAGE 07 — MOBILE POLISH & BASELINE CANDIDATE
   body.mobile-shell-active .mobile-action-button{
     width:100% !important;
     min-width:0 !important;
-    min-height:40px !important;
-    height:40px !important;
     padding:0 !important;
     border:0 !important;
     border-radius:12px !important;
@@ -2945,8 +2850,6 @@ PACKAGE 07 — MOBILE POLISH & BASELINE CANDIDATE
     grid-auto-flow:column !important;
     grid-template-rows:repeat(3,44px) !important;
     grid-auto-columns:minmax(82px,1fr) !important;
-    grid-template-columns:none !important;
-    align-content:start !important;
     overflow-x:auto !important;
     overflow-y:hidden !important;
     scroll-snap-type:x proximity;
@@ -2955,7 +2858,6 @@ PACKAGE 07 — MOBILE POLISH & BASELINE CANDIDATE
 
   body.mobile-shell-active #picker.picker-mobile-aperture .picker-title,
   body.mobile-shell-active #picker.picker-mobile-calculation .picker-title{
-    position:sticky !important;
     left:0;
     grid-row:1 / 4 !important;
     align-self:stretch;
@@ -2994,12 +2896,7 @@ PACKAGE 07 — MOBILE POLISH & BASELINE CANDIDATE
     padding:0 1px 2px !important;
   }
 
-  body.mobile-shell-active .calculation-status-copy > span{
-    font-size:8px !important;
-  }
-
   body.mobile-shell-active .calculated-exposure-row{
-    display:grid !important;
     grid-template-columns:52px minmax(0,1fr) !important;
     gap:4px !important;
   }
@@ -3015,7 +2912,6 @@ PACKAGE 07 — MOBILE POLISH & BASELINE CANDIDATE
   }
 
   body.mobile-shell-active .calculated-exposure-fields{
-    display:grid !important;
     grid-template-columns:repeat(3,minmax(0,1fr)) 34px !important;
     column-gap:3px !important;
     min-width:0;
@@ -3200,7 +3096,6 @@ PACKAGE 07 HOTFIX 01 — MOBILE SHELL / PICKER / CALCULATION
   }
 
   body.mobile-shell-active #drBtn{
-    min-width:36px !important;
     height:auto !important;
     padding:0 !important;
     border:0 !important;
@@ -3210,9 +3105,6 @@ PACKAGE 07 HOTFIX 01 — MOBILE SHELL / PICKER / CALCULATION
   }
 
   /* Loaded photographs start directly below the header instead of floating vertically. */
-  body.mobile-shell-active #stage.has-image{
-    align-items:flex-start !important;
-  }
 
   /* Gear editor must stay inside the visual viewport in both axes. */
   body.mobile-shell-active #mobileSurfacePortal > .project-info-menu{
@@ -3262,19 +3154,14 @@ PACKAGE 07 HOTFIX 01 — MOBILE SHELL / PICKER / CALCULATION
   body.mobile-shell-active #picker.picker-mobile-calculation[data-picker-owner="calculated-aperture"]{
     display:grid !important;
     grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-    grid-template-rows:none !important;
-    grid-auto-flow:row !important;
     grid-auto-columns:auto !important;
     align-content:start !important;
-    overflow-x:hidden !important;
-    overflow-y:auto !important;
     scroll-snap-type:none !important;
     max-height:min(58vh,520px) !important;
   }
 
   body.mobile-shell-active #picker.picker-mobile-aperture .picker-title,
   body.mobile-shell-active #picker.picker-mobile-calculation .picker-title{
-    position:sticky !important;
     top:0 !important;
     left:auto !important;
     z-index:3;
@@ -3287,13 +3174,10 @@ PACKAGE 07 HOTFIX 01 — MOBILE SHELL / PICKER / CALCULATION
     align-self:auto !important;
     justify-content:flex-start;
     background:inherit;
-    border-bottom:1px solid var(--border) !important;
   }
 
   body.mobile-shell-active #picker.picker-mobile-aperture .picker-option,
   body.mobile-shell-active #picker.picker-mobile-calculation .picker-option{
-    width:100% !important;
-    min-width:0 !important;
     min-height:42px !important;
     height:42px !important;
     scroll-snap-align:none !important;
@@ -3370,25 +3254,16 @@ PACKAGE 07 HOTFIX 01 — MOBILE SHELL / PICKER / CALCULATION
 
   body.mobile-shell-active .calculated-exposure-row{
     display:block !important;
-    width:100% !important;
-    min-width:0 !important;
   }
 
   body.mobile-shell-active .calculated-exposure-fields{
-    display:grid !important;
-    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
     gap:6px !important;
-    width:100% !important;
-    min-width:0 !important;
   }
 
   body.mobile-shell-active .calculated-exposure-field{
-    width:100% !important;
-    min-width:0 !important;
     height:38px !important;
     min-height:38px !important;
     padding:0 6px !important;
-    font-size:9px !important;
   }
 }
 
@@ -3398,12 +3273,6 @@ PACKAGE 07 HOTFIX 01 — MOBILE SHELL / PICKER / CALCULATION
 PACKAGE 07 HOTFIX 02 — FIXED MOBILE BAR + CALCULATION DRAWER
 ==========================================================
 */
-
-:root{
-  --mobile-fixed-bar-content-height:46px;
-  --calculation-drawer-notch-height:36px;
-  --calculation-drawer-radius:15px;
-}
 
 @media (max-width:900px){
   /* The primary mobile navigation is now permanently available. */
@@ -3916,7 +3785,6 @@ PACKAGE 07 HOTFIX 02 — FIXED MOBILE BAR + CALCULATION DRAWER
     gap:6px !important;
   }
   body.mobile-shell-active .app-notification{
-    width:100% !important;
     max-width:430px !important;
     min-height:0 !important;
     padding:9px 10px !important;
@@ -3943,7 +3811,6 @@ PACKAGE 07 HOTFIX 02 — FIXED MOBILE BAR + CALCULATION DRAWER
     gap:7px !important;
   }
   body.mobile-shell-active .export-workspace-jpeg-button{
-    display:inline-flex !important;
     color:var(--muted);
     background:transparent;
   }
@@ -4050,7 +3917,6 @@ PACKAGE 07 HOTFIX 02 — FIXED MOBILE BAR + CALCULATION DRAWER
     pointer-events:auto !important;
     opacity:1 !important;
     transform:translate3d(0,0,0) !important;
-    transition:transform 280ms cubic-bezier(.22,.82,.2,1), opacity 180ms ease !important;
   }
 
   body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-setup-panel.is-mobile-shell-collapsed,
@@ -4143,29 +4009,17 @@ PACKAGE 07 HOTFIX 02 — FIXED MOBILE BAR + CALCULATION DRAWER
   }
 
   body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-setup-selection{
-    display:grid !important;
-    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
-    gap:8px !important;
     padding:0 !important;
   }
 
   body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-setup-selection > div{
-    min-width:0 !important;
-    min-height:42px !important;
     padding:7px 10px !important;
     border-radius:10px !important;
   }
 
-  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-setup-actions{
-    display:block !important;
-    padding:0 !important;
-  }
-
   body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-setup-primary-button{
-    width:100% !important;
     height:40px !important;
     min-height:40px !important;
-    margin:0 !important;
     padding:0 12px !important;
   }
 
@@ -4194,10 +4048,8 @@ PACKAGE 07 HOTFIX 02 — FIXED MOBILE BAR + CALCULATION DRAWER
     width:146px !important;
     min-width:116px !important;
     max-width:100% !important;
-    height:32px !important;
     min-height:32px !important;
     margin:0 !important;
-    padding:0 7px !important;
     display:grid !important;
     grid-template-columns:16px 64px 16px !important;
     justify-content:center !important;
@@ -4209,12 +4061,6 @@ PACKAGE 07 HOTFIX 02 — FIXED MOBILE BAR + CALCULATION DRAWER
   body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-control-track{
     width:64px !important;
     min-width:64px !important;
-    height:18px !important;
-  }
-
-  body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-control-thumb{
-    width:14px !important;
-    height:14px !important;
   }
 
   body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-control-mode.is-aperture .calculation-control-thumb{
@@ -4275,7 +4121,6 @@ PACKAGE 07 HOTFIX 02 — FIXED MOBILE BAR + CALCULATION DRAWER
 @media (max-width:390px){
   body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-mobile-primary-row{
     grid-template-columns:minmax(108px,138px) minmax(116px,1fr) !important;
-    gap:7px !important;
   }
 
   body.mobile-shell-active.mobile-calculation-shell-v2 .calculation-control-mode{

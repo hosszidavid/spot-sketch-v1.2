@@ -28,7 +28,6 @@ Does NOT own:
 
 let mobileProjectSurfacesInitialized = false;
 let mobileProjectSurfaceObserver = null;
-let mobileProjectSurfaceFrame = null;
 let mobileFocusedFieldTimer = null;
 
 const MOBILE_PROJECT_SURFACE_SELECTORS = Object.freeze({
@@ -263,14 +262,7 @@ function synchronizeMobileProjectSurfaceState() {
   }
 }
 
-function scheduleMobileProjectSurfaceSync() {
-  if (mobileProjectSurfaceFrame !== null) return;
-
-  mobileProjectSurfaceFrame = window.requestAnimationFrame(() => {
-    mobileProjectSurfaceFrame = null;
-    synchronizeMobileProjectSurfaceState();
-  });
-}
+const scheduleMobileProjectSurfaceSync = createFrameScheduler(synchronizeMobileProjectSurfaceState);
 
 function initializeMobileProjectSurfaceObserver() {
   mobileProjectSurfaceObserver = new MutationObserver(

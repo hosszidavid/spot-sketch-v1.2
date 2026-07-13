@@ -63,7 +63,6 @@ const RESPONSIVE_KEYBOARD_THRESHOLD = 140;
 */
 
 let responsiveFoundationInitialized = false;
-let responsiveFrameRequest = null;
 let responsiveState = null;
 let responsiveStableWorkspaceHeight = 0;
 
@@ -247,14 +246,7 @@ function commitResponsiveState() {
 ────────────────────────────────────────────
 */
 
-function scheduleResponsiveStateSync() {
-  if (responsiveFrameRequest !== null) return;
-
-  responsiveFrameRequest = window.requestAnimationFrame(() => {
-    responsiveFrameRequest = null;
-    commitResponsiveState();
-  });
-}
+const scheduleResponsiveStateSync = createFrameScheduler(commitResponsiveState);
 
 function bindResponsiveMediaQuery(query) {
   const media = window.matchMedia?.(query);

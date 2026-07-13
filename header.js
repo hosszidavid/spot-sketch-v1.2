@@ -284,70 +284,7 @@ function bindHeaderOutsideClick() {
 
 
 /*
-  While a transient menu, location editor, or picker is open, the first click
-  outside that surface only closes it. The requested underlying action is not
-  executed until the next click. This prevents accidental Spot Readings and
-  conflicting panel transitions.
+  Transient-surface priority and the capture guard are owned by
+  ui-runtime.js. Header initialization only binds the shared guard.
 */
-function getOpenTransientSurface() {
-  if (typeof isDialogOpen === "function" && isDialogOpen()) {
-    return null;
-  }
-  if (headerAddMenu && !headerAddMenu.hidden) {
-    return { element: headerAddMenu, trigger: headerAddBtn, close: closeHeaderMenus };
-  }
 
-  if (headerAddToProjectMenu && !headerAddToProjectMenu.hidden) {
-    return { element: headerAddToProjectMenu, trigger: null, close: closeHeaderMenus };
-  }
-
-  /*
-    A picker opened from Gear is visually and interactively above the Gear
-    surface. It must therefore win the transient-surface priority. Otherwise
-    the capture guard interprets a range selection as a click outside Gear,
-    closes the editor, and prevents the selected value from being committed.
-  */
-  if (typeof isPickerOpen === "function" && isPickerOpen()) {
-    return { element: picker, trigger: null, close: hidePicker };
-  }
-
-  if (typeof isProjectInfoOpen === "function" && isProjectInfoOpen()) {
-    return {
-      element: document.getElementById("projectInfoMenu"),
-      trigger: document.getElementById("projectInfoBtn"),
-      close: requestCancelProjectInfoPanel
-    };
-  }
-
-  if (typeof isLocationPanelOpen === "function" && isLocationPanelOpen()) {
-    return {
-      element: document.getElementById("locationPanel"),
-      trigger: document.getElementById("locationBtn"),
-      close: closeLocationPanel
-    };
-  }
-
-  return null;
-}
-
-function bindTransientSurfaceGuard() {
-  document.addEventListener("click", event => {
-    if (
-      (typeof isDialogOpen === "function" && isDialogOpen()) ||
-      event.target.closest("#dialogOverlay")
-    ) {
-      return;
-    }
-
-    const surface = getOpenTransientSurface();
-    if (!surface || !surface.element) return;
-
-    if (surface.element.contains(event.target)) return;
-    if (surface.trigger && surface.trigger.contains(event.target)) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-    surface.close();
-  }, true);
-}

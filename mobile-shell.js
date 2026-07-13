@@ -39,13 +39,12 @@ Dependencies:
 const MOBILE_SHELL_VIEWPORTS = new Set(["mobile", "tablet"]);
 
 let mobileApplicationShellInitialized = false;
-let mobileShellSyncFrame = null;
 let mobileShellObserver = null;
 let mobileShellBarHeight = 0;
 let mobileActionBarExpanded = true;
 let mobileActionBarTimer = null;
 
-const mobileSurfaceOrigins = new Map();
+const mobileSurfaceRelocator = createDomRelocator("mobile-shell");
 
 
 /*
@@ -107,33 +106,12 @@ function isMobileShellModalSurfaceOpen(surfaceName) {
 ────────────────────────────────────────────
 */
 
-function rememberMobileSurfaceOrigin(element) {
-  if (!element || mobileSurfaceOrigins.has(element)) return;
-
-  const marker = document.createComment(
-    `spot-sketch-mobile-origin:${element.id || element.className || "surface"}`
-  );
-
-  element.parentNode?.insertBefore(marker, element);
-  mobileSurfaceOrigins.set(element, marker);
-}
-
 function moveMobileSurfaceToPortal(element) {
-  const portal = getMobileSurfacePortal();
-  if (!element || !portal) return;
-
-  rememberMobileSurfaceOrigin(element);
-
-  if (element.parentElement !== portal) {
-    portal.appendChild(element);
-  }
+  mobileSurfaceRelocator.move(element, getMobileSurfacePortal());
 }
 
 function restoreMobileSurfaceOrigin(element) {
-  const marker = mobileSurfaceOrigins.get(element);
-  if (!element || !marker?.parentNode) return;
-
-  marker.parentNode.insertBefore(element, marker.nextSibling);
+  mobileSurfaceRelocator.restore(element);
 }
 
 function relocateMobileShellSurfaces(active) {
@@ -384,14 +362,7 @@ function syncMobileApplicationShell() {
   window.requestAnimationFrame(syncMobileShellBarHeight);
 }
 
-function scheduleMobileApplicationShellSync() {
-  if (mobileShellSyncFrame !== null) return;
-
-  mobileShellSyncFrame = window.requestAnimationFrame(() => {
-    mobileShellSyncFrame = null;
-    syncMobileApplicationShell();
-  });
-}
+const scheduleMobileApplicationShellSync = createFrameScheduler(syncMobileApplicationShell);
 
 
 /*

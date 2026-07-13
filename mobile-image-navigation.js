@@ -47,7 +47,6 @@ let mobileImagePointers = new Map();
 let mobileImagePinch = null;
 let mobileImagePan = null;
 let mobileImageGestureActive = false;
-let mobileImageApplyFrame = null;
 
 function isMobileImageNavigationAvailable() {
   return Boolean(
@@ -131,7 +130,6 @@ function clampMobileImageTransform() {
 }
 
 function applyMobileImageTransformImmediately() {
-  mobileImageApplyFrame = null;
 
   const resetButton = getMobileImageResetButton();
   const active = isMobileImageNavigationAvailable();
@@ -161,12 +159,9 @@ function applyMobileImageTransformImmediately() {
   if (resetButton) resetButton.hidden = !zoomed;
 }
 
-function scheduleMobileImageTransform() {
-  if (mobileImageApplyFrame !== null) return;
-  mobileImageApplyFrame = window.requestAnimationFrame(
-    applyMobileImageTransformImmediately
-  );
-}
+const scheduleMobileImageTransform = createFrameScheduler(
+  applyMobileImageTransformImmediately
+);
 
 function resetMobileImageNavigation(options = {}) {
   mobileImageScale = 1;

@@ -35,14 +35,13 @@ let calculationGuideCountdownTimer = null;
 let calculationGuideMutationObserver = null;
 let calculationPickerMutationObserver = null;
 let calculationShellResizeObserver = null;
-let calculationShellFrame = null;
 let lastMobileCalculationPhase = "none";
 let calculationMobilePrimaryRow = null;
 let calculationMobileCloseHost = null;
 let calculationPickerWasOpen = false;
 let calculationShellExpandedBeforePicker = true;
 let calculationShellExpanded = true;
-const calculationMobileControlOrigins = new Map();
+const calculationMobileControlRelocator = createDomRelocator("calculation-mobile");
 
 const CALCULATION_MOBILE_GUIDES = Object.freeze({
   setup: {
@@ -83,18 +82,11 @@ function getMobileCalculationPanel(phase = getMobileCalculationPhase()) {
 }
 
 function rememberCalculationMobileControlOrigin(element) {
-  if (!element || calculationMobileControlOrigins.has(element)) return;
-  const marker = document.createComment(
-    `spot-sketch-calculation-mobile-origin:${element.id || element.className}`
-  );
-  element.parentNode?.insertBefore(marker, element);
-  calculationMobileControlOrigins.set(element, marker);
+  calculationMobileControlRelocator.remember(element);
 }
 
 function restoreCalculationMobileControlOrigin(element) {
-  const marker = calculationMobileControlOrigins.get(element);
-  if (!element || !marker?.parentNode) return;
-  marker.parentNode.insertBefore(element, marker.nextSibling);
+  calculationMobileControlRelocator.restore(element);
 }
 
 function ensureCalculationMobilePrimaryRow() {
@@ -185,7 +177,6 @@ function syncCalculationMobileControlLayout() {
 }
 
 function measureMobileCalculationShell() {
-  calculationShellFrame = null;
   const panel = getMobileCalculationPanel();
   const height = panel?.offsetHeight || 0;
   document.documentElement.style.setProperty(
@@ -194,10 +185,7 @@ function measureMobileCalculationShell() {
   );
 }
 
-function scheduleMobileCalculationShellMeasure() {
-  if (calculationShellFrame !== null) return;
-  calculationShellFrame = window.requestAnimationFrame(measureMobileCalculationShell);
-}
+const scheduleMobileCalculationShellMeasure = createFrameScheduler(measureMobileCalculationShell);
 
 function setMobileCalculationShellExpanded(expanded, options = {}) {
   const phase = getMobileCalculationPhase();

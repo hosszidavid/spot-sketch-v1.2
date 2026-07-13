@@ -903,16 +903,12 @@ function ensureProjectInfoDropdownAnchor() {
     typeof isMobileApplicationShellActive === "function" &&
     isMobileApplicationShellActive();
 
-  if (mobileShellActive) {
-    const portal =
-      typeof getMobileSurfacePortal === "function"
-        ? getMobileSurfacePortal()
-        : document.getElementById("mobileSurfacePortal");
-
-    if (portal && menu.parentElement !== portal) {
-      portal.appendChild(menu);
-    }
-  } else if (menu.parentElement !== wrap) {
+  /*
+    mobile-shell.js exclusively owns portal relocation. Project workflow
+    code only guarantees the desktop anchor when the mobile shell is off.
+    This prevents two modules from recording different DOM origins.
+  */
+  if (!mobileShellActive && menu.parentElement !== wrap) {
     wrap.appendChild(menu);
   }
 
